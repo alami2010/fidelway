@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:parallax_slide_animation/home_page.dart';
+import 'package:parallax_slide_animation/first-time.dart';
 
-void main() => runApp(const MyApp());
+import 'home.dart';
+import 'local_storage_helper.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await LocalStorageHelper.init();
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var isFirstTime = LocalStorageHelper.readShopName()?.isNotEmpty ?? false;
+
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'SF Pro Display'),
-      title: 'Buy Tickets',
-      home: const HomePage(),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: isFirstTime ? const MyHomePage() : FirstTime(),
     );
   }
 }

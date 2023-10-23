@@ -91,7 +91,7 @@ class _ExhibitionBottomSheetState extends State<ExhibitionBottomSheet>
                     topMargin: headerTopMargin,
                   ),
                   for (Event event in events) _buildFullItem(event),
-                  for (Event event in events) _buildIcon(event),
+
                 ],
               ),
             ),

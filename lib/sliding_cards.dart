@@ -30,7 +30,7 @@ class _SlidingCardsViewState extends State<SlidingCardsView> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.55,
+      height: MediaQuery.of(context).size.height * 0.3,
       child: PageView.builder(
         clipBehavior: Clip.none,
         controller: pageController,
@@ -68,12 +68,11 @@ class _SlidingCardsViewState extends State<SlidingCardsView> {
                       // Image
                       ClipRRect(
                         borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(32)),
+                            top: Radius.circular(15)),
                         child: Image.asset(
                           'assets/${demoCardData[index].image}',
-                          height: MediaQuery.of(context).size.height * 0.3,
-                          alignment: Alignment(-pageOffset.abs(), 0),
-                          fit: BoxFit.none,
+                           alignment: Alignment(-pageOffset.abs(), 0),
+                          fit: BoxFit.cover,
                         ),
                       ),
                       Expanded(child: child!),
@@ -82,17 +81,7 @@ class _SlidingCardsViewState extends State<SlidingCardsView> {
                 ),
               );
             },
-            child: Column(
-              children: [
-                const SizedBox(height: 8),
-                Expanded(
-                  child: CardContent(
-                    name: demoCardData[index].name,
-                    date: demoCardData[index].date,
-                  ),
-                ),
-              ],
-            ),
+            child: Container(),
           );
         },
       ),

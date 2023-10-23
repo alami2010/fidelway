@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 ///Notice that by default this class is not used
-///Go to [home_page.dart] and replace [ExhibitionBottomSheet] with [ScrollableExhibitionSheet] to use it
+///Go to [scanne.dart] and replace [ExhibitionBottomSheet] with [ScrollableExhibitionSheet] to use it
 class ScrollableExhibitionSheet extends StatefulWidget {
   const ScrollableExhibitionSheet({super.key});
 

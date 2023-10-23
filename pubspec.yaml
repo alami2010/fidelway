@@ -34,6 +34,13 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  http: ^1.1.0
+  flutter_barcode_scanner: ^2.0.0
+  motion_tab_bar_v2: ^0.3.0
+  shared_preferences: ^2.2.2
+  after_layout: ^1.2.0
+  path_provider: ^2.1.1
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +67,11 @@ flutter:
     - assets/efe-kurnaz.jpg
     - assets/rodion-kutsaev.jpeg
     - assets/steve-johnson.jpeg
+    - assets/fidelway-logo.png
+    - assets/logo.png
+    - assets/burger.png
+    - assets/coca.png
+    - assets/pizza.png
   fonts:
     - family: SF Pro Display
       fonts:

@@ -9,10 +9,8 @@ class Tabs extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         SizedBox(width: 24),
-        MyTab(text: 'Nearby', isSelected: false),
-        MyTab(text: 'Recent', isSelected: true),
-        MyTab(text: 'Notice', isSelected: false),
-      ],
+         MyTab(text: 'Fidelway', isSelected: true),
+       ],
     );
   }
 }
@@ -33,7 +31,7 @@ class MyTab extends StatelessWidget {
           Text(
             text,
             style: TextStyle(
-              fontSize: isSelected ? 16 : 14,
+              fontSize: isSelected ? 20 : 14,
               color: isSelected ? Colors.black : Colors.grey,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             ),

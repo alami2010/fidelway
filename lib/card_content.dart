@@ -22,7 +22,7 @@ class CardContent extends StatelessWidget {
             date,
             style: const TextStyle(color: Colors.grey),
           ),
-          const Spacer(),
+
           Row(
             children: <Widget>[
               ElevatedButton(
@@ -44,7 +44,7 @@ class CardContent extends StatelessWidget {
                   fontSize: 20,
                 ),
               ),
-              const SizedBox(width: 16),
+
             ],
           )
         ],

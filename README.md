@@ -11,3 +11,4 @@ Big thanks to Marcin Szałek for his article on Medium about this. Want to read 
 ![intro](intro.gif)
 
 ![App UI](/ui.png)
+"# fidelway" 

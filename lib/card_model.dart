@@ -7,7 +7,7 @@ class CardModel {
 List<CardModel> demoCardData = [
   CardModel(
     name: "Shenzhen GLOBAL DESIGN AWARD 2018",
-    image: "steve-johnson.jpeg",
+    image: "fidelway-logo.png",
     date: "4.20-30",
   ),
   CardModel(
