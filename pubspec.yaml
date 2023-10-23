@@ -72,6 +72,7 @@ flutter:
     - assets/burger.png
     - assets/coca.png
     - assets/pizza.png
+    - assets/pizzas.png
   fonts:
     - family: SF Pro Display
       fonts:
