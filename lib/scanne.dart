@@ -97,9 +97,14 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                         width: MediaQuery.of(context).size.width,
                         child: Container(
                           color: Colors.blue,
-                          child: const Column(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
+                              Text(
+                                'Solde : ${client?.solde.toString() ?? ''}',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
+                              ),
                               Text(
                                 "Déconnexion",
                                 style: TextStyle(color: Colors.white),
@@ -111,26 +116,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                 SingleChildScrollView(
                     scrollDirection: Axis.horizontal, child: buildRow(mode)),
                 if (client.history != null)
-                  Row(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(left: 10, top: 2, bottom: 2),
-                        child: Text(
-                          'solde : ${client?.solde.toString() ?? ''}',
-                          style: const TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(left: 50, top: 2, bottom: 2),
-                        child: const Text(
-                          'Historique des points',
-                          style: TextStyle(
-                              fontSize: 14.0, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  ),
+                  itemCard('', 'Historique des points'),
                 if (client.history != null)
                   SizedBox(
                     height: 250,
@@ -139,7 +125,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                       itemBuilder: (context, index) {
                         return ListTile(
                           title: itemCard(client.history?[index].date ?? '',
-                              client.history?[index].amout ?? 0),
+                              client.history?[index].amout.toString() ?? ''),
                         );
                       },
                     ),
@@ -215,7 +201,9 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                     children: <Widget>[
                       Image.asset(
                         "assets/${list[i]}.png",
-                        width: 40,
+                        height: 100,
+                        width: 80,
+
                       ),
                     ],
                   ),
@@ -227,15 +215,17 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
 
   int getAmount(String repas) {
     if (repas == "coca") {
-      return 5;
-    } else if (repas == "burger") {
       return 10;
+    } else if (repas == "burger") {
+      return 20;
     } else if (repas == "menu") {
       return 15;
     } else if (repas == "coca_pizza") {
       return 3;
     } else if (repas == "pizza") {
-      return 5;
+      return 15;
+    } else if (repas == "pizzas") {
+      return 200;
     } else if (repas == "coiffeur") {
       return 6;
     }
@@ -243,12 +233,16 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
     return 0;
   }
 
-  Widget itemCard(String date, int point) {
+  Widget itemCard(String date, String point) {
     return Padding(
       padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0),
       child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(width: 1.5, color: Colors.grey),
+            ),
+          ),
           width: MediaQuery.of(context).size.width,
-          color: Colors.white,
           child: Column(
             children: <Widget>[
               const SizedBox(
