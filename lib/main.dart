@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'first-time.dart';
 import 'home.dart';
 import 'local_storage_helper.dart';
 
@@ -15,13 +14,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var isFirstTime = LocalStorageHelper.readShopName()?.isNotEmpty ?? false;
-
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: isFirstTime ? const MyHomePage() : FirstTime(),
+      home: const MyHomePage(),
     );
   }
 }

@@ -1,8 +1,6 @@
 import 'package:FidelWay/tabs.dart';
 import 'package:flutter/material.dart';
 
-
-import 'first-time.dart';
 import 'local_storage_helper.dart';
 import 'moreviewAPropos.dart';
 
@@ -102,25 +100,6 @@ class _MoreViewState extends State<MoreView> {
                           color: Colors.grey,
                         ),
                         title: Text("à propos"),
-                      ),
-                    ),
-                  )),
-              Container(
-                  padding: EdgeInsets.only(left: 10, right: 10),
-                  margin: EdgeInsets.only(bottom: 3),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => FirstTime()));
-                    },
-                    child: const Card(
-                      elevation: 1,
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.info,
-                          color: Colors.grey,
-                        ),
-                        title: Text("Setting"),
                       ),
                     ),
                   )),

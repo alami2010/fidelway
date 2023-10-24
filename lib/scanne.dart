@@ -21,13 +21,13 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
   MotionTabBarController? _motionTabBarController;
 
   void scanQrCode() {
-    /*   APIRest.scan("test_21-10-96ssw2").then((value) {
+      APIRest.scan("test_21-10-96sswx2").then((value) {
       setState(() {
         // adding a new marker to map
         client = value;
       });
-    });*/
-    FlutterBarcodeScanner.scanBarcode("#000000", "Sortir", true, ScanMode.QR)
+    });
+    /* FlutterBarcodeScanner.scanBarcode("#000000", "Sortir", true, ScanMode.QR)
         .then((value) {
       if (value != "-1") {
         APIRest.scan(value).then((value) {
@@ -37,7 +37,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
           });
         });
       }
-    });
+    });*/
   }
 
   @override
@@ -187,14 +187,15 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
   }
 
   Row buildRow(String? mode) {
-    List<int> list = client.amounts ?? [];
+    List<String> list = client.fastFoodRepas ?? [];
 
     return Row(
       children: [
         for (int i = 0; i < list.length; i++)
           InkWell(
             onTap: () {
-              APIRest.minus(client.code ?? '', list[i]).then((value) {
+              APIRest.minus(client.code ?? '', getAmount(list[i]))
+                  .then((value) {
                 setState(() {
                   // adding a new marker to map
                   client = value;
@@ -202,17 +203,19 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
               });
             },
             child: Container(
-                height: 75,
-                width: 75,
+                height: 100,
+                width: 100,
                 margin: EdgeInsets.only(left: 7, bottom: 5),
                 child: Container(
-                  color: Colors.blueAccent,
+                  color: Colors.transparent,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Text(
-                        '${client.amounts?[i]} €	',
-                        style: TextStyle(color: Colors.white),
+                      Image.asset(
+                        "assets/${list[i]}.png",
+                        height: 100,
+                        width: 80,
+
                       ),
                     ],
                   ),
@@ -234,7 +237,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
     } else if (repas == "pizza") {
       return 15;
     } else if (repas == "pizzas") {
-      return 200;
+      return 20;
     } else if (repas == "coiffeur") {
       return 6;
     }
