@@ -1,5 +1,5 @@
+import 'package:FidelWay/tabs.dart';
 import 'package:flutter/material.dart';
-import 'package:parallax_slide_animation/tabs.dart';
 
 class AProposPage extends StatefulWidget {
   const AProposPage({Key? key}) : super(key: key);

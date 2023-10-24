@@ -1,4 +1,4 @@
-name: parallax_slide_animation
+name: FidelWay
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -73,6 +73,7 @@ flutter:
     - assets/coca.png
     - assets/pizza.png
     - assets/pizzas.png
+    - assets/welcome.jpg
   fonts:
     - family: SF Pro Display
       fonts:

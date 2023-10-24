@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:parallax_slide_animation/first-time.dart';
 
+import 'first-time.dart';
 import 'home.dart';
 import 'local_storage_helper.dart';
 

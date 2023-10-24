@@ -1,10 +1,12 @@
+import 'package:FidelWay/tabs.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
-import 'package:parallax_slide_animation/model/Client.dart';
-import 'package:parallax_slide_animation/tabs.dart';
+
 
 import 'local_storage_helper.dart';
 import 'model/APIRest.dart';
+import 'model/Client.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -19,13 +21,13 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
   MotionTabBarController? _motionTabBarController;
 
   void scanQrCode() {
-    APIRest.scan("test_21-10-223xddddxxxxee").then((value) {
+    /*   APIRest.scan("test_21-10-96ssw2").then((value) {
       setState(() {
         // adding a new marker to map
         client = value;
       });
-    });
-    /* FlutterBarcodeScanner.scanBarcode("#000000", "Sortir", true, ScanMode.QR)
+    });*/
+    FlutterBarcodeScanner.scanBarcode("#000000", "Sortir", true, ScanMode.QR)
         .then((value) {
       if (value != "-1") {
         APIRest.scan(value).then((value) {
@@ -35,7 +37,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
           });
         });
       }
-    });*/
+    });
   }
 
   @override
@@ -64,7 +66,6 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    print("holley");
     var mode = LocalStorageHelper.readMode();
     return Scaffold(
       backgroundColor: Colors.white,
@@ -96,18 +97,29 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                         margin: EdgeInsets.only(left: 7, bottom: 5),
                         width: MediaQuery.of(context).size.width,
                         child: Container(
-                          color: Colors.blue,
+                          color: Colors.transparent,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
                               Text(
                                 'Solde : ${client?.solde.toString() ?? ''}',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
                               ),
-                              Text(
-                                "Déconnexion",
-                                style: TextStyle(color: Colors.white),
+                              Expanded(
+                                child: Align(
+                                    alignment: Alignment.centerRight,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsets.all(20)
+                                          //internal content margin
+                                          ),
+                                      onPressed: () => setState(() {
+                                        // adding a new marker to map
+                                        client = ClientWay();
+                                      }),
+                                      child: Text(
+                                        "Déconnexion",
+                                      ),
+                                    )),
                               )
                             ],
                           ),
@@ -175,15 +187,14 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
   }
 
   Row buildRow(String? mode) {
-    List<String> list = client.fastFoodRepas ?? [];
+    List<int> list = client.amounts ?? [];
 
     return Row(
       children: [
         for (int i = 0; i < list.length; i++)
           InkWell(
             onTap: () {
-              APIRest.minus(client.code ?? '', getAmount(list[i]))
-                  .then((value) {
+              APIRest.minus(client.code ?? '', list[i]).then((value) {
                 setState(() {
                   // adding a new marker to map
                   client = value;
@@ -191,19 +202,17 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
               });
             },
             child: Container(
-                height: 100,
-                width: 100,
+                height: 75,
+                width: 75,
                 margin: EdgeInsets.only(left: 7, bottom: 5),
                 child: Container(
-                  color: Colors.transparent,
+                  color: Colors.blueAccent,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Image.asset(
-                        "assets/${list[i]}.png",
-                        height: 100,
-                        width: 80,
-
+                      Text(
+                        '${client.amounts?[i]} €	',
+                        style: TextStyle(color: Colors.white),
                       ),
                     ],
                   ),

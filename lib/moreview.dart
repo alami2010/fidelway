@@ -1,8 +1,8 @@
+import 'package:FidelWay/tabs.dart';
 import 'package:flutter/material.dart';
-import 'package:parallax_slide_animation/first-time.dart';
-import 'package:parallax_slide_animation/tabs.dart';
 
-import 'TypeFidelWay.dart';
+
+import 'first-time.dart';
 import 'local_storage_helper.dart';
 import 'moreviewAPropos.dart';
 
@@ -110,29 +110,10 @@ class _MoreViewState extends State<MoreView> {
                   margin: EdgeInsets.only(bottom: 3),
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => TypeFidelWay()));
-                    },
-                    child: Card(
-                      elevation: 1,
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.info,
-                          color: Colors.grey,
-                        ),
-                        title: Text("type d'application"),
-                      ),
-                    ),
-                  )),
-              Container(
-                  padding: EdgeInsets.only(left: 10, right: 10),
-                  margin: EdgeInsets.only(bottom: 3),
-                  child: InkWell(
-                    onTap: () {
                       Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => FirstTime()));
                     },
-                    child: Card(
+                    child: const Card(
                       elevation: 1,
                       child: ListTile(
                         leading: Icon(

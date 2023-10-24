@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:parallax_slide_animation/local_storage_helper.dart';
 
+import '../local_storage_helper.dart';
 import 'Client.dart';
 
 const isLocal = false;
@@ -20,7 +20,7 @@ class APIRest {
   static Future<ClientWay> scan(String code) async {
     var offert = LocalStorageHelper.readOffert();
     var count = LocalStorageHelper.readCountVisit();
-    var url = '${baseUrl}fidel-way-client/$code';
+    var url = '${baseUrl}fidel-way-client/$code?offert=$offert&count=$count';
 
     final response = await http.get(Uri.parse(url), headers: buildHeader());
     if (response.statusCode == 200) {
@@ -53,7 +53,7 @@ class APIRest {
   static Future<ClientWay> minus(String code, int points) async {
     var offert = LocalStorageHelper.readOffert();
     var count = LocalStorageHelper.readCountVisit();
-    var url = '${baseUrl}fidel-way-client/$code/$points';
+    var url = '${baseUrl}fidel-way-client/$code/$points?offert=$offert&count=$count';
 
     final response = await http.get(Uri.parse(url), headers: buildHeader());
     if (response.statusCode == 200) {

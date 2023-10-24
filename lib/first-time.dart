@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:parallax_slide_animation/home.dart';
 
+import 'home.dart';
 import 'local_storage_helper.dart';
 
 class FirstTime extends StatelessWidget {

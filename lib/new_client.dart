@@ -1,6 +1,6 @@
+import 'package:FidelWay/tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:parallax_slide_animation/tabs.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import 'local_storage_helper.dart';
