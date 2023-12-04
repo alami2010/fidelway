@@ -27,7 +27,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
         client = value;
       });
     });
-    /* FlutterBarcodeScanner.scanBarcode("#000000", "Sortir", true, ScanMode.QR)
+    /*FlutterBarcodeScanner.scanBarcode("#000000", "Sortir", true, ScanMode.QR)
         .then((value) {
       if (value != "-1") {
         APIRest.scan(value).then((value) {
@@ -108,15 +108,12 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                                 child: Align(
                                     alignment: Alignment.centerRight,
                                     child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                          padding: EdgeInsets.all(20)
-                                          //internal content margin
-                                          ),
+
                                       onPressed: () => setState(() {
                                         // adding a new marker to map
                                         client = ClientWay();
                                       }),
-                                      child: Text(
+                                      child: const Text(
                                         "Déconnexion",
                                       ),
                                     )),
