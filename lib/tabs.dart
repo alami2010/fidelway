@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Tabs extends StatelessWidget {
-  const Tabs({super.key});
+class FildelityBar extends StatelessWidget {
+  const FildelityBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class MyTab extends StatelessWidget {
             text,
             style: TextStyle(
               fontSize: isSelected ? 20 : 14,
-              color: isSelected ? Colors.black : Colors.grey,
+              color: Colors.white,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             ),
           ),

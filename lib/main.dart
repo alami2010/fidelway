@@ -1,7 +1,6 @@
+import 'package:FidelWay/shared/local_storage_helper.dart';
+import 'package:FidelWay/subscribtion/splash_screen.dart';
 import 'package:flutter/material.dart';
-
-import 'home.dart';
-import 'local_storage_helper.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      home: SplashScreen(),
     );
   }
 }

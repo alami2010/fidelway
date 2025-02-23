@@ -16,7 +16,7 @@ class _AProposPageState extends State<AProposPage> {
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Colors.transparent,
-          title: const Tabs(),
+          title: const FildelityBar(),
         ),
         body: SingleChildScrollView(
           child: Column(

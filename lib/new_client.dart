@@ -1,10 +1,9 @@
-import 'package:FidelWay/tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import 'local_storage_helper.dart';
 import 'model/APIRest.dart';
+import 'shared/local_storage_helper.dart';
 
 class GenerateScreen extends StatefulWidget {
   const GenerateScreen({super.key});
@@ -25,19 +24,7 @@ class GenerateScreenState extends State<GenerateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: const Tabs(),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: () => {},
-          )
-        ],
-      ),
-      body: _contentWidget(),
-    );
+    return _contentWidget();
   }
 
   _contentWidget() {
@@ -47,7 +34,6 @@ class GenerateScreenState extends State<GenerateScreen> {
       color: const Color(0xFFFFFFFF),
       child: Column(
         children: <Widget>[
-
           const SizedBox(height: 24),
           Form(
             key: _formKey,
@@ -86,9 +72,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                     print(LocalStorageHelper.readShopName());
 
                     setState(() {
-                      _dataString = ((LocalStorageHelper.readShopName() ??
-                              "shop_")! +
-                          DateTime.now().microsecondsSinceEpoch.toString())!;
+                      _dataString = generateCode();
                       APIRest.create(_dataString, _nameController.text,
                               _telController.text)
                           .then((value) {
@@ -151,5 +135,9 @@ class GenerateScreenState extends State<GenerateScreen> {
         ],
       ),
     );
+  }
+
+  String generateCode() {
+    return ("${LocalStorageHelper.getAccount()?.id ?? "_shop_"}_${DateTime.now().microsecondsSinceEpoch}");
   }
 }

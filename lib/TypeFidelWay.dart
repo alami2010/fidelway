@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'local_storage_helper.dart';
+import 'shared/local_storage_helper.dart';
 
 class TypeFidelWay extends StatefulWidget {
   @override

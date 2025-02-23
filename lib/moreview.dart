@@ -1,7 +1,6 @@
-import 'package:FidelWay/tabs.dart';
+import 'package:FidelWay/shared/utils.dart';
 import 'package:flutter/material.dart';
 
-import 'local_storage_helper.dart';
 import 'moreviewAPropos.dart';
 
 class MoreView extends StatefulWidget {
@@ -16,11 +15,7 @@ class _MoreViewState extends State<MoreView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          title: const Tabs(),
-        ),
+        appBar: Utils.buildAppBar(),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -65,25 +60,7 @@ class _MoreViewState extends State<MoreView> {
                   ),
                 ),
               ),*/
-              Container(
-                  padding: EdgeInsets.only(left: 10, right: 10),
-                  margin: EdgeInsets.only(bottom: 3),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AProposPage()));
-                    },
-                    child: Card(
-                      elevation: 1,
-                      child: ListTile(
-                        leading: const Icon(
-                          Icons.shopping_bag,
-                          color: Colors.grey,
-                        ),
-                        title: Text(LocalStorageHelper.readShopName() ?? ''),
-                      ),
-                    ),
-                  )),
+
               Container(
                   padding: EdgeInsets.only(left: 10, right: 10),
                   margin: EdgeInsets.only(bottom: 3),

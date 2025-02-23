@@ -1,12 +1,10 @@
-import 'package:FidelWay/tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
 
-
-import 'local_storage_helper.dart';
 import 'model/APIRest.dart';
-import 'model/Client.dart';
+import 'model/choice_result.dart';
+import 'shared/local_storage_helper.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -17,17 +15,17 @@ class ScanPage extends StatefulWidget {
 
 class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
   bool notification = false;
-  ClientWay client = ClientWay();
+  ChoiceResult client = ChoiceResult();
   MotionTabBarController? _motionTabBarController;
 
   void scanQrCode() {
-      APIRest.scan("test_21-10-96sswx2").then((value) {
+/*       APIRest.scan("test_21-10-00000x3x").then((value) {
       setState(() {
         // adding a new marker to map
         client = value;
       });
-    });
-    /*FlutterBarcodeScanner.scanBarcode("#000000", "Sortir", true, ScanMode.QR)
+    });*/
+    FlutterBarcodeScanner.scanBarcode("#000000", "Sortir", true, ScanMode.QR)
         .then((value) {
       if (value != "-1") {
         APIRest.scan(value).then((value) {
@@ -37,7 +35,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
           });
         });
       }
-    });*/
+    });
   }
 
   @override
@@ -75,8 +73,6 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(height: 8),
-                Tabs(),
                 SizedBox(
                   height: 150,
                   child: Image.asset(
@@ -90,7 +86,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                   InkWell(
                     onTap: () => setState(() {
                       // adding a new marker to map
-                      client = ClientWay();
+                      client = ChoiceResult();
                     }),
                     child: Container(
                         height: 50,
@@ -111,7 +107,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
 
                                       onPressed: () => setState(() {
                                         // adding a new marker to map
-                                        client = ClientWay();
+                                        client = ChoiceResult();
                                       }),
                                       child: const Text(
                                         "Déconnexion",
@@ -123,7 +119,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                         )),
                   ),
                 SingleChildScrollView(
-                    scrollDirection: Axis.horizontal, child: buildRow(mode)),
+                    scrollDirection: Axis.horizontal, child: showChoice(mode)),
                 if (client.history != null)
                   itemCard('', 'Historique des points'),
                 if (client.history != null)
@@ -163,7 +159,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
               TextButton(
                   style: ButtonStyle(
                     foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white),
+                        WidgetStateProperty.all<Color>(Colors.white),
                   ),
                   onPressed: () {
                     scanQrCode();
@@ -183,15 +179,15 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
         ));
   }
 
-  Row buildRow(String? mode) {
-    List<String> list = client.fastFoodRepas ?? [];
+  Row showChoice(String? mode) {
+    List<Choices> list = client.choices ?? [];
 
     return Row(
       children: [
         for (int i = 0; i < list.length; i++)
           InkWell(
             onTap: () {
-              APIRest.minus(client.code ?? '', getAmount(list[i]))
+              APIRest.minus(client.code ?? '', list[i].points ?? 0)
                   .then((value) {
                 setState(() {
                   // adding a new marker to map
@@ -209,7 +205,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Image.asset(
-                        "assets/${list[i]}.png",
+                        "assets/${list[i].image}",
                         height: 100,
                         width: 80,
 
@@ -222,25 +218,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
     );
   }
 
-  int getAmount(String repas) {
-    if (repas == "coca") {
-      return 10;
-    } else if (repas == "burger") {
-      return 20;
-    } else if (repas == "menu") {
-      return 15;
-    } else if (repas == "coca_pizza") {
-      return 3;
-    } else if (repas == "pizza") {
-      return 15;
-    } else if (repas == "pizzas") {
-      return 20;
-    } else if (repas == "coiffeur") {
-      return 6;
-    }
 
-    return 0;
-  }
 
   Widget itemCard(String date, String point) {
     return Padding(
