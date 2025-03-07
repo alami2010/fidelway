@@ -1,5 +1,5 @@
-import 'package:FidelWay/login/sign_in.dart';
-import 'package:FidelWay/model/APIRest.dart';
+import 'package:fidelway/login/sign_in.dart';
+import 'package:fidelway/model/APIRest.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 

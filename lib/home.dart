@@ -1,6 +1,6 @@
-import 'package:FidelWay/shared/constant.dart';
-import 'package:FidelWay/shared/utils.dart';
-import 'package:FidelWay/tabs.dart';
+import 'package:fidelway/shared/constant.dart';
+import 'package:fidelway/shared/utils.dart';
+import 'package:fidelway/tabs.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen>
         elevation: 0.0,
         titleSpacing: 0.0,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: FildelityBar(),
+        title: const FildelityBar(),
       ),
       drawer: Utils.buildDrawer(context),
       bottomNavigationBar: MotionTabBar(
@@ -69,17 +69,13 @@ class _HomeScreenState extends State<HomeScreen>
 
         tabSize: 40,
         tabBarHeight: 55,
-        textStyle: const TextStyle(
-          fontSize: 12,
-          color: Colors.black,
-          fontWeight: FontWeight.w500,
-        ),
-        tabIconColor: kMainColor,
+        textStyle: kTextStyle.copyWith(color: Colors.white),
+        tabIconColor: kAlertColor,
         tabIconSize: 28.0,
         tabIconSelectedSize: 26.0,
-        tabSelectedColor: kMainColor,
+        tabSelectedColor: kAlertColor,
         tabIconSelectedColor: Colors.white,
-        tabBarColor: kGreyTextColor,
+        tabBarColor: kMainColor,
         onTabItemSelected: (int value) {
           setState(() {
             _motionTabBarController!.index = value;

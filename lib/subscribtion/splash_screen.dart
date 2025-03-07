@@ -1,9 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:FidelWay/home.dart';
-import 'package:FidelWay/login/sign_in.dart';
-import 'package:FidelWay/model/APIRest.dart';
-import 'package:FidelWay/shared/local_storage_helper.dart';
+import 'package:fidelway/home.dart';
+import 'package:fidelway/login/sign_in.dart';
+import 'package:fidelway/model/APIRest.dart';
+import 'package:fidelway/shared/local_storage_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -44,11 +44,16 @@ class _SplashScreenState extends State<SplashScreen> {
       const OnBoard().launch(context, isNewTask: true);
     } else {
       try {
-        await APIRest.getAcount();
+        var account = await APIRest.getAcount();
+        if (account != null) {
+          const HomeScreen().launch(context, isNewTask: true);
+        } else {
+          const SignIn().launch(context, isNewTask: true);
+        }
+
         setState(() {
           isLoading = false;
         });
-        const HomeScreen().launch(context, isNewTask: true);
       } catch (error) {
         setState(() {
           isLoading = false;
@@ -81,10 +86,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 padding: const EdgeInsets.only(bottom: 10.0),
                 child: Text(
                   'Version 1.0.0',
-                  style: GoogleFonts.manrope(
-                      color: Colors.white,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 15.0),
+                  style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 15.0),
                 ),
               ),
             ),

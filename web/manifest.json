@@ -1,6 +1,6 @@
 {
-    "name": "parallax_slide_animation",
-    "short_name": "parallax_slide_animation",
+  "name": "fidelway",
+  "short_name": "fidelway",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

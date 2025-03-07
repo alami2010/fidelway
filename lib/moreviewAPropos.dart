@@ -1,4 +1,4 @@
-import 'package:FidelWay/tabs.dart';
+import 'package:fidelway/tabs.dart';
 import 'package:flutter/material.dart';
 
 class AProposPage extends StatefulWidget {
@@ -70,7 +70,7 @@ class _AProposPageState extends State<AProposPage> {
                 margin: EdgeInsets.only(bottom: 3),
                 child: InkWell(
                   onTap: () {},
-                  child: Card(
+                  child: const Card(
                     elevation: 1,
                     child: Column(
                       children: [
@@ -82,7 +82,7 @@ class _AProposPageState extends State<AProposPage> {
                           title: Text("CONTACTEZ NOUS"),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(20),
                           child: Text(
                               "Appelez-nous ou passez nous voir à tout moment, nous nous efforçons de répondre à toutes les demandes dans les 24 heures tous les jours ouvrables. Nous serons heureux de répondre à vos questions."),
                         )
@@ -96,7 +96,7 @@ class _AProposPageState extends State<AProposPage> {
                 margin: EdgeInsets.only(bottom: 3),
                 child: InkWell(
                   onTap: () {},
-                  child: Card(
+                  child: const Card(
                     elevation: 1,
                     child: Column(
                       children: [
@@ -108,7 +108,7 @@ class _AProposPageState extends State<AProposPage> {
                           title: Text("Email"),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(20),
                           child: Text("contact.bway22@gmail.com"),
                         )
                       ],
@@ -121,7 +121,7 @@ class _AProposPageState extends State<AProposPage> {
                 margin: EdgeInsets.only(bottom: 3),
                 child: InkWell(
                   onTap: () {},
-                  child: Card(
+                  child: const Card(
                     elevation: 1,
                     child: Column(
                       children: [
@@ -133,11 +133,11 @@ class _AProposPageState extends State<AProposPage> {
                           title: Text("Téléphone"),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(20),
                           child: Text("+33 6 32 98 46 29"),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(20),
                           child: Text("+212 6 04 64 60 89"),
                         )
                       ],

@@ -1,14 +1,15 @@
+import 'dart:convert';
 import 'dart:ui';
 
 class Category {
-  int id; // Added ID field
+  int id;
   String name;
   String image;
   Color color;
   List<Map<String, dynamic>> choices;
 
   Category({
-    required this.id, // Include ID in the constructor
+    required this.id,
     required this.name,
     required this.image,
     required this.color,
@@ -33,9 +34,30 @@ class Category {
       name: json["name"],
       image: json["image"],
       color: Color(json["color"]),
-      // Convert integer to Color
       choices: List<Map<String, dynamic>>.from(json["choices"]),
     );
+  }
+
+  // CopyWith method for shallow copy
+  Category copyWith({
+    int? id,
+    String? name,
+    String? image,
+    Color? color,
+    List<Map<String, dynamic>>? choices,
+  }) {
+    return Category(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      image: image ?? this.image,
+      color: color ?? this.color,
+      choices: choices ?? List.from(this.choices), // Create new list instance
+    );
+  }
+
+  // Deep Copy method
+  Category deepCopy() {
+    return Category.fromJson(jsonDecode(jsonEncode(this.toJson())));
   }
 
   @override
@@ -43,3 +65,4 @@ class Category {
     return 'Category{id: $id, name: $name, image: $image, color: $color, choices: $choices}';
   }
 }
+

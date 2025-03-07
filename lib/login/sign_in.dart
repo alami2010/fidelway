@@ -1,16 +1,15 @@
-import 'package:FidelWay/login/sign_up.dart';
-import 'package:FidelWay/model/APIRest.dart';
+import 'package:fidelway/login/sign_up.dart';
+import 'package:fidelway/model/APIRest.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-import '../home.dart';
 import '../shared/button_global.dart';
 import '../shared/constant.dart';
-import '../shared/local_storage_helper.dart';
 import '../shared/utils.dart';
-import '../subscribtion/fidelity_screen.dart';
+import 'auth_service.dart';
 import 'forgot_password.dart';
+import 'login_service.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -23,7 +22,8 @@ class _SignInState extends State<SignIn> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
-
+  final AuthService _authService = AuthService();
+  LoginService loginService = LoginService();
   bool isChecked = false;
 
   @override
@@ -37,8 +37,7 @@ class _SignInState extends State<SignIn> {
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
           'Connexion',
-          style: kTextStyle.copyWith(
-              color: Colors.white, fontWeight: FontWeight.bold),
+          style: kTextStyle.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(
@@ -57,9 +56,7 @@ class _SignInState extends State<SignIn> {
             child: Container(
               padding: const EdgeInsets.all(20.0),
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30.0),
-                    topRight: Radius.circular(30.0)),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
                 color: Colors.white,
               ),
               child: Column(
@@ -71,9 +68,11 @@ class _SignInState extends State<SignIn> {
                   const SizedBox(height: 20.0),
                   _buildRememberMeAndForgotPassword(),
                   const SizedBox(height: 20.0),
-                  if (isLoading) Utils.getLoading(),
                   _buildSignInButton(),
                   const SizedBox(height: 20.0),
+                  _buildGoogleSignInButton(),
+                  const SizedBox(height: 20.0),
+                  if (isLoading) Utils.getLoading(),
                   _buildSignUpText(),
                 ],
               ),
@@ -88,7 +87,7 @@ class _SignInState extends State<SignIn> {
     return SizedBox(
       height: 60.0,
       child: AppTextField(
-        textFieldType: TextFieldType.PHONE,
+        textFieldType: TextFieldType.EMAIL,
         controller: emailController,
         enabled: true,
         decoration: InputDecoration(
@@ -143,34 +142,81 @@ class _SignInState extends State<SignIn> {
       buttontext: 'Se connecter',
       buttonDecoration: kButtonDecoration.copyWith(color: kMainColor),
       onPressed: () {
-        setState(() {
-          isLoading = true;
-        });
+        startLoading();
 
-        APIRest.login(emailController.text, passwordController.text)
-            .then((value) async {
-          LocalStorageHelper.writeUserToken(value.token ?? '');
-          var account = await APIRest.getAcount();
-          LocalStorageHelper.saveAccount(account);
-          var category = await APIRest.getCategory() ??
-              await LocalStorageHelper.getCategory();
+        APIRest.login(emailController.text, passwordController.text).then((value) async {
+          await loginService.afterLogin(value, context);
 
-          if (category == null) {
-            FidelityScreen().launch(context);
-            return;
-          }
-          setState(() {
-            isLoading = false;
-          });
-          const HomeScreen().launch(context);
+          stopLoading();
         }).catchError((value) {
-          setState(() {
-            isLoading = false;
-          });
+          stopLoading();
           Utils.showErreur("Login ou mot de passe incorrect");
         });
       },
     );
+  }
+
+  void stopLoading() {
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Widget _buildGoogleSignInButton() {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.black,
+        backgroundColor: Colors.white,
+      ),
+      onPressed: () async {
+        startLoading();
+        final user = await _authService.signInWithGoogle();
+
+        if (user != null) {
+          var token = await user?.getIdToken(true) ?? '';
+
+          await APIRest.validateGoogleToken(token).then((value) async {
+            await loginService.afterLogin(value, context);
+            stopLoading();
+          }).catchError((error) {
+            stopLoading();
+          });
+        } else {
+          stopLoading();
+        }
+      },
+      child: const Padding(
+        padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image(
+              image: AssetImage("assets/images/google_logo.png"),
+              height: 18.0,
+              width: 24,
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 24, right: 8),
+              child: Text(
+                'Se connecter avec Google',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.black54,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void startLoading() {
+    setState(() {
+      isLoading = true;
+    });
   }
 
   Widget _buildSignUpText() {
@@ -184,8 +230,7 @@ class _SignInState extends State<SignIn> {
           WidgetSpan(
             child: Text(
               'Inscrivez-vous',
-              style: kTextStyle.copyWith(
-                  fontWeight: FontWeight.bold, color: kMainColor),
+              style: kTextStyle.copyWith(fontWeight: FontWeight.bold, color: kMainColor),
             ).onTap(() {
               const Inscription().launch(context);
             }),

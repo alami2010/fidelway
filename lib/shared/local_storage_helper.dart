@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:FidelWay/model/category.dart';
+import 'package:fidelway/model/category.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/account.dart';

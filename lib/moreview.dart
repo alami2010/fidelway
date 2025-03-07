@@ -1,4 +1,4 @@
-import 'package:FidelWay/shared/utils.dart';
+import 'package:fidelway/shared/utils.dart';
 import 'package:flutter/material.dart';
 
 import 'moreviewAPropos.dart';

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../model/category.dart';
 
 const kMainColor = Color(0xFF007AFF);
+const kMainColorLight = Color(0xFF4DCEFA);
 const kGreyTextColor = Color(0xFF9090AD);
 const kBorderColorTextField = Color(0xFFC2C2C2);
 const kDarkWhite = Color(0xFFF1F7F7);
@@ -14,7 +15,7 @@ const kHalfDay = Color(0xFFE8B500);
 const kGreenColor = Color(0xFF08BC85);
 
 final kTextStyle = GoogleFonts.manrope(
-  color: kTitleColor,
+  color: kMainColor,
 );
 String purchaseCode = '528cdb9a-5d37-4292-a2b5-b792d5eca03a';
 const kButtonDecoration = BoxDecoration(

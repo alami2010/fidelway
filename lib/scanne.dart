@@ -1,5 +1,5 @@
+import 'package:fidelway/subscribtion/scan_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
 
 import 'model/APIRest.dart';
@@ -18,24 +18,29 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
   ChoiceResult client = ChoiceResult();
   MotionTabBarController? _motionTabBarController;
 
-  void scanQrCode() {
-/*       APIRest.scan("test_21-10-00000x3x").then((value) {
+  Future<void> scanQrCode() async {
+    /*APIRest.scan("test_21-10-00000x3x").then((value) {
       setState(() {
         // adding a new marker to map
         client = value;
       });
     });*/
-    FlutterBarcodeScanner.scanBarcode("#000000", "Sortir", true, ScanMode.QR)
-        .then((value) {
-      if (value != "-1") {
-        APIRest.scan(value).then((value) {
-          setState(() {
-            // adding a new marker to map
-            client = value;
-          });
+
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const BarcodeScannerScreen()),
+    );
+    print('result');
+    print(result);
+
+    if (result != null) {
+      APIRest.scan(result).then((value) {
+        setState(() {
+          // adding a new marker to map
+          client = value;
         });
-      }
-    });
+      });
+    }
   }
 
   @override
@@ -104,7 +109,6 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                                 child: Align(
                                     alignment: Alignment.centerRight,
                                     child: ElevatedButton(
-
                                       onPressed: () => setState(() {
                                         // adding a new marker to map
                                         client = ChoiceResult();
@@ -208,7 +212,6 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                         "assets/${list[i].image}",
                         height: 100,
                         width: 80,
-
                       ),
                     ],
                   ),
@@ -217,8 +220,6 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
       ],
     );
   }
-
-
 
   Widget itemCard(String date, String point) {
     return Padding(

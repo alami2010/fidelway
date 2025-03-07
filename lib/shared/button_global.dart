@@ -60,7 +60,7 @@ class ButtonGlobalWithoutIcon extends StatelessWidget {
       onPressed: onPressed,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+        padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
         decoration: buttonDecoration,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

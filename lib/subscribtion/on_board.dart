@@ -130,7 +130,7 @@ class _OnBoardState extends State<OnBoard> {
                       return Column(
                         children: [
                           Image.asset(
-                            sliderList[index]['icon'],
+                            "assets/" + sliderList[index]['icon'],
                             fit: BoxFit.fill,
                             width: context.width(),
                           ),

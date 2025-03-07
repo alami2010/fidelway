@@ -1,12 +1,13 @@
-import 'package:FidelWay/login/profile_screen.dart';
-import 'package:FidelWay/moreviewAPropos.dart';
-import 'package:FidelWay/shared/local_storage_helper.dart';
-import 'package:FidelWay/subscribtion/fidelity_screen.dart';
+import 'package:fidelway/login/profile_screen.dart';
+import 'package:fidelway/moreviewAPropos.dart';
+import 'package:fidelway/shared/local_storage_helper.dart';
+import 'package:fidelway/subscribtion/fidelity_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+import '../home.dart';
 import '../login/sign_in.dart';
 import '../subscribtion/pricing_screen.dart';
 import '../subscribtion/privacy_policy.dart';
@@ -161,6 +162,23 @@ class Utils {
           ),
           const SizedBox(
             height: 20.0,
+          ),
+          ListTile(
+            onTap: () {
+              const HomeScreen().launch(context);
+            },
+            leading: const Icon(
+              Icons.camera_alt_rounded,
+              color: kGreyTextColor,
+            ),
+            title: Text(
+              'Scan',
+              style: kTextStyle.copyWith(color: kGreyTextColor),
+            ),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              color: kGreyTextColor,
+            ),
           ),
           ListTile(
             onTap: () {

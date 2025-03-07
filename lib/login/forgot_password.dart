@@ -1,7 +1,7 @@
 // import 'package:country_code_picker/country_code_picker.dart';
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:FidelWay/login/phone_verification.dart';
+import 'package:fidelway/login/phone_verification.dart';
 import 'package:flutter/material.dart';
 
 import 'package:nb_utils/nb_utils.dart';

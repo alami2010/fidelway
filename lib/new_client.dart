@@ -1,5 +1,5 @@
+import 'package:fidelway/subscribtion/scan_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import 'model/APIRest.dart';
@@ -67,7 +67,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                     shape: const BeveledRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5))),
                   ),
-                  child: Text(" Créer "),
+                  child: const Text(" Créer "),
                   onPressed: () {
                     print(LocalStorageHelper.readShopName());
 
@@ -100,19 +100,19 @@ class GenerateScreenState extends State<GenerateScreen> {
                   child: Text("Enregistrer"),
                   onPressed: () {
                     setState(() {
-                      FlutterBarcodeScanner.scanBarcode(
-                              "#000000", "Sortir", true, ScanMode.QR)
+                      /* FlutterBarcodeScanner.scanBarcode(
+                          "#000000", "Sortir", true, ScanMode.QR)
                           .then((code) {
                         if (code != "-1") {
                           APIRest.create(code, _nameController.text,
-                                  _telController.text)
+                              _telController.text)
                               .then((value) {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text("Bien Enregistrer"),
                             ));
                           });
                         }
-                      });
+                      });*/
                     });
                   },
                 ),
@@ -135,6 +135,28 @@ class GenerateScreenState extends State<GenerateScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> scanQrCode() async {
+    /*APIRest.scan("test_21-10-00000x3x").then((value) {
+      setState(() {
+        // adding a new marker to map
+        client = value;
+      });
+    });*/
+
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const BarcodeScannerScreen()),
+    );
+
+    if (result != null) {
+      APIRest.create(result, _nameController.text, _telController.text).then((value) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Bien Créer"),
+        ));
+      });
+    }
   }
 
   String generateCode() {
