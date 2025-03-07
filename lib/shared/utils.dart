@@ -1,5 +1,5 @@
+import 'package:fidelway/contact.dart';
 import 'package:fidelway/login/profile_screen.dart';
-import 'package:fidelway/moreviewAPropos.dart';
 import 'package:fidelway/shared/local_storage_helper.dart';
 import 'package:fidelway/subscribtion/fidelity_screen.dart';
 import 'package:flutter/material.dart';
@@ -281,7 +281,7 @@ class Utils {
           ),
           ListTile(
             onTap: () {
-              const AProposPage().launch(context);
+              const ContactUs().launch(context);
             },
             leading: const Icon(
               Icons.info_outline,

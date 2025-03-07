@@ -11,7 +11,7 @@ import 'account.dart';
 import 'choice_result.dart';
 import 'jwt_response.dart';
 
-const isLocal = false;
+const isLocal = true;
 const baseUrl = isLocal ? "http://localhost:8080/api/" : "https://dinapolipizzacarrieres.fr/api/api/";
 
 class APIRest {
@@ -132,7 +132,7 @@ class APIRest {
 
   static Future<JwtResponse> validateGoogleToken(String token) async {
     var url = '${baseUrl}verifyGoogleToken';
-    print('validateGoogleToken: ${url}');
+    print('validateGoogleToken: $url');
 
     final response = await http.post(
       Uri.parse(url),
@@ -144,6 +144,33 @@ class APIRest {
       return JwtResponse.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to login.');
+    }
+  }
+
+  static Future<void> sendContact({
+    required String subject,
+    required String message,
+    String? phone,
+    String? email,
+  }) async {
+    var url = '${baseUrl}contact';
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: buildHeader(),
+      body: jsonEncode({
+        "subject": subject,
+        "message": message,
+        if (phone != null && phone.isNotEmpty) "phone": phone,
+        if (email != null && email.isNotEmpty) "email": email,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print("Message envoyé avec succès !");
+    } else {
+      print("Erreur lors de l'envoi du message: ${response.body}");
+      throw Exception("Échec de l'envoi du message");
     }
   }
 }

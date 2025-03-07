@@ -45,7 +45,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
   }
 
   Future<void> _saveChoices() async {
-    startloading();
+    startLoading();
 
     try {
       LocalStorageHelper.saveCategory(selectedCategory);
@@ -61,7 +61,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
     }
   }
 
-  void startloading() {
+  void startLoading() {
     setState(() {
       isLoading = true;
     });
@@ -372,7 +372,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
                   // Toggle between manual and category selection
                   Row(
                     children: [
-                      Text('Manual Entry'),
+                      const Text('Ajout Manuel'),
                       Switch(
                         value: isManualEntry,
                         onChanged: (value) {
@@ -407,6 +407,10 @@ class _FidelityScreenState extends State<FidelityScreen> {
                               return ListTile(
                                 title: Text(choice["choice"]),
                                 subtitle: Text("Points: ${choice["points"]}"),
+                                selected: selectedChoice == choice,
+                                tileColor: Colors.grey[200],
+                                // Default background color
+                                selectedTileColor: Colors.blue[200],
                                 onTap: () {
                                   setState(() {
                                     selectedChoice = choice; // Store the selected choice
@@ -461,7 +465,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
   }
 
   void resetChoice() {
-    startloading();
+    startLoading();
     setState(() {
       selectedCategory!.choices.clear();
       _initializeControllers();
@@ -470,7 +474,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
   }
 
   void defaultChoice() {
-    startloading();
+    startLoading();
     List<Map<String, dynamic>> choices = List.from(categories.firstWhere((cat) => cat.id == selectedCategory?.id).choices);
     print("choices");
     print(selectedCategory?.id);
