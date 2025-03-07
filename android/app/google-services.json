@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "576521761023",
+    "project_id": "fidelway-2yq",
+    "storage_bucket": "fidelway-2yq.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:576521761023:android:c977e9002b90d0569c1cca",
+        "android_client_info": {
+          "package_name": "com.alamio.fidelway"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "576521761023-e69gm9um99fl1vft67lc1ikb35j5j0ei.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alamio.fidelway",
+            "certificate_hash": "cd8afbdc9fc077dc6e9edfda395a82887a0b2886"
+          }
+        },
+        {
+          "client_id": "576521761023-gju6pe5fuqsnslgb6m1rv26ieo1oqqgh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE7kMfCepF2xUdp1IcJ7H0z2wcGJAklRM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "576521761023-gju6pe5fuqsnslgb6m1rv26ieo1oqqgh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "576521761023-iddh9oo532gu4t2b7rtmnbe9jnlhhfb5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.alamio.fidelway"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
