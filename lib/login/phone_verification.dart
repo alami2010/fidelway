@@ -1,11 +1,14 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:fidelway/login/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+import '../model/APIRest.dart';
 import '../shared/button_global.dart';
 import '../shared/constant.dart';
 import '../shared/otp_form.dart';
+import '../shared/utils.dart';
 
 class PhoneVerification extends StatefulWidget {
   const PhoneVerification({Key? key}) : super(key: key);
@@ -15,9 +18,33 @@ class PhoneVerification extends StatefulWidget {
 }
 
 class _PhoneVerificationState extends State<PhoneVerification> {
+  TextEditingController control = TextEditingController();
+  bool isLoading = false;
+  String optCode = '';
+
+  void stopLoading() {
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void handleOtp(String otp) {
+    print("Received OTP: $otp"); // 🎯 Use OTP here
+    setState(() {
+      optCode = otp;
+    });
+  }
+
+  void startLoading() {
+    setState(() {
+      isLoading = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Utils.buildDrawer(context),
       resizeToAvoidBottomInset: false,
       backgroundColor: kMainColor,
       appBar: AppBar(
@@ -25,9 +52,8 @@ class _PhoneVerificationState extends State<PhoneVerification> {
         elevation: 0.0,
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
-          'Enter Otp',
-          style: kTextStyle.copyWith(
-              color: Colors.white, fontWeight: FontWeight.bold),
+          'Validation de code',
+          style: kTextStyle.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(
@@ -36,7 +62,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Text(
-              'Lorem ipsum dolor sit amet, consectetur.',
+              'Merci de remplir le code reçu par mail et le nouveau password.',
               style: kTextStyle.copyWith(color: Colors.white),
             ),
           ),
@@ -44,9 +70,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
             child: Container(
               padding: const EdgeInsets.all(20.0),
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30.0),
-                    topRight: Radius.circular(30.0)),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
                 color: Colors.white,
               ),
               child: Column(
@@ -66,61 +90,72 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                       color: kAlertColor.withOpacity(0.1),
                     ),
                     child: Text(
-                      'OTP Input',
-                      style: kTextStyle.copyWith(
-                          color: kTitleColor,
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold),
+                      'Code reçu par mail',
+                      style: kTextStyle.copyWith(color: kTitleColor, fontSize: 20.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(
                     height: 20.0,
                   ),
-                  const OtpForm(),
+                  OtpForm(onOtpCompleted: handleOtp),
                   const SizedBox(
                     height: 20.0,
                   ),
                   Container(
                     padding: const EdgeInsets.all(10.0),
-                    decoration: kButtonDecoration.copyWith(
-                        color: kTitleColor.withOpacity(0.1)),
+                    decoration: kButtonDecoration.copyWith(color: kTitleColor.withOpacity(0.1)),
                     child: Text(
-                      'Resend Otp',
-                      style: kTextStyle.copyWith(
-                          color: kTitleColor, fontWeight: FontWeight.bold),
+                      'Renvoyer un nouveau code',
+                      style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(
                     height: 20.0,
                   ),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'You can request otp again after ',
-                          style: kTextStyle.copyWith(
-                            color: kAlertColor,
-                          ),
-                        ),
-                        TextSpan(
-                          text: '1:12',
-                          style: kTextStyle.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: kAlertColor,
-                          ),
-                        ),
-                      ],
+                  SizedBox(
+                    height: 60.0,
+                    child: AppTextField(
+                      textFieldType: TextFieldType.PASSWORD,
+                      controller: control,
+                      enabled: true,
+                      decoration: InputDecoration(
+                        labelText: 'Nouveau password',
+
+                        labelStyle: kTextStyle,
+                        border: const OutlineInputBorder(),
+                        // prefixIcon: CountryCodePicker(
+                        //   padding: EdgeInsets.zero,
+                        //   onChanged: print,
+                        //   initialSelection: 'BD',
+                        //   showFlag: true,
+                        //   showDropDownButton: true,
+                        //   alignLeft: false,
+                        // ),
+                      ),
                     ),
                   ),
                   const SizedBox(
                     height: 20.0,
                   ),
+                  if (isLoading) Utils.getLoading(),
+                  if (isLoading)
+                    const SizedBox(
+                      height: 20.0,
+                    ),
                   ButtonGlobal(
-                    buttontext: 'Verify',
-                    buttonDecoration:
-                        kButtonDecoration.copyWith(color: kMainColor),
+                    buttontext: 'Changer le mot de passe',
+                    buttonDecoration: kButtonDecoration.copyWith(color: kMainColor),
                     onPressed: () {
-                      // const PhoneVerification().launch(context);
+                      startLoading();
+                      APIRest.finishPasswordReset(optCode, control.text).then((value) {
+                        Utils.showSucces('Mot de pass bien changé');
+                        const SignIn().launch(context);
+                        stopLoading();
+                      }).catchError((value) {
+                        Utils.showErreur('Erreur lors de changement de mot de passe');
+
+                        stopLoading();
+                      });
                     },
                   ),
                 ],

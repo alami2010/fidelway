@@ -11,7 +11,7 @@ import 'account.dart';
 import 'choice_result.dart';
 import 'jwt_response.dart';
 
-const isLocal = true;
+const isLocal = false;
 const baseUrl = isLocal ? "http://localhost:8080/api/" : "https://dinapolipizzacarrieres.fr/api/api/";
 
 class APIRest {
@@ -171,6 +171,56 @@ class APIRest {
     } else {
       print("Erreur lors de l'envoi du message: ${response.body}");
       throw Exception("Échec de l'envoi du message");
+    }
+  }
+
+  static Future<void> delete() async {
+    var url = '${baseUrl}desactivate';
+
+    final response = await http.delete(
+      Uri.parse(url),
+      headers: buildHeader(),
+    );
+
+    if (response.statusCode == 200) {
+      // Suppression réussie, déconnecter l'utilisateur
+      LocalStorageHelper.logOut();
+    } else {
+      throw Exception('Erreur lors de la suppression du compte');
+    }
+  }
+
+  static Future<void> requestPasswordReset(String email) async {
+    var url = '${baseUrl}account/reset-password/init';
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: buildHeader(),
+      body: email,
+    );
+
+    if (response.statusCode == 200) {
+      print('Password reset email sent successfully');
+    } else {
+      throw Exception('Failed to request password reset: ${response.statusCode}');
+    }
+  }
+
+  static Future<void> finishPasswordReset(String key, String newPassword) async {
+    var url = '${baseUrl}account/reset-password/finish';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'key': key,
+        'newPassword': newPassword,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print('Password reset completed successfully');
+    } else {
+      throw Exception('Failed to complete password reset: ${response.statusCode}');
     }
   }
 }

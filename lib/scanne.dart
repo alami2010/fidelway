@@ -1,6 +1,8 @@
+import 'package:fidelway/shared/constant.dart';
 import 'package:fidelway/subscribtion/scan_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 import 'model/APIRest.dart';
 import 'model/choice_result.dart';
@@ -30,8 +32,6 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
       context,
       MaterialPageRoute(builder: (context) => const BarcodeScannerScreen()),
     );
-    print('result');
-    print(result);
 
     if (result != null) {
       APIRest.scan(result).then((value) {
@@ -102,8 +102,21 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
-                              Text(
-                                'Solde : ${client?.solde.toString() ?? ''}',
+                              Container(
+                                width: context.width() / 2,
+                                padding: const EdgeInsets.all(10.0),
+                                decoration: BoxDecoration(
+                                  border: const Border(
+                                      left: BorderSide(
+                                    color: kAlertColor,
+                                    width: 3.0,
+                                  )),
+                                  color: kAlertColor.withOpacity(0.1),
+                                ),
+                                child: Text(
+                                  'Solde : ${client?.solde.toString() ?? ''}',
+                                  style: kTextStyle.copyWith(color: kTitleColor, fontSize: 20.0, fontWeight: FontWeight.bold),
+                                ),
                               ),
                               Expanded(
                                 child: Align(
@@ -122,10 +135,8 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                           ),
                         )),
                   ),
-                SingleChildScrollView(
-                    scrollDirection: Axis.horizontal, child: showChoice(mode)),
-                if (client.history != null)
-                  itemCard('', 'Historique des points'),
+                SingleChildScrollView(scrollDirection: Axis.horizontal, child: showChoice(mode)),
+                if (client.history != null) itemCard('', 'Historique des points'),
                 if (client.history != null)
                   SizedBox(
                     height: 250,
@@ -133,8 +144,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                       itemCount: client.history!.length,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          title: itemCard(client.history?[index].date ?? '',
-                              client.history?[index].amout.toString() ?? ''),
+                          title: itemCard(client.history?[index].date ?? '', client.history?[index].amout.toString() ?? ''),
                         );
                       },
                     ),
@@ -162,8 +172,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
             children: <Widget>[
               TextButton(
                   style: ButtonStyle(
-                    foregroundColor:
-                        WidgetStateProperty.all<Color>(Colors.white),
+                    foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
                   ),
                   onPressed: () {
                     scanQrCode();
@@ -191,8 +200,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
         for (int i = 0; i < list.length; i++)
           InkWell(
             onTap: () {
-              APIRest.minus(client.code ?? '', list[i].points ?? 0)
-                  .then((value) {
+              APIRest.minus(client.code ?? '', list[i].points ?? 0).then((value) {
                 setState(() {
                   // adding a new marker to map
                   client = value;
@@ -200,7 +208,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
               });
             },
             child: Container(
-                height: 100,
+                height: 170,
                 width: 100,
                 margin: EdgeInsets.only(left: 7, bottom: 5),
                 child: Container(
@@ -208,10 +216,17 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
+                      ListTile(
+                        subtitle: Text(
+                          list[i]?.points.toString() ?? '',
+                          style: kTextStyle.copyWith(fontSize: 10.0),
+                        ),
+                        title: Text(list[i]?.choice ?? '', style: kTextStyle.copyWith(fontSize: 12.0)),
+                      ),
                       Image.asset(
                         "assets/${list[i].image}",
                         height: 100,
-                        width: 80,
+                        width: 100,
                       ),
                     ],
                   ),
@@ -241,18 +256,12 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                 leading: Text(
                   point.toString(),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12.0),
+                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12.0),
                 ),
                 title: Text(
                   date,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12.0),
+                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12.0),
                 ),
               )),
             ],
@@ -295,9 +304,7 @@ class MainPageContentComponent extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(title,
-              style:
-                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 50),
           const Text('Go to "X" page programmatically'),
           const SizedBox(height: 10),

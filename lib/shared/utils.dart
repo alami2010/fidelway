@@ -10,7 +10,6 @@ import 'package:nb_utils/nb_utils.dart';
 import '../home.dart';
 import '../login/sign_in.dart';
 import '../subscribtion/pricing_screen.dart';
-import '../subscribtion/privacy_policy.dart';
 import '../subscribtion/terms_of_service.dart';
 import '../tabs.dart';
 import 'constant.dart';
@@ -81,6 +80,8 @@ class Utils {
   }
 
   static Drawer buildDrawer(BuildContext context) {
+    var account = LocalStorageHelper.getAccount();
+
     return Drawer(
       child: ListView(
         children: [
@@ -113,9 +114,12 @@ class Utils {
                           height: 10.0,
                         ),
                         Text(
-                          'Sahidul Islam',
-                          style:
-                              kTextStyle.copyWith(fontWeight: FontWeight.bold),
+                          '${account?.firstName ?? ''}  ',
+                          style: kTextStyle.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: kMainColor,
+                          ),
                         ),
                       ],
                     ).onTap(() {
@@ -182,6 +186,23 @@ class Utils {
           ),
           ListTile(
             onTap: () {
+              const ProfileScreen().launch(context);
+            },
+            leading: const Icon(
+              Icons.person,
+              color: kGreyTextColor,
+            ),
+            title: Text(
+              'Porfile',
+              style: kTextStyle.copyWith(color: kGreyTextColor),
+            ),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              color: kGreyTextColor,
+            ),
+          ),
+          ListTile(
+            onTap: () {
               FidelityScreen().launch(context);
             },
             leading: const Icon(
@@ -216,7 +237,7 @@ class Utils {
           ),
           ListTile(
             onTap: () {
-              const TermsOfServices().launch(context);
+              const PrivacyPolicyPage().launch(context);
             },
             leading: const Icon(
               FontAwesomeIcons.coffee,
@@ -247,7 +268,7 @@ class Utils {
           ),
           ListTile(
             onTap: () {
-              const TermsOfServices().launch(context);
+              const PrivacyPolicyPage().launch(context);
             },
             leading: const Icon(
               FontAwesomeIcons.infoCircle,
@@ -255,23 +276,6 @@ class Utils {
             ),
             title: Text(
               'Conditions d\'utilisation',
-              style: kTextStyle.copyWith(color: kGreyTextColor),
-            ),
-            trailing: const Icon(
-              Icons.arrow_forward_ios,
-              color: kGreyTextColor,
-            ),
-          ),
-          ListTile(
-            onTap: () {
-              const PrivacyPolicy().launch(context);
-            },
-            leading: const Icon(
-              Icons.dangerous_sharp,
-              color: kGreyTextColor,
-            ),
-            title: Text(
-              'Politique de confidentialité',
               style: kTextStyle.copyWith(color: kGreyTextColor),
             ),
             trailing: const Icon(

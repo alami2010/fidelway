@@ -162,6 +162,12 @@ class _SignInState extends State<SignIn> {
     });
   }
 
+  void startLoading() {
+    setState(() {
+      isLoading = true;
+    });
+  }
+
   Widget _buildGoogleSignInButton() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -211,12 +217,6 @@ class _SignInState extends State<SignIn> {
         ),
       ),
     );
-  }
-
-  void startLoading() {
-    setState(() {
-      isLoading = true;
-    });
   }
 
   Widget _buildSignUpText() {

@@ -1,3 +1,4 @@
+import 'package:fidelway/shared/local_storage_helper.dart';
 import 'package:fidelway/shared/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,8 @@ class ContactUs extends StatefulWidget {
 }
 
 class _ContactUsState extends State<ContactUs> {
+  var account = LocalStorageHelper.getAccount();
+
   final TextEditingController subjectController = TextEditingController();
   final TextEditingController messageController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
@@ -47,6 +50,7 @@ class _ContactUsState extends State<ContactUs> {
     messageController.addListener(checkFields);
     phoneController.addListener(checkFields);
     emailController.addListener(checkFields);
+    emailController.text = account?.email;
   }
 
   Future<void> sendContactRequest() async {
@@ -83,27 +87,27 @@ class _ContactUsState extends State<ContactUs> {
           children: [
             TextField(
               controller: emailController,
-              decoration: InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
+              decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextField(
               controller: phoneController,
-              decoration: InputDecoration(labelText: 'Numéro de téléphone', border: OutlineInputBorder()),
+              decoration: const InputDecoration(labelText: 'Numéro de téléphone', border: OutlineInputBorder()),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextField(
               controller: subjectController,
-              decoration: InputDecoration(labelText: 'Sujet', border: OutlineInputBorder()),
+              decoration: const InputDecoration(labelText: 'Sujet *', border: OutlineInputBorder()),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextField(
               controller: messageController,
               maxLines: 5,
-              decoration: InputDecoration(labelText: 'Message', border: OutlineInputBorder()),
+              decoration: const InputDecoration(labelText: 'Message *', border: OutlineInputBorder()),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (isLoading) Utils.getLoading(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ButtonGlobal(
               buttontext: 'Envoyer',
               buttonDecoration: kButtonDecoration.copyWith(color: isButtonEnabled ? kMainColor : Colors.grey),
