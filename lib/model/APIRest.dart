@@ -132,14 +132,12 @@ class APIRest {
 
   static Future<JwtResponse> validateGoogleToken(String token) async {
     var url = '${baseUrl}verifyGoogleToken';
-    print('validateGoogleToken: $url');
 
     final response = await http.post(
       Uri.parse(url),
       headers: buildHeader(),
       body: jsonEncode({'token': token}),
     );
-    print('validateGoogleToken: ${response.statusCode}');
     if (response.statusCode == 200) {
       return JwtResponse.fromJson(json.decode(response.body));
     } else {
@@ -166,10 +164,7 @@ class APIRest {
       }),
     );
 
-    if (response.statusCode == 200) {
-      print("Message envoyé avec succès !");
-    } else {
-      print("Erreur lors de l'envoi du message: ${response.body}");
+    if (response.statusCode == 200) {} else {
       throw Exception("Échec de l'envoi du message");
     }
   }
@@ -199,9 +194,7 @@ class APIRest {
       body: email,
     );
 
-    if (response.statusCode == 200) {
-      print('Password reset email sent successfully');
-    } else {
+    if (response.statusCode == 200) {} else {
       throw Exception('Failed to request password reset: ${response.statusCode}');
     }
   }
@@ -217,9 +210,7 @@ class APIRest {
       }),
     );
 
-    if (response.statusCode == 200) {
-      print('Password reset completed successfully');
-    } else {
+    if (response.statusCode == 200) {} else {
       throw Exception('Failed to complete password reset: ${response.statusCode}');
     }
   }

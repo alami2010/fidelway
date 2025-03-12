@@ -29,7 +29,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
   }
 
   void handleOtp(String otp) {
-    print("Received OTP: $otp"); // 🎯 Use OTP here
+    // 🎯 Use OTP here
     setState(() {
       optCode = otp;
     });

@@ -1,7 +1,7 @@
+import 'package:after_layout/after_layout.dart';
 import 'package:fidelway/shared/constant.dart';
 import 'package:fidelway/shared/utils.dart';
 import 'package:fidelway/tabs.dart';
-import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
 import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen>
     super.initState();
     _motionTabBarController = MotionTabBarController(
       initialIndex: 0,
-      length: 3,
+      length: 2,
       vsync: this,
     );
   }
@@ -64,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen>
         labels: const ["FidelWay", "Nouveau"],
         icons: const [
           Icons.dashboard,
-          Icons.add,
+          Icons.add
         ],
 
         tabSize: 40,
@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen>
         physics: const NeverScrollableScrollPhysics(),
         // swipe navigation handling is not supported
         controller: _motionTabBarController,
-        children: const <Widget>[ScanPage(), GenerateScreen()],
+        children: const <Widget>[ ScanPage(), GenerateScreen()],
       ),
     );
   }

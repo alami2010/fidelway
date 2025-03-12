@@ -28,21 +28,15 @@ class AuthService {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      print('ddddd');
 
-      print(googleAuth.idToken);
       final UserCredential userCredential = await _auth.signInWithCredential(credential);
       final User? user = userCredential.user;
       var idTokenResult = await user?.getIdTokenResult(true);
 
-      print(idTokenResult?.expirationTime.toString() ?? "0");
 
       return userCredential.user;
-    } on PlatformException catch (e) {
-      print("Error: ${e.message}");
-    } catch (e) {
-      print("Error during Google Sign-inx: $e");
-
+    } on PlatformException catch (e) {} catch (e) {
+      
       return null;
     }
   }
@@ -53,12 +47,9 @@ class AuthService {
   }
 
   Future<void> verifyToken(String idToken) async {
-    print('--------------------------'); //contains the token info
-    print('https://oauth2.googleapis.com/tokeninfo?access_token =$idToken');
+    //contains the token info
     final response = await http.get(
       Uri.parse('https://oauth2.googleapis.com/tokeninfo?access_token=$idToken'),
     );
-
-    print("Googlex Verification Response: ${response.body}");
   }
 }

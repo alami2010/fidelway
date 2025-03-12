@@ -18,7 +18,6 @@ class TypeFidelWayState extends State<TypeFidelWay> {
     super.initState();
 
     var mode = LocalStorageHelper.readMode();
-    print(mode?.isEmpty);
 
     sampleData.add(new RadioModel(
         1, mode!.isEmpty || mode == 1.toString(), 'default', 'Default'));

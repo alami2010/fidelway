@@ -69,8 +69,6 @@ class GenerateScreenState extends State<GenerateScreen> {
                   ),
                   child: const Text(" Créer "),
                   onPressed: () {
-                    print(LocalStorageHelper.readShopName());
-
                     setState(() {
                       _dataString = generateCode();
                       APIRest.create(_dataString, _nameController.text,

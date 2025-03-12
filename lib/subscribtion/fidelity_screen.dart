@@ -98,7 +98,6 @@ class _FidelityScreenState extends State<FidelityScreen> {
   }
 
   void updatePoints(int index, String newPoints) {
-    print('updatePoints');
     setState(() {
       selectedCategory!.choices[index]["points"] = int.tryParse(newPoints) ?? selectedCategory!.choices[index]["points"];
     });
@@ -112,15 +111,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
   }
 
   void addCustomChoice() {
-    print('addCustomChoice');
-    print(choiceController.text);
-    print('addCustomChoice');
-    print(pointsController.text);
-    print('addCustomChoice');
-
     if (choiceController.text.isNotEmpty && pointsController.text.isNotEmpty) {
-      print('addCustomChoicex');
-
       setState(() {
         selectedCategory!.choices.add({
           "choice": choiceController.text,
@@ -146,7 +137,6 @@ class _FidelityScreenState extends State<FidelityScreen> {
       choiceController.clear();
       pointsController.clear();
     });
-    print("Added choice from category: ${choice["choice"]} with ${choice["points"]} points");
   }
 
   @override
@@ -219,8 +209,6 @@ class _FidelityScreenState extends State<FidelityScreen> {
                 itemCount: categories.length,
                 itemBuilder: (context, index) {
                   final category = categories[index];
-                  print(category.id);
-                  print(selectedCategory?.id);
                   return Material(
                     elevation: 2.0,
                     child: GestureDetector(
@@ -261,17 +249,24 @@ class _FidelityScreenState extends State<FidelityScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(
-                      onPressed: _saveChoices,
-                      child: Container(
+                  InkWell(
+                    onTap: _saveChoices,
+                    child: Container(
+                        padding: const EdgeInsets.all(10.0),
+                        margin: const EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
+                          border: const Border(
+                              left: BorderSide(
+                                color: kMainColor,
+                                width: 3.0,
+                              )),
+                          color: kGreenColor,
                         ),
                         child: Text(
                           "Enregisterer",
-                          style: kTextStyle.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      )),
+                          style: kTextStyle.copyWith(color: Colors.white),
+                        )),
+                  ),
                   const Spacer(),
                   if (isLoading) Utils.getLoading(),
                   const Spacer(),
@@ -476,12 +471,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
   void defaultChoice() {
     startLoading();
     List<Map<String, dynamic>> choices = List.from(categories.firstWhere((cat) => cat.id == selectedCategory?.id).choices);
-    print("choices");
-    print(selectedCategory?.id);
 
-    print(categories.firstWhere((cat) => cat.id == selectedCategory?.id));
-
-    print(choices);
     setState(() {
       selectedCategory!.choices = choices;
     });

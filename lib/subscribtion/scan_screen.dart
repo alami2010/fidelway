@@ -2,74 +2,87 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class BarcodeScannerScreen extends StatefulWidget {
-  const BarcodeScannerScreen({Key? key}) : super(key: key);
+  const BarcodeScannerScreen({super.key});
 
   @override
-  _BarcodeScannerScreenState createState() => _BarcodeScannerScreenState();
+  State<BarcodeScannerScreen> createState() => _BarcodeScannerScreenState();
 }
 
 class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
-  MobileScannerController cameraController = MobileScannerController();
+  final MobileScannerController controller = MobileScannerController();
+  String? scannedData;
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Barcode Scanner'),
+        title: const Text('Mobile Scanner'),
         actions: [
           IconButton(
+            color: Colors.white,
             icon: ValueListenableBuilder(
-              valueListenable: cameraController,
-              builder: (context, state, child) {
-                switch (state) {
-                  case TorchState.off:
-                    return const Icon(Icons.flash_off, color: Colors.grey);
-                  case TorchState.on:
-                    return const Icon(Icons.flash_on, color: Colors.yellow);
+              valueListenable: controller,
+              builder: (context, cameraEnabled, child) {
+                if (cameraEnabled != null) {
+                  return const Icon(Icons.camera_rear);
+                } else {
+                  return const Icon(Icons.camera_front);
                 }
-                return const Icon(Icons.flash_on, color: Colors.yellow);
               },
             ),
-            onPressed: () => cameraController.toggleTorch(),
+            onPressed: controller.switchCamera,
           ),
           IconButton(
+            color: Colors.white,
             icon: ValueListenableBuilder(
-              valueListenable: cameraController,
-              builder: (context, state, child) {
-                switch (state) {
-                  case CameraFacing.front:
-                    return const Icon(Icons.camera_front);
-                  case CameraFacing.back:
-                    return const Icon(Icons.camera_rear);
+              valueListenable: controller,
+              builder: (context, torchState, child) {
+                if (torchState == TorchState.off) {
+                  return const Icon(Icons.flash_off, color: Colors.grey);
+                } else if (torchState == TorchState.on) {
+                  return const Icon(Icons.flash_on, color: Colors.yellow);
+                } else {
+                  return const Icon(Icons.flash_off, color: Colors.grey);
                 }
-                return const Icon(Icons.flash_on, color: Colors.yellow);
               },
             ),
-            onPressed: () => cameraController.switchCamera(),
+            onPressed: controller.toggleTorch,
           ),
         ],
       ),
-      body: MobileScanner(
-        controller: cameraController,
-        onDetect: (capture) {
-          print('capture');
-          dispose();
-          final List<Barcode> barcodes = capture.barcodes;
-          if (barcodes.isNotEmpty) {
-            final String? scannedCode = barcodes.first.rawValue;
-            print('barcodes');
-            if (scannedCode != null) {
-              Navigator.pop(context, scannedCode); // Return scanned code
-            }
-          }
-        },
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            flex: 5,
+            child: MobileScanner(
+              controller: controller,
+              onDetect: (capture) {
+                final List<Barcode> barcodes = capture.barcodes;
+                if (barcodes.isNotEmpty) {
+                  final String? scannedCode = barcodes.first.rawValue;
+                  controller.stop();
+                  print(scannedCode);
+                  if (scannedCode != null) {
+                    Navigator.pop(context, scannedCode); // Return scanned code
+                  }
+                }
+              },
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Center(
+              child: Text(scannedData ?? 'Scan something!'),
+            ),
+          ),
+        ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    cameraController.dispose();
-    super.dispose();
   }
 }

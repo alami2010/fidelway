@@ -21,18 +21,20 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
   MotionTabBarController? _motionTabBarController;
 
   Future<void> scanQrCode() async {
-    /*APIRest.scan("test_21-10-00000x3x").then((value) {
+    /*   APIRest.scan("test_21-10-000x00x3x").then((value) {
       setState(() {
         // adding a new marker to map
         client = value;
       });
     });*/
 
+    print('scanQrCode');
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const BarcodeScannerScreen()),
     );
-
+    print(result);
+    print('scanQrCode---------');
     if (result != null) {
       APIRest.scan(result).then((value) {
         setState(() {
@@ -102,34 +104,47 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
-                              Container(
-                                width: context.width() / 2,
-                                padding: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                  border: const Border(
-                                      left: BorderSide(
-                                    color: kAlertColor,
-                                    width: 3.0,
-                                  )),
-                                  color: kAlertColor.withOpacity(0.1),
-                                ),
-                                child: Text(
-                                  'Solde : ${client?.solde.toString() ?? ''}',
-                                  style: kTextStyle.copyWith(color: kTitleColor, fontSize: 20.0, fontWeight: FontWeight.bold),
+                              Expanded(
+                                child: Container(
+                                  width: context.width() / 2,
+                                  padding: const EdgeInsets.all(10.0),
+                                  decoration: BoxDecoration(
+                                    border: const Border(
+                                        left: BorderSide(
+                                      color: kAlertColor,
+                                      width: 3.0,
+                                    )),
+                                    color: kAlertColor.withOpacity(0.1),
+                                  ),
+                                  child: Text(
+                                    'Solde : ${client?.solde.toString() ?? ''}',
+                                    style: kTextStyle.copyWith(color: kTitleColor, fontSize: 20.0, fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                               ),
                               Expanded(
-                                child: Align(
-                                    alignment: Alignment.centerRight,
-                                    child: ElevatedButton(
-                                      onPressed: () => setState(() {
-                                        // adding a new marker to map
-                                        client = ChoiceResult();
-                                      }),
-                                      child: const Text(
-                                        "Déconnexion",
+                                child: InkWell(
+                                  onTap: () => setState(() {
+                                    // adding a new marker to map
+                                    client = ChoiceResult();
+                                  }),
+                                  child: Container(
+                                      width: context.width() / 3,
+                                      padding: const EdgeInsets.all(10.0),
+                                      decoration: BoxDecoration(
+                                        border: const Border(
+                                            left: BorderSide(
+                                          color: kAlertColor,
+                                          width: 3.0,
+                                        )),
+                                        color: kMainColor.withOpacity(0.1),
                                       ),
-                                    )),
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        "Déconnexion",
+                                        style: kTextStyle,
+                                      )),
+                                ),
                               )
                             ],
                           ),
@@ -143,9 +158,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                     child: ListView.builder(
                       itemCount: client.history!.length,
                       itemBuilder: (context, index) {
-                        return ListTile(
-                          title: itemCard(client.history?[index].date ?? '', client.history?[index].amout.toString() ?? ''),
-                        );
+                        return itemCard(client.history?[index].date ?? '', client.history?[index].amout.toString() ?? '');
                       },
                     ),
                   ),
@@ -238,7 +251,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
 
   Widget itemCard(String date, String point) {
     return Padding(
-      padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0),
+      padding: EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0),
       child: Container(
           decoration: const BoxDecoration(
             border: Border(
