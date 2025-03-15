@@ -67,7 +67,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                     shape: const BeveledRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5))),
                   ),
-                  child: const Text(" Créer "),
+                  child: const Text(" Générer QR "),
                   onPressed: () {
                     setState(() {
                       _dataString = generateCode();
@@ -95,7 +95,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                     shape: const BeveledRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5))),
                   ),
-                  child: Text("Enregistrer"),
+                  child: const Text("Envoyer par email"),
                   onPressed: () {
                     setState(() {
                       /* FlutterBarcodeScanner.scanBarcode(

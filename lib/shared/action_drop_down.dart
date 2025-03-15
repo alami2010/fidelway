@@ -42,19 +42,22 @@ class ActionDropDown extends StatelessWidget {
     return CustomDropDownButton<int>(
       buttonStyle: buttonStyle,
       buttonText: text,
-      buttonChild: const Row(children: <Widget>[
-        Text(" Action "),
-        Icon(CupertinoIcons.settings_solid),
+      buttonChild: Row(children: <Widget>[
+        Text(" Action ", style: kTextStyle.copyWith(color: Colors.black87)),
+        const Icon(
+          CupertinoIcons.settings_solid,
+          color: Colors.black87,
+        ),
       ]),
       position: position,
       buttonTextStyle: buttonTextStyle,
       menuItems: [
         CustomDropDownButtonItem(
           value: 1,
-          text: "Ajouter un nouveaux choix",
+          text: "Ajouter une nouvelle récompense",
           icon: const Icon(
             CupertinoIcons.add_circled,
-            color: kMainColor,
+            color: Colors.black87,
           ),
           onPressed: showAddChoiceDialog,
           buttonStyle: itemButtonStyle,
@@ -64,10 +67,10 @@ class ActionDropDown extends StatelessWidget {
         ),
         CustomDropDownButtonItem(
           value: 2,
-          text: "Charger les valeurs par défaut",
+          text: "Charger les récompenses par défaut",
           icon: const Icon(
             CupertinoIcons.settings_solid,
-            color: kMainColor,
+            color: Colors.black87,
           ),
           onPressed: defaultChoice,
           buttonStyle: itemButtonStyle,
@@ -77,10 +80,10 @@ class ActionDropDown extends StatelessWidget {
         ),
         CustomDropDownButtonItem(
           value: 2,
-          text: "Supprimer tout les choix",
+          text: "Supprimer toutes les récompenses",
           icon: const Icon(
             CupertinoIcons.delete_solid,
-            color: kMainColor,
+            color: Colors.black87,
           ),
           onPressed: resetChoice,
           buttonStyle: itemButtonStyle,

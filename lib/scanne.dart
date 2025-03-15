@@ -1,5 +1,6 @@
 import 'package:fidelway/shared/constant.dart';
 import 'package:fidelway/subscribtion/scan_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -29,10 +30,12 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
     });*/
 
     print('scanQrCode');
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const BarcodeScannerScreen()),
-    );
+    final result = (kIsWeb)
+        ? "test_21-10-000x00x3x"
+        : await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const BarcodeScannerScreen()),
+          );
     print(result);
     print('scanQrCode---------');
     if (result != null) {
@@ -193,7 +196,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                   child: const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32),
                     child: Text(
-                      'Scannez',
+                      'Scanner une carte',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w600,

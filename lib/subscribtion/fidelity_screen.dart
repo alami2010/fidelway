@@ -73,16 +73,19 @@ class _FidelityScreenState extends State<FidelityScreen> {
     });
   }
 
-  void selectCategory(Category category) {
-    setState(() {
-      selectedCategory = category.copyWith();
-      if (category.id != selectedCategory?.id) {
-        selectedCategory?.choices = List.from(category.choices);
-      }
+  Future<void> selectCategory(Category category) async {
+    bool? result = await Utils.showYesNoDialog(context, "En changeant de métier, votre configuration sera perdue. Continuer ?  ");
+    if (result == true) {
+      setState(() {
+        selectedCategory = category.copyWith();
+        if (category.id != selectedCategory?.id) {
+          selectedCategory?.choices = List.from(category.choices);
+        }
 
-      _initializeControllers();
-      showCategories = false;
-    });
+        _initializeControllers();
+        showCategories = false;
+      });
+    }
   }
 
   void resetSelection() {
@@ -257,9 +260,9 @@ class _FidelityScreenState extends State<FidelityScreen> {
                         decoration: BoxDecoration(
                           border: const Border(
                               left: BorderSide(
-                                color: kMainColor,
-                                width: 3.0,
-                              )),
+                            color: kMainColor,
+                            width: 3.0,
+                          )),
                           color: kGreenColor,
                         ),
                         child: Text(
@@ -275,9 +278,9 @@ class _FidelityScreenState extends State<FidelityScreen> {
                     position: DropDownButtonPosition.bottomRight,
                     buttonStyle: _buttonStyle6,
                     itemButtonStyle: _itemButtonStyle6,
-                    buttonTextStyle: kTextStyle,
-                    iconColor: kMainColor,
-                    itemTextColor: kMainColor,
+                    buttonTextStyle: kTextStyle.copyWith(color: Colors.black87),
+                    iconColor: Colors.black87,
+                    itemTextColor: Colors.black87,
                     itemCount: 4,
                     currentIndex: 0,
                     text: 'x',
@@ -336,23 +339,25 @@ class _FidelityScreenState extends State<FidelityScreen> {
   }
 
   ButtonStyle get _buttonStyle6 => TextButton.styleFrom(
-        backgroundColor: Colors.white,
+        backgroundColor: kHalfDay,
         padding: const EdgeInsets.all(20),
-        textStyle: kTextStyle,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2), side: const BorderSide(color: kMainColor)),
+        textStyle: kTextStyle.copyWith(color: Colors.black87),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2), side: const BorderSide(color: Colors.black87)),
       );
 
   ButtonStyle get _itemButtonStyle6 => TextButton.styleFrom(
-        backgroundColor: Colors.white,
+        backgroundColor: kHalfDay,
         padding: const EdgeInsets.all(10),
-        textStyle: kTextStyle,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1), side: const BorderSide(color: kMainColor)),
+        textStyle: kTextStyle.copyWith(color: Colors.black87),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1), side: const BorderSide(color: Colors.black87)),
       );
 
   void showAddChoiceDialog() {
     bool isManualEntry = false;
 
     Map<String, dynamic>? selectedChoice; // Stores the selected choice from a category
+    print(selectedCategory);
+    print(categories);
 
     showDialog(
       context: context,
@@ -360,14 +365,23 @@ class _FidelityScreenState extends State<FidelityScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text("Ajouter un choix"),
+              title: Text(
+                "Ajouter une nouvelle récompense",
+                style: kTextStyle,
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Toggle between manual and category selection
+                  Text(
+                    "un achat = 10 points (Chaque scan attribue 10 points au client",
+                    style: kTextStyle.copyWith(color: Colors.black87),
+                  ),
                   Row(
                     children: [
-                      const Text('Ajout Manuel'),
+                      Text(
+                        'Ajout Manuel',
+                        style: kTextStyle,
+                      ),
                       Switch(
                         value: isManualEntry,
                         onChanged: (value) {
@@ -396,9 +410,19 @@ class _FidelityScreenState extends State<FidelityScreen> {
                           height: 200, // Set a fixed height for the scrollable list
                           width: 200,
                           child: ListView.builder(
-                            itemCount: categories.firstWhere((cat) => cat.id.toString() == selectedCategory?.id.toString()).choices.length,
+                            itemCount: categories
+                                .firstWhere(
+                                  (cat) => cat.id.toString() == selectedCategory?.id.toString(),
+                                  orElse: () => Category(id: -1, name: '', image: '', color: Colors.black, choices: []),
+                                )
+                                .choices
+                                .length,
                             itemBuilder: (context, index) {
-                              final choice = categories.firstWhere((cat) => cat.id.toString() == selectedCategory?.id.toString()).choices[index];
+                              final category = categories.firstWhere(
+                                (cat) => cat.id.toString() == selectedCategory?.id.toString(),
+                                orElse: () => Category(id: -1, name: '', image: '', color: Colors.black, choices: []),
+                              );
+                              final choice = category.choices[index];
                               return ListTile(
                                 title: Text(choice["choice"]),
                                 subtitle: Text("Points: ${choice["points"]}"),
@@ -459,23 +483,29 @@ class _FidelityScreenState extends State<FidelityScreen> {
     );
   }
 
-  void resetChoice() {
-    startLoading();
-    setState(() {
-      selectedCategory!.choices.clear();
-      _initializeControllers();
-    });
-    stopLoading();
+  Future<void> resetChoice() async {
+    bool? result = await Utils.showYesNoDialog(context, "Êtes-vous sûr de vouloir supprimer toutes les récompenses ?");
+    if (result == true) {
+      startLoading();
+      setState(() {
+        selectedCategory!.choices.clear();
+        _initializeControllers();
+      });
+      stopLoading();
+    }
   }
 
-  void defaultChoice() {
-    startLoading();
-    List<Map<String, dynamic>> choices = List.from(categories.firstWhere((cat) => cat.id == selectedCategory?.id).choices);
+  Future<void> defaultChoice() async {
+    bool? result = await Utils.showYesNoDialog(context, "Êtes-vous sûr de vouloir réinitialiser les récompenses par défaut ?");
+    if (result == true) {
+      startLoading();
+      List<Map<String, dynamic>> choices = List.from(categories.firstWhere((cat) => cat.id == selectedCategory?.id).choices);
 
-    setState(() {
-      selectedCategory!.choices = choices;
-    });
-    _initializeControllers();
-    stopLoading();
+      setState(() {
+        selectedCategory!.choices = choices;
+      });
+      _initializeControllers();
+      stopLoading();
+    }
   }
 }

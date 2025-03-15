@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../home.dart';
 import '../login/sign_in.dart';
@@ -44,19 +45,13 @@ class Utils {
 
   /// Generates a random string of a given length
   static String generateRandomString(int length) {
-    const chars =
-        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    return List.generate(
-        length,
-        (index) => chars[(DateTime.now().millisecondsSinceEpoch + index) %
-            chars.length]).join();
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return List.generate(length, (index) => chars[(DateTime.now().millisecondsSinceEpoch + index) % chars.length]).join();
   }
 
   /// Formats a number with commas
   static String formatNumber(int number) {
-    return number
-        .toString()
-        .replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (match) => ',');
+    return number.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (match) => ',');
   }
 
   /// Returns the current timestamp in milliseconds
@@ -88,9 +83,7 @@ class Utils {
           Container(
             height: context.height() / 3,
             decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30.0),
-                  bottomRight: Radius.circular(30.0)),
+              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30.0), bottomRight: Radius.circular(30.0)),
               color: kMainColor,
             ),
             child: Column(
@@ -98,9 +91,7 @@ class Utils {
                 Container(
                   height: context.height() / 4,
                   decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(30.0),
-                        bottomRight: Radius.circular(30.0)),
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30.0), bottomRight: Radius.circular(30.0)),
                     color: Colors.white,
                   ),
                   child: Center(
@@ -137,8 +128,7 @@ class Utils {
                       children: [
                         Text(
                           '12',
-                          style: kTextStyle.copyWith(
-                              color: Colors.white, fontWeight: FontWeight.bold),
+                          style: kTextStyle.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'Ajd',
@@ -150,8 +140,7 @@ class Utils {
                       children: [
                         Text(
                           'Total',
-                          style: kTextStyle.copyWith(
-                              color: Colors.white, fontWeight: FontWeight.bold),
+                          style: kTextStyle.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                         Text(
                           '50',
@@ -172,11 +161,11 @@ class Utils {
               const HomeScreen().launch(context);
             },
             leading: const Icon(
-              Icons.camera_alt_rounded,
+              Icons.home,
               color: kGreyTextColor,
             ),
             title: Text(
-              'Scan',
+              'Accueil',
               style: kTextStyle.copyWith(color: kGreyTextColor),
             ),
             trailing: const Icon(
@@ -194,6 +183,40 @@ class Utils {
             ),
             title: Text(
               'Porfile',
+              style: kTextStyle.copyWith(color: kGreyTextColor),
+            ),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              color: kGreyTextColor,
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              const HomeScreen().launch(context);
+            },
+            leading: const Icon(
+              Icons.camera_alt_rounded,
+              color: kGreyTextColor,
+            ),
+            title: Text(
+              'Scanner une carte',
+              style: kTextStyle.copyWith(color: kGreyTextColor),
+            ),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              color: kGreyTextColor,
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              const HomeScreen().launch(context);
+            },
+            leading: const Icon(
+              Icons.camera_alt_rounded,
+              color: kGreyTextColor,
+            ),
+            title: Text(
+              'Guide d\'utilisation',
               style: kTextStyle.copyWith(color: kGreyTextColor),
             ),
             trailing: const Icon(
@@ -253,6 +276,10 @@ class Utils {
             ),
           ),
           ListTile(
+            onTap: () {
+              String text = "Check out this amazing website: https://example.com";
+              Share.share(text);
+            },
             leading: const Icon(
               FontAwesomeIcons.peopleGroup,
               color: kGreyTextColor,
@@ -348,5 +375,31 @@ class Utils {
         );
       },
     ));
+  }
+
+  static Future<bool?> showYesNoDialog(BuildContext context, String title) async {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text("Confirmation"), // Use the provided title
+              content: Text(title),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false), // Return false
+                  child: const Text("Non"),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context, true), // Return true
+                  child: const Text("Oui"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }
