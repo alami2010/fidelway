@@ -59,40 +59,13 @@ final otpInputDecoration = InputDecoration(
 
 final List<Category> categories = [
   Category(
-    id: 4,
-    name: "Coiffure",
-    image: "images/coiffure.png",
-    color: Color(0xFFFD72AF),
+    id: 1,
+    name: "Autre",
+    color: Color(0xFFCD3636),
+    image: "images/gift.png",
     choices: [
-      {"choice": "Coupe gratuite", "points": 50, "image": "images/coupe.png"},
-      {
-        "choice": "Shampoing offert",
-        "points": 30,
-        "image": "images/shampoing.png"
-      },
-      {
-        "choice": "Réduction de 10%",
-        "points": 20,
-        "image": "images/reduction.png"
-      },
-    ],
-  ),
-  Category(
-    id: 3,
-    name: "Alimentation",
-    image: "images/alimentation.png",
-    color: Color(0xFF7C69EE),
-    choices: [
-      {
-        "choice": "Panier de fruits",
-        "points": 40,
-        "image": "images/fruits.png"
-      },
-      {
-        "choice": "Boisson gratuite",
-        "points": 25,
-        "image": "images/boisson.png"
-      },
+      {"choice": "10 €", "points": 10, "image": "images/10e.png"},
+      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
     ],
   ),
   Category(
@@ -101,41 +74,88 @@ final List<Category> categories = [
     color: Color(0xFF4ACDF9),
     image: "images/boucherie.png",
     choices: [
-      {
-        "choice": "Viande hachée 500g",
-        "points": 60,
-        "image": "images/viande.png"
-      },
+      {"choice": "Viande hachée 500g", "points": 60, "image": "images/viande.png"},
       {"choice": "Steak offert", "points": 50, "image": "images/steak.png"},
+      {"choice": "10 €", "points": 10, "image": "images/10e.png"},
+      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
     ],
   ),
   Category(
-    id: 1,
-    name: "Normale",
-    color: Color(0xFFCD3636),
-    image: "images/gift.png",
+    id: 3,
+    name: "Alimentation Generale",
+    image: "images/alimentation.png",
+    color: Color(0xFF7C69EE),
     choices: [
+      {"choice": "Panier de fruits", "points": 40, "image": "images/fruits.png"},
+      {"choice": "Boisson gratuite", "points": 25, "image": "images/boisson.png"},
       {"choice": "10 €", "points": 10, "image": "images/10e.png"},
+      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
+    ],
+  ),
+  Category(
+    id: 4,
+    name: "Coiffeur pour homme",
+    image: "images/coiffure.png",
+    color: Color(0xFFFD72AF),
+    choices: [
+      {"choice": "Coupe gratuite", "points": 50, "image": "images/coupe.png"},
+      {"choice": "Shampoing offert", "points": 30, "image": "images/shampoing.png"},
+      {"choice": "Barbe", "points": 30, "image": "images/barbe.png"},
+      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
     ],
   ),
   Category(
     id: 5,
-    name: "Restauration",
-    color: Color(0xFF02B984),
-    image: "images/restauration.png",
+    name: "Coiffeur pour femme",
+    image: "images/coiffeurFemme.png",
+    color: Color(0xFFFD72AF),
     choices: [
-      {"choice": "Pizza", "points": 40, "image": "images/pizza.png"},
-      {"choice": "Burger", "points": 35, "image": "images/burger.png"},
-      {"choice": "Sandwich", "points": 30, "image": "images/sandwich.png"},
-      {"choice": "Boisson", "points": 20, "image": "images/boisson.png"},
-      {"choice": "Tacos", "points": 45, "image": "images/tacos.png"},
-      {"choice": "Kebab", "points": 40, "image": "images/kebab.png"},
-      {"choice": "Pasta", "points": 50, "image": "images/pasta.png"},
-      {"choice": "Salade", "points": 30, "image": "images/salade.png"},
-      {"choice": "Crêpe", "points": 25, "image": "images/crepe.png"},
-      {"choice": "Glace", "points": 20, "image": "images/glace.png"},
-      {"choice": "Café", "points": 15, "image": "images/cafe.png"},
-      {"choice": "Smoothie", "points": 20, "image": "images/smoothie.png"},
+      {"choice": "Coupe offerte", "points": 50, "image": "images/coupeFemme.png"},
+      {"choice": "Shampoing offert", "points": 30, "image": "images/shampoing.png"},
+      {"choice": "Sechoir", "points": 30, "image": "images/sechoir.png"},
+      {"choice": "Broching", "points": 40, "image": "images/broching.png"},
+      {"choice": "Shampoing", "points": 40, "image": "images/shampoing.png"},
+      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
+    ],
+  ),
+  Category(
+    id: 6,
+    name: "Boulangerie",
+    color: Color(0xFF02B984),
+    image: "images/boulangerie.png",
+    choices: [
+      {"choice": "Baguette", "points": 40, "image": "images/baguette.png"},
+      {"choice": "Tradition", "points": 35, "image": "images/tradition.png"},
+      {"choice": "Croissant", "points": 30, "image": "images/croissant.png"},
+      {"choice": "Pain au chocolat", "points": 20, "image": "images/painchocolat.png"},
+      {"choice": "Cookies", "points": 20, "image": "images/cookies.png"},
+      {"choice": "10 €", "points": 10, "image": "images/10e.png"},
+      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
+    ],
+  ),
+  Category(
+    id: 7,
+    name: "Centre de beauté",
+    color: Color(0xFF02B984),
+    image: "images/centreBeaute.png",
+    choices: [
+      {"choice": "Epilation", "points": 40, "image": "images/epilation.png"},
+      {"choice": "Manicure", "points": 35, "image": "images/manicure.png"},
+      {"choice": "Pedicure", "points": 30, "image": "images/pedicure.png"},
+      {"choice": "10 €", "points": 10, "image": "images/10e.png"},
+      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
+    ],
+  ),
+  Category(
+    id: 8,
+    name: "Garagiste Auto",
+    color: Color(0xFF02B984),
+    image: "images/garagiste.png",
+    choices: [
+      {"choice": "Diagnostique", "points": 40, "image": "images/diagnostique.png"},
+      {"choice": "Vidange", "points": 35, "image": "images/vidange.png"},
+      {"choice": "10 €", "points": 10, "image": "images/10e.png"},
+      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
     ],
   ),
 ];

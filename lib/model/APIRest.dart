@@ -11,8 +11,8 @@ import 'account.dart';
 import 'choice_result.dart';
 import 'jwt_response.dart';
 
-const isLocal = false;
-const baseUrl = isLocal ? "http://localhost:8080/api/" : "https://dinapolipizzacarrieres.fr/api/api/";
+const isLocal = true;
+const baseUrl = isLocal ? "http://localhost:8080/api" : "https://fidelway.enovway.com/api/api";
 
 class APIRest {
   static Map<String, String> buildHeader() {
@@ -25,7 +25,7 @@ class APIRest {
 
   static Future<ChoiceResult> scan(String code) async {
     var idMarchand = LocalStorageHelper.getAccount()?.id ?? 0;
-    var url = '${baseUrl}fidel-way-client/v2/$code/$idMarchand';
+    var url = '$baseUrl/fidel-way-client/v2/$code/$idMarchand';
 
     final response = await http.get(Uri.parse(url), headers: buildHeader());
     if (response.statusCode == 200) {
@@ -36,7 +36,7 @@ class APIRest {
   }
 
   static Future<JwtResponse> login(String email, String password) async {
-    var url = "${baseUrl}authenticate";
+    var url = "$baseUrl/authenticate";
     Map data = {
       'username': email,
       'password': password,
@@ -52,7 +52,7 @@ class APIRest {
   }
 
   static Future<http.Response> signUp(User user) async {
-    var url = "${baseUrl}register";
+    var url = "$baseUrl/register";
     var response = await http.post(Uri.parse(url), headers: buildHeader(), body: jsonEncode(user));
     if (response.statusCode != 201) {
       throw Exception('Failed to login.');
@@ -61,7 +61,7 @@ class APIRest {
   }
 
   static Future<ClientWay> create(String code, String name, String tel) async {
-    var url = '${baseUrl}fidel-way-client/';
+    var url = '$baseUrl/fidel-way-client/';
 
     Map data = {
       'email': tel,
@@ -82,7 +82,7 @@ class APIRest {
   static Future<ChoiceResult> minus(String code, int points) async {
     var idMarchand = LocalStorageHelper.getAccount()?.id ?? 0;
 
-    var url = '${baseUrl}fidel-way-client/v2/$code/$points/$idMarchand';
+    var url = '$baseUrl/fidel-way-client/v2/$code/$points/$idMarchand';
 
     final response = await http.get(Uri.parse(url), headers: buildHeader());
     if (response.statusCode == 200) {
@@ -94,7 +94,7 @@ class APIRest {
   }
 
   static Future<Account?> getAcount() async {
-    var url = '${baseUrl}account';
+    var url = '$baseUrl/account';
     final response = await http.get(Uri.parse(url), headers: buildHeader());
 
     if (response.statusCode == 200) {
@@ -106,7 +106,7 @@ class APIRest {
   }
 
   static Future<http.Response> saveCategory(Category? selectedCategory) async {
-    var url = "${baseUrl}categories";
+    var url = "$baseUrl/categories";
 
     var response = await http.post(Uri.parse(url), headers: buildHeader(), body: jsonEncode(selectedCategory));
     if (response.statusCode != 200) {
@@ -115,8 +115,23 @@ class APIRest {
     return response;
   }
 
+  static Future<String?> generateFlyer() async {
+    var url = '$baseUrl/flyer';
+    final response = await http.get(Uri.parse(url), headers: buildHeader());
+
+    if (response.statusCode == 200) {
+      if (response.body.isNotEmpty) {
+        return json.decode(response.body);
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
   static Future<Category?> getCategory() async {
-    var url = '${baseUrl}categories';
+    var url = '$baseUrl/categories';
     final response = await http.get(Uri.parse(url), headers: buildHeader());
 
     if (response.statusCode == 200) {
@@ -131,7 +146,7 @@ class APIRest {
   }
 
   static Future<JwtResponse> validateGoogleToken(String token) async {
-    var url = '${baseUrl}verifyGoogleToken';
+    var url = '$baseUrl/verifyGoogleToken';
 
     final response = await http.post(
       Uri.parse(url),
@@ -151,7 +166,7 @@ class APIRest {
     String? phone,
     String? email,
   }) async {
-    var url = '${baseUrl}contact';
+    var url = '$baseUrl/contact';
 
     final response = await http.post(
       Uri.parse(url),
@@ -170,7 +185,7 @@ class APIRest {
   }
 
   static Future<void> delete() async {
-    var url = '${baseUrl}desactivate';
+    var url = '$baseUrl/desactivate';
 
     final response = await http.delete(
       Uri.parse(url),
@@ -186,7 +201,7 @@ class APIRest {
   }
 
   static Future<void> requestPasswordReset(String email) async {
-    var url = '${baseUrl}account/reset-password/init';
+    var url = '$baseUrl/account/reset-password/init';
 
     final response = await http.post(
       Uri.parse(url),
@@ -200,7 +215,7 @@ class APIRest {
   }
 
   static Future<void> finishPasswordReset(String key, String newPassword) async {
-    var url = '${baseUrl}account/reset-password/finish';
+    var url = '$baseUrl/account/reset-password/finish';
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},

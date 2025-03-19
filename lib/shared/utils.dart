@@ -1,5 +1,6 @@
 import 'package:fidelway/contact.dart';
 import 'package:fidelway/login/profile_screen.dart';
+import 'package:fidelway/model/APIRest.dart';
 import 'package:fidelway/shared/local_storage_helper.dart';
 import 'package:fidelway/subscribtion/fidelity_screen.dart';
 import 'package:flutter/material.dart';
@@ -277,7 +278,11 @@ class Utils {
           ),
           ListTile(
             onTap: () {
-              String text = "Check out this amazing website: https://example.com";
+              String text = '''Bonjour !
+              Je t'invite à rejoindre Fildeyway, une application géniale qui te permet de [mentionner les fonctionnalités de l'application]. C’est simple, rapide et parfait pour [bénéfices de l'application].
+              Clique sur ce lien pour t’inscrire et commencer à profiter de tous ses avantages : https://fidelway.enovway.com/.
+
+              À bientôt sur l’app ! 😊''';
               Share.share(text);
             },
             leading: const Icon(
@@ -294,15 +299,16 @@ class Utils {
             ),
           ),
           ListTile(
-            onTap: () {
-              const PrivacyPolicyPage().launch(context);
+            onTap: () async {
+              String? url = await APIRest.generateFlyer();
+              print(url);
             },
             leading: const Icon(
-              FontAwesomeIcons.infoCircle,
+              FontAwesomeIcons.caretDown,
               color: kGreyTextColor,
             ),
             title: Text(
-              'Conditions d\'utilisation',
+              'Création carte client',
               style: kTextStyle.copyWith(color: kGreyTextColor),
             ),
             trailing: const Icon(

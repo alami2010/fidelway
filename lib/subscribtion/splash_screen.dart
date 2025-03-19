@@ -1,13 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:fidelway/home.dart';
 import 'package:fidelway/login/sign_in.dart';
-import 'package:fidelway/model/APIRest.dart';
 import 'package:fidelway/shared/local_storage_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+import '../login/login_service.dart';
 import '../shared/constant.dart';
 import '../shared/utils.dart';
 import 'on_board.dart';
@@ -22,6 +21,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool isLoading = false;
+  LoginService loginService = LoginService();
 
   @override
   void initState() {
@@ -44,12 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
       const OnBoard().launch(context, isNewTask: true);
     } else {
       try {
-        var account = await APIRest.getAcount();
-        if (account != null) {
-          const HomeScreen().launch(context, isNewTask: true);
-        } else {
-          const SignIn().launch(context, isNewTask: true);
-        }
+        await loginService.afterLoginAccount(context);
 
         setState(() {
           isLoading = false;
