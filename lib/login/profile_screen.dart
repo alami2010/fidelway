@@ -7,6 +7,7 @@ import 'package:nb_utils/nb_utils.dart';
 
 import '../shared/constant.dart';
 import '../shared/local_storage_helper.dart';
+import '../shared/menu.dart';
 import '../shared/utils.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -47,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Utils.buildDrawer(context),
+      drawer: MyDrawer(),
       resizeToAvoidBottomInset: false,
       backgroundColor: kMainColor,
       appBar: AppBar(

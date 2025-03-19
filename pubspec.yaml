@@ -55,6 +55,7 @@ dependencies:
   firebase_auth: ^5.5.1
   basic_dropdown_button: ^1.1.1+1
   share_plus: ^10.1.4
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:

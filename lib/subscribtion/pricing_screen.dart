@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../shared/constant.dart';
-import '../shared/utils.dart';
+import '../shared/menu.dart';
 import '../tabs.dart';
 
 // ignore_for_file: library_private_types_in_public_api
@@ -28,7 +28,7 @@ class _PricingScreenState extends State<PricingScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
         title: const FildelityBar(),
       ),
-      drawer: Utils.buildDrawer(context),
+      drawer: MyDrawer(),
       body: Scrollbar(
         child: SingleChildScrollView(
           child: Stack(

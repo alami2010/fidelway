@@ -10,6 +10,7 @@ import 'package:nb_utils/nb_utils.dart';
 import '../model/category.dart';
 import '../shared/action_drop_down.dart';
 import '../shared/constant.dart';
+import '../shared/menu.dart';
 import '../shared/utils.dart';
 import '../tabs.dart';
 
@@ -145,7 +146,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Utils.buildDrawer(context),
+      drawer: MyDrawer(),
       appBar: AppBar(
         backgroundColor: kMainColor,
         elevation: 0.0,

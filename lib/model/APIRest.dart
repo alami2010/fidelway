@@ -11,7 +11,7 @@ import 'account.dart';
 import 'choice_result.dart';
 import 'jwt_response.dart';
 
-const isLocal = true;
+const isLocal = false;
 const baseUrl = isLocal ? "http://localhost:8080/api" : "https://fidelway.enovway.com/api/api";
 
 class APIRest {
@@ -121,7 +121,7 @@ class APIRest {
 
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
-        return json.decode(response.body);
+        return response.body;
       } else {
         return null;
       }

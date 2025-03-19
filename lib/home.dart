@@ -1,6 +1,6 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:fidelway/shared/constant.dart';
-import 'package:fidelway/shared/utils.dart';
+import 'package:fidelway/shared/menu.dart';
 import 'package:fidelway/tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen>
         iconTheme: const IconThemeData(color: Colors.white),
         title: const FildelityBar(),
       ),
-      drawer: Utils.buildDrawer(context),
+      drawer: MyDrawer(),
       bottomNavigationBar: MotionTabBar(
         controller: _motionTabBarController,
         // ADD THIS if you need to change your tab programmatically

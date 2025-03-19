@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../shared/constant.dart';
-import '../shared/utils.dart';
+import '../shared/menu.dart';
 
 class PrivacyPolicyPage extends StatelessWidget {
   const PrivacyPolicyPage({Key? key}) : super(key: key);
@@ -30,7 +30,7 @@ class PrivacyPolicyPage extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: kMainColor,
-      drawer: Utils.buildDrawer(context),
+      drawer: MyDrawer(),
       appBar: AppBar(
         backgroundColor: kMainColor,
         elevation: 0.0,
