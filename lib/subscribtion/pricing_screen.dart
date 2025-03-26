@@ -1,9 +1,13 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:pricing_cards/pricing_cards.dart';
 
 import '../shared/constant.dart';
+import '../shared/local_storage_helper.dart';
 import '../shared/menu.dart';
 import '../tabs.dart';
 
@@ -16,8 +20,11 @@ class PricingScreen extends StatefulWidget {
 }
 
 class _PricingScreenState extends State<PricingScreen> {
+  var account = LocalStorageHelper.getAccount();
+
   @override
   Widget build(BuildContext context) {
+    var subscribed = (account?.subscribed ?? false);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: kMainColor,
@@ -51,7 +58,140 @@ class _PricingScreenState extends State<PricingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const SizedBox(
-                          height: 50.0,
+                          height: 30.0,
+                        ),
+
+                        Container(
+                          width: context.width() * 0.95,
+                          padding: const EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              left: BorderSide(
+                                color: subscribed ? kGreenColor : kRedColor,
+                                width: 10.0,
+                              ),
+                            ),
+                            color: const Color(0xFFDAF3FF),
+                          ),
+                          child: ListTile(
+                            onTap: () {
+                              print("go to payment screen");
+
+                              // PaymentScreen().launch(context);
+                            },
+                            leading: Icon(
+                              subscribed ? CupertinoIcons.timer_fill : CupertinoIcons.time,
+                              color: subscribed ? kGreenColor : kRedColor,
+                            ),
+                            title: Text(
+                              subscribed ? "Votre abonnement est Actif" : "Votre abonnement est Expiré",
+                              maxLines: 2,
+                              style: kTextStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                              subscribed
+                                  ? "Votre abonnement expire le ${DateFormat('dd/MM/yyyy').format(account?.subscriptionExpiryDate ?? DateTime.now())}"
+                                  : "Votre abonnement est expiré la date ${DateFormat('yyyy-MM-dd').format(account?.subscriptionExpiryDate ?? DateTime.now())}",
+                              maxLines: 2,
+                              style: kTextStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: context.width() * 0.95,
+                                padding: const EdgeInsets.all(10.0),
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    left: BorderSide(
+                                      color: kAlertColor,
+                                      width: 10.0,
+                                    ),
+                                  ),
+                                  color: Colors.white,
+                                ),
+                                child: Text(
+                                  subscribed ? 'Choisissez et prolongez votre abonnement' : 'Choisissez et activez votre abonnement',
+                                  style: kTextStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold, color: kAlertColor),
+                                ),
+                              ),
+                              SizedBox(height: 30),
+                              PricingCards(
+                                pricingCards: [
+                                  PricingCard(
+                                    title: 'Mensuel',
+                                    price: '9,99 €',
+                                    subPriceText: '/mois',
+                                    billedText: 'Facturé mensuellement',
+                                    onPress: () {
+                                      // votre logique ici
+                                    },
+                                    cardColor: Colors.green,
+                                    priceStyle: TextStyle(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                    titleStyle: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                    ),
+                                    billedTextStyle: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                    subPriceStyle: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                    cardBorder: RoundedRectangleBorder(
+                                      side: BorderSide(color: Colors.red, width: 4.0),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  ),
+                                  PricingCard(
+                                    title: 'Annuel',
+                                    price: '59,99 €',
+                                    subPriceText: '/an',
+                                    billedText: 'Facturé annuellement',
+                                    mainPricing: true,
+                                    mainPricingHighlightText: 'Économisez de l\'argent',
+                                    onPress: () {
+                                      // votre logique ici
+                                    },
+                                    cardColor: Colors.blue,
+                                    priceStyle: const TextStyle(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                    titleStyle: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                    ),
+                                    billedTextStyle: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                    subPriceStyle: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                    cardBorder: RoundedRectangleBorder(
+                                      side: BorderSide(color: Colors.red, width: 4.0),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
 
                         const SizedBox(
@@ -59,9 +199,14 @@ class _PricingScreenState extends State<PricingScreen> {
                         ),
                         Container(
                           padding: const EdgeInsets.all(20.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.0),
-                            color: const Color(0xFFEBE7FF),
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              left: BorderSide(
+                                color: kMainColor,
+                                width: 5.0,
+                              ),
+                            ),
+                            color: Colors.white,
                           ),
                           child: Text(
                             'Économies significatives : Passez d’un coût annuel de 520 € à 300 €, soit 42% d’économies !',
@@ -69,11 +214,17 @@ class _PricingScreenState extends State<PricingScreen> {
                             textAlign: TextAlign.center,
                           ),
                         ),
+                        const SizedBox(height: 10.0),
                         Container(
                           padding: const EdgeInsets.all(20.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.0),
-                            color: const Color(0xFFDAF3FF),
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              left: BorderSide(
+                                color: kMainColor,
+                                width: 5.0,
+                              ),
+                            ),
+                            color: Colors.white,
                           ),
                           child: Text(
                             'Fiabilité accrue : Les QR codes uniques suppriment tout risque de perte, d’usure ou de fraude.',
@@ -81,11 +232,18 @@ class _PricingScreenState extends State<PricingScreen> {
                             textAlign: TextAlign.center,
                           ),
                         ),
+                        const SizedBox(height: 10.0),
+
                         Container(
                           padding: const EdgeInsets.all(20.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.0),
-                            color: const Color(0xFFFFECF5),
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              left: BorderSide(
+                                color: kMainColor,
+                                width: 5.0,
+                              ),
+                            ),
+                            color: Colors.white,
                           ),
                           child: Text(
                             'Flexibilité et modernité : Configurez vos offres en temps réel pour mieux répondre aux attentes de vos clients.',
@@ -93,11 +251,18 @@ class _PricingScreenState extends State<PricingScreen> {
                             textAlign: TextAlign.center,
                           ),
                         ),
+                        const SizedBox(height: 10.0),
+
                         Container(
                           padding: const EdgeInsets.all(20.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.0),
-                            color: const Color(0xFFEFFFEC),
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              left: BorderSide(
+                                color: kMainColor,
+                                width: 5.0,
+                              ),
+                            ),
+                            color: Colors.white,
                           ),
                           child: Text(
                             'Solution écologique et durable : Dites adieu aux cartes papier jetables et réduisez votre empreinte écologique.',
@@ -106,7 +271,7 @@ class _PricingScreenState extends State<PricingScreen> {
                           ),
                         ),
                         const SizedBox(
-                          height: 20.0,
+                          height: 10.0,
                         ),
                         Container(
                           padding: const EdgeInsets.all(20.0),
@@ -266,7 +431,7 @@ class _PricingScreenState extends State<PricingScreen> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
-                    child: Image.asset('images/premium.png'),
+                    child: Image.asset("assets/images/premium.png"),
                   ),
                 ),
               ),

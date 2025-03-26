@@ -29,7 +29,8 @@ class APIRest {
 
     final response = await http.get(Uri.parse(url), headers: buildHeader());
     if (response.statusCode == 200) {
-      return ChoiceResult.fromJson(json.decode(response.body));
+      var decodedBody = utf8.decode(response.bodyBytes); // Décodage UTF-8
+      return ChoiceResult.fromJson(json.decode(decodedBody));
     } else {
       throw Exception('Erreur lors de get scan');
     }
@@ -86,7 +87,8 @@ class APIRest {
 
     final response = await http.get(Uri.parse(url), headers: buildHeader());
     if (response.statusCode == 200) {
-      return ChoiceResult.fromJson(json.decode(response.body));
+      var decodedBody = utf8.decode(response.bodyBytes); // Décodage UTF-8
+      return ChoiceResult.fromJson(json.decode(decodedBody));
     } else {
       //Tools.show("Erreur lors de get agency");
       throw Exception('Erreur lors de get minus');
@@ -179,7 +181,8 @@ class APIRest {
       }),
     );
 
-    if (response.statusCode == 200) {} else {
+    if (response.statusCode == 200) {
+    } else {
       throw Exception("Échec de l'envoi du message");
     }
   }
@@ -209,7 +212,8 @@ class APIRest {
       body: email,
     );
 
-    if (response.statusCode == 200) {} else {
+    if (response.statusCode == 200) {
+    } else {
       throw Exception('Failed to request password reset: ${response.statusCode}');
     }
   }
@@ -225,7 +229,8 @@ class APIRest {
       }),
     );
 
-    if (response.statusCode == 200) {} else {
+    if (response.statusCode == 200) {
+    } else {
       throw Exception('Failed to complete password reset: ${response.statusCode}');
     }
   }

@@ -1,7 +1,11 @@
+import 'package:fidelway/shared/constant.dart';
+import 'package:fidelway/shared/utils.dart';
 import 'package:fidelway/subscribtion/scan_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import 'home.dart';
 import 'model/APIRest.dart';
 import 'shared/local_storage_helper.dart';
 
@@ -28,8 +32,7 @@ class GenerateScreenState extends State<GenerateScreen> {
   }
 
   _contentWidget() {
-    final bodyHeight = MediaQuery.of(context).size.height -
-        MediaQuery.of(context).viewInsets.bottom;
+    final bodyHeight = MediaQuery.of(context).size.height - MediaQuery.of(context).viewInsets.bottom;
     return Container(
       color: const Color(0xFFFFFFFF),
       child: Column(
@@ -62,55 +65,20 @@ class GenerateScreenState extends State<GenerateScreen> {
                 width: 150,
                 child: TextButton(
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.yellow,
-                    backgroundColor: Colors.black,
-                    shape: const BeveledRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
+                    foregroundColor: kMainColor,
+                    backgroundColor: kMainColor,
+                    shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
                   ),
-                  child: const Text(" Générer QR "),
+                  child: const Text("Créer votre carte de fidélité "),
                   onPressed: () {
                     setState(() {
                       _dataString = generateCode();
-                      APIRest.create(_dataString, _nameController.text,
-                              _telController.text)
-                          .then((value) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content: Text("Bien Créer"),
-                        ));
+                      APIRest.create(_dataString, _nameController.text, _telController.text).then((value) {
+                        Utils.showSucces("Votre carte de fidélité a bien été créée. Si vous avez renseigné un email, vous la recevrez par email.",
+                            context: context);
                       });
 
                       _inputErrorText = "";
-                    });
-                  },
-                ),
-              ),
-              SizedBox(
-                height: 50,
-                width: 150,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.yellow,
-                    backgroundColor: Colors.black,
-                    shape: const BeveledRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                  ),
-                  child: const Text("Envoyer par email"),
-                  onPressed: () {
-                    setState(() {
-                      /* FlutterBarcodeScanner.scanBarcode(
-                          "#000000", "Sortir", true, ScanMode.QR)
-                          .then((code) {
-                        if (code != "-1") {
-                          APIRest.create(code, _nameController.text,
-                              _telController.text)
-                              .then((value) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("Bien Enregistrer"),
-                            ));
-                          });
-                        }
-                      });*/
                     });
                   },
                 ),
@@ -150,6 +118,7 @@ class GenerateScreenState extends State<GenerateScreen> {
 
     if (result != null) {
       APIRest.create(result, _nameController.text, _telController.text).then((value) {
+        const HomeScreen().launch(context);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Bien Créer"),
         ));

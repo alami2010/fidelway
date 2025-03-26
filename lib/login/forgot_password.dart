@@ -105,11 +105,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     onPressed: () {
                       startLoading();
                       APIRest.requestPasswordReset(control.text).then((value) {
-                        Utils.showSucces('Code bien envoyé à votre email si votre mail existe');
+                        Utils.showSucces('Code bien envoyé à votre email si votre mail existe', context: context);
                         const PhoneVerification().launch(context);
                         stopLoading();
                       }).catchError((value) {
-                        Utils.showErreur('Erreur lors de l\'envoi de mail');
+                        Utils.showErreur('Erreur lors de l\'envoi de mail', context: context);
 
                         stopLoading();
                       });

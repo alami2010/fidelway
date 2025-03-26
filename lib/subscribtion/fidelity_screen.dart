@@ -12,7 +12,6 @@ import '../shared/action_drop_down.dart';
 import '../shared/constant.dart';
 import '../shared/menu.dart';
 import '../shared/utils.dart';
-import '../tabs.dart';
 
 class FidelityScreen extends StatefulWidget {
   @override
@@ -53,12 +52,12 @@ class _FidelityScreenState extends State<FidelityScreen> {
 
       await APIRest.saveCategory(selectedCategory);
 
-      Utils.showSucces("Choix bien sauvegarder");
+      Utils.showSucces("Choix bien sauvegarder", context: context);
       stopLoading();
       const HomeScreen().launch(context);
     } catch (error) {
       stopLoading();
-      Utils.showErreur("Erreur lors de sauvgarde de choix");
+      Utils.showErreur("Erreur lors de sauvgarde de choix", context: context);
     }
   }
 
@@ -147,15 +146,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: MyDrawer(),
-      appBar: AppBar(
-        backgroundColor: kMainColor,
-        elevation: 0.0,
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const ListTile(
-          leading: null,
-          title: FildelityBar(),
-        ),
-      ),
+      appBar: Utils.buildAppBar(),
       body: Column(
         children: [
           const Row(
@@ -322,6 +313,9 @@ class _FidelityScreenState extends State<FidelityScreen> {
                           controller: pointsControllers[index],
                           keyboardType: TextInputType.number,
                           onChanged: (value) => updatePoints(index, value),
+                          decoration: InputDecoration(
+                            suffixText: ' points', // Le suffixe est ajouté ici
+                          ),
                         ),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
@@ -380,7 +374,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
                   Row(
                     children: [
                       Text(
-                        'Ajout Manuel',
+                        'Nouvelle Récompense',
                         style: kTextStyle,
                       ),
                       Switch(

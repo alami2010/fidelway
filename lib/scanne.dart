@@ -120,7 +120,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                                     color: kAlertColor.withOpacity(0.1),
                                   ),
                                   child: Text(
-                                    'Solde : ${client?.solde.toString() ?? ''}',
+                                    'Solde : ${client?.solde.toString() ?? ''} points',
                                     style: kTextStyle.copyWith(color: kTitleColor, fontSize: 20.0, fontWeight: FontWeight.bold),
                                   ),
                                 ),
@@ -270,7 +270,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
               Container(
                   child: ListTile(
                 leading: Text(
-                  point.toString(),
+                  '$point points',
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12.0),
                 ),
@@ -304,44 +304,3 @@ class Header extends StatelessWidget {
   }
 }
 
-class MainPageContentComponent extends StatelessWidget {
-  const MainPageContentComponent({
-    required this.title,
-    required this.controller,
-    Key? key,
-  }) : super(key: key);
-
-  final String title;
-  final MotionTabBarController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 50),
-          const Text('Go to "X" page programmatically'),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () => controller.index = 0,
-            child: const Text('Dashboard Page'),
-          ),
-          ElevatedButton(
-            onPressed: () => controller.index = 1,
-            child: const Text('Home Page'),
-          ),
-          ElevatedButton(
-            onPressed: () => controller.index = 2,
-            child: const Text('Profile Page'),
-          ),
-          ElevatedButton(
-            onPressed: () => controller.index = 3,
-            child: const Text('Settings Page'),
-          ),
-        ],
-      ),
-    );
-  }
-}

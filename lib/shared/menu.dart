@@ -8,8 +8,8 @@ import '../contact.dart';
 import '../home.dart';
 import '../login/profile_screen.dart';
 import '../login/sign_in.dart';
-import '../model/APIRest.dart';
 import '../subscribtion/fidelity_screen.dart';
+import '../subscribtion/guide_user.dart';
 import '../subscribtion/pricing_screen.dart';
 import '../subscribtion/terms_of_service.dart';
 import 'constant.dart';
@@ -23,19 +23,7 @@ class MyDrawer extends StatefulWidget {
 
 class _MyDrawerState extends State<MyDrawer> {
   var account = LocalStorageHelper.getAccount();
-  bool isLoading = false;
 
-  void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
-  }
-
-  void startLoading() {
-    setState(() {
-      isLoading = true;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -173,7 +161,7 @@ class _MyDrawerState extends State<MyDrawer> {
               ),
               ListTile(
                 onTap: () {
-                  const HomeScreen().launch(context);
+                  ImprovedLoyaltyScreen().launch(context);
                 },
                 leading: const Icon(
                   Icons.camera_alt_rounded,
@@ -263,27 +251,14 @@ class _MyDrawerState extends State<MyDrawer> {
               ),
               ListTile(
                 onTap: () async {
-                  try {
-                    startLoading();
-                    String? url = await APIRest.generateFlyer();
-                    print(url);
-
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return DownloadImageModal(
-                          imageUrl: url ?? '', // Example image URL
-                          closeModal: () => Navigator.of(context).pop(),
-                        );
-                      },
-                    );
-
-                    Utils.showSucces('Flyer généré avec succès');
-                  } catch (e) {
-                    Utils.showErreur('Erreur lors de la génération du flyer');
-                  } finally {
-                    stopLoading();
-                  }
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return DownloadImageModal(
+                        closeModal: () => Navigator.of(context).pop(),
+                      );
+                    },
+                  );
                 },
                 leading: const Icon(
                   FontAwesomeIcons.caretDown,
@@ -293,12 +268,10 @@ class _MyDrawerState extends State<MyDrawer> {
                   'Création carte client',
                   style: kTextStyle.copyWith(color: kGreyTextColor),
                 ),
-                trailing: isLoading
-                    ? Utils.getLoading()
-                    : const Icon(
-                        Icons.arrow_forward_ios,
-                        color: kGreyTextColor,
-                      ),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios,
+                  color: kGreyTextColor,
+                ),
               ),
               ListTile(
                 onTap: () {

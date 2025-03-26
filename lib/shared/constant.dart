@@ -13,6 +13,7 @@ const kAlertColor = Color(0xFFFF8919);
 const kBgColor = Color(0xFFFAFAFA);
 const kHalfDay = Color(0xFFE8B500);
 const kGreenColor = Color(0xFF08BC85);
+const kRedColor = Color(0xFFBC0838);
 
 final kTextStyle = GoogleFonts.manrope(
   color: kMainColor,
@@ -65,7 +66,7 @@ final List<Category> categories = [
     image: "images/gift.png",
     choices: [
       {"choice": "10 €", "points": 10, "image": "images/10e.png"},
-      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
+      {"choice": 'Réduction de 10%', "points": 20, "image": "images/reduction.png"},
     ],
   ),
   Category(

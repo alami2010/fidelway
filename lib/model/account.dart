@@ -15,6 +15,7 @@ class Account {
   DateTime? lastModifiedDate;
   List<String>? authorities;
   bool? subscribed;
+  DateTime? subscriptionExpiryDate;
 
   Account({
     this.id,
@@ -31,6 +32,7 @@ class Account {
     this.lastModifiedDate,
     this.authorities,
     this.subscribed,
+    this.subscriptionExpiryDate,
   });
 
   factory Account.fromRawJson(String str) => Account.fromJson(json.decode(str));
@@ -47,6 +49,7 @@ class Account {
         imageUrl: json["imageUrl"],
         activated: json["activated"],
         langKey: json["langKey"],
+        subscriptionExpiryDate: json["subscriptionExpiryDate"] == null ? null : DateTime.parse(json["subscriptionExpiryDate"]),
         createdBy: json["createdBy"],
         createdDate: json["createdDate"] == null ? null : DateTime.parse(json["createdDate"]),
         lastModifiedBy: json["lastModifiedBy"],
@@ -64,6 +67,7 @@ class Account {
         "imageUrl": imageUrl,
         "activated": activated,
         "langKey": langKey,
+        "subscriptionExpiryDate": subscriptionExpiryDate?.toIso8601String(),
         "createdBy": createdBy,
         "createdDate": createdDate?.toIso8601String(),
         "lastModifiedBy": lastModifiedBy,

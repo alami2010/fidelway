@@ -147,11 +147,11 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                     onPressed: () {
                       startLoading();
                       APIRest.finishPasswordReset(optCode, control.text).then((value) {
-                        Utils.showSucces('Mot de pass bien changé');
+                        Utils.showSucces('Mot de pass bien changé', context: context);
                         const SignIn().launch(context);
                         stopLoading();
                       }).catchError((value) {
-                        Utils.showErreur('Erreur lors de changement de mot de passe');
+                        Utils.showErreur('Erreur lors de changement de mot de passe', context: context);
 
                         stopLoading();
                       });

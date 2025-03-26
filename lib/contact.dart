@@ -64,10 +64,10 @@ class _ContactUsState extends State<ContactUs> {
         email: emailController.text,
       );
       stopLoading();
-      Utils.showSucces("Message envoyé avec succès !");
+      Utils.showSucces("Message envoyé avec succès !", context: context);
     } catch (e) {
       stopLoading();
-      Utils.showErreur("Échec de l'envoi du message !");
+      Utils.showErreur("Échec de l'envoi du message !", context: context);
     }
   }
 

@@ -175,9 +175,9 @@ class _InscriptionState extends State<Inscription> {
 
                             APIRest.signUp(user).then((value) {
                               const SignIn().launch(context);
-                              Utils.showSucces("Bienvue");
+                              Utils.showSucces("Bienvue", context: context);
                             }).catchError((value) {
-                              Utils.showErreur("Email déjà utilisé!");
+                              Utils.showErreur("Email déjà utilisé!", context: context);
                             });
                           }
                         : null,

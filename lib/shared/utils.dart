@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:nb_utils/nb_utils.dart';
 
 import '../tabs.dart';
 import 'constant.dart';
@@ -11,26 +10,26 @@ class Utils {
     return value == null || value.trim().isEmpty;
   }
 
-  static void showErreur(titre) {
-    Fluttertoast.showToast(
-        msg: titre,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0);
+  static void showErreur(String message, {String value = '', required BuildContext context}) {
+    showTopSnackBar(context, message, Colors.red);
   }
 
-  static void showSucces(title) {
-    Fluttertoast.showToast(
-        msg: title,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.greenAccent,
-        textColor: Colors.white,
-        fontSize: 16.0);
+  static void showSucces(String message, {String value = '', required BuildContext context}) {
+    showTopSnackBar(context, message, Colors.green);
+  }
+
+  static void showTopSnackBar(BuildContext context, String message, Color color) {
+    ScaffoldMessenger.of(context).clearSnackBars(); // Clear existing SnackBars
+
+    // Manually position SnackBar at the top
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.only(top: 50, left: 20, right: 20), // Adjust top margin
+      ),
+    );
   }
 
   /// Generates a random string of a given length
@@ -59,7 +58,7 @@ class Utils {
 
   static AppBar buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: kMainColor,
       title: const FildelityBar(),
     );
   }
