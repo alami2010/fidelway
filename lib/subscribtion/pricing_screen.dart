@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:pricing_cards/pricing_cards.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../shared/constant.dart';
 import '../shared/local_storage_helper.dart';
@@ -130,7 +131,7 @@ class _PricingScreenState extends State<PricingScreen> {
                                     subPriceText: '/mois',
                                     billedText: 'Facturé mensuellement',
                                     onPress: () {
-                                      // votre logique ici
+                                      _launchURLPayment(PaymentType.monthly);
                                     },
                                     cardColor: Colors.green,
                                     priceStyle: TextStyle(
@@ -163,7 +164,7 @@ class _PricingScreenState extends State<PricingScreen> {
                                     mainPricing: true,
                                     mainPricingHighlightText: 'Économisez de l\'argent',
                                     onPress: () {
-                                      // votre logique ici
+                                      _launchURLPayment(PaymentType.annually);
                                     },
                                     cardColor: Colors.blue,
                                     priceStyle: const TextStyle(
@@ -440,5 +441,34 @@ class _PricingScreenState extends State<PricingScreen> {
         ),
       ),
     );
+  }
+
+  final String baseUrl = "https://fidelway.enovway.com/payment";
+
+  Future<void> _launchURLPayment(PaymentType type) async {
+    // Construire l'URL avec les paramètres
+    var idMarchand = LocalStorageHelper.getAccount()?.id?.toString() ?? "";
+    final Uri uri = Uri.parse("$baseUrl?type=${type.value}&client=$idMarchand");
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw "Impossible d'ouvrir l'URL : $uri";
+    }
+  }
+}
+
+// Définition de l'enum pour les types
+enum PaymentType { monthly, annually }
+
+// Extension pour convertir l'enum en String
+extension PaymentTypeExtension on PaymentType {
+  String get value {
+    switch (this) {
+      case PaymentType.monthly:
+        return "monthly";
+      case PaymentType.annually:
+        return "annually";
+    }
   }
 }
