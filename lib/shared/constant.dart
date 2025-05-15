@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../model/category.dart';
 
-const kMainColor = Color(0xFF007AFF);
-const kMainColorLight = Color(0xFF4DCEFA);
-const kGreyTextColor = Color(0xFF9090AD);
-const kBorderColorTextField = Color(0xFFC2C2C2);
-const kDarkWhite = Color(0xFFF1F7F7);
-const kTitleColor = Color(0xFF4A90E2);
-const kAlertColor = Color(0xFFFF8919);
-const kBgColor = Color(0xFFFAFAFA);
-const kHalfDay = Color(0xFFE8B500);
-const kGreenColor = Color(0xFF08BC85);
-const kRedColor = Color(0xFFBC0838);
+const Color kMainColor = Color(0xFF00A8A3); // Refined Teal
+const Color kMainColorLight = Color(0xFF66D3CF); // Soft Teal Light
+const Color kGreyTextColor = Color(0xFF6E7A8A); // Elegant Slate Grey
+const Color kTextColor = Color(0xFF333333); // Deep Charcoal for readability
+const Color kBorderColorTextField = Color(0xFFCED4DA); // Subtle Neutral Border
+const Color kDarkWhite = Color(0xFFF8F9FA); // Gentle Light Grey-White
+const Color kTitleColor = Color(0xFF2563EB); // Professional Blue (slightly deeper)
+const Color kAlertColor = Color(0xFFFF7C42); // Modern Warm Orange
+const Color kBgColor = Color(0xFFF5F7FA); // Light & Clean Background
+const Color kHalfDay = Color(0xFFF4B400); // Rich Gold for attention
+const Color kGreenColor = Color(0xFF10B981); // Trendy Emerald Green
+const Color kRedColor = Color(0xFFEF4444); // Vivid but Soft Red
 
-final kTextStyle = GoogleFonts.manrope(
-  color: kMainColor,
+const TextStyle kTextStyle = TextStyle(
+  fontFamily: 'Poppins',
+  color: kTextColor,
 );
+
 String purchaseCode = '528cdb9a-5d37-4292-a2b5-b792d5eca03a';
 const kButtonDecoration = BoxDecoration(
   borderRadius: BorderRadius.all(

@@ -66,7 +66,7 @@ class Utils {
   static Container getLogoWidget() {
     return Container(
       width: 200,
-      height: 100,
+      height: 80,
       decoration: BoxDecoration(
         color: Colors.white, // Background color
         borderRadius: BorderRadius.circular(20), // Border radius

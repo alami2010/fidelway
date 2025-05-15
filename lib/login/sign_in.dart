@@ -43,18 +43,16 @@ class _SignInState extends State<SignIn> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    _buildAppBar(),
-                    const SizedBox(height: 30),
                     _buildHeader(),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 30),
                     _buildLoginForm(size),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 15),
                     _buildOrDivider(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 15),
                     _buildSocialLoginButtons(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 15),
                     _buildSignUpText(),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
@@ -78,7 +76,7 @@ class _SignInState extends State<SignIn> {
       child: Container(
         height: 220,
         decoration: const BoxDecoration(
-          color: kDarkWhite,
+          color: Colors.white,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(40.0),
             bottomRight: Radius.circular(40.0),
@@ -91,14 +89,10 @@ class _SignInState extends State<SignIn> {
   Widget _buildAppBar() {
     return Row(
       children: [
-        IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
         Text(
           'Connexion',
           style: kTextStyle.copyWith(
-            color: Colors.white,
+            color: kMainColor,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),

@@ -1,15 +1,11 @@
-import 'dart:async';
-
-import 'package:basic_dropdown_button/basic_dropwon_button_widget.dart';
-import 'package:fidelway/home.dart';
-import 'package:fidelway/model/APIRest.dart';
-import 'package:fidelway/shared/local_storage_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+import '../home.dart';
+import '../model/APIRest.dart';
 import '../model/category.dart';
-import '../shared/action_drop_down.dart';
 import '../shared/constant.dart';
+import '../shared/local_storage_helper.dart';
 import '../shared/menu.dart';
 import '../shared/utils.dart';
 
@@ -146,331 +142,697 @@ class _FidelityScreenState extends State<FidelityScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: MyDrawer(),
-      appBar: Utils.buildAppBar(),
+      appBar: AppBar(
+        title: Text('Programme de fidélité'),
+        backgroundColor: kMainColor,
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
       body: Column(
         children: [
-          const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [],
+          if (!showCategories) _buildCategoryHeader(),
+          Expanded(
+            child: showCategories ? _buildCategorySelection() : _buildRewardsManagement(),
           ),
-          if (!showCategories) ...[
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Material(
-                    child: Container(
-                      width: context.width() * 0.95,
-                      padding: const EdgeInsets.all(10.0),
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          left: BorderSide(
-                            color: kAlertColor,
-                            width: 3.0,
-                          ),
-                        ),
-                        color: const Color(0xFFDAF3FF),
-                      ),
-                      child: ListTile(
-                        leading: Image.asset("assets/${selectedCategory!.image}", height: 50),
-                        title: Text(
-                          selectedCategory!.name,
-                          maxLines: 2,
-                          style: kTextStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        trailing: IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: resetSelection,
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ],
-          if (showCategories) ...[
-            Text(
-              "Choisissez une catégorie :",
-              style: kTextStyle.copyWith(fontSize: 14, color: kTitleColor, fontWeight: FontWeight.bold),
-            ),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  final category = categories[index];
-                  return Material(
-                    elevation: 2.0,
-                    child: GestureDetector(
-                      onTap: () => selectCategory(category),
-                      child: Container(
-                        width: context.width(),
-                        padding: const EdgeInsets.all(10.0),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            left: BorderSide(
-                              color: category.color,
-                              width: 3.0,
-                            ),
-                          ),
-                          color: category.id != selectedCategory?.id ? Colors.white : kMainColorLight,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Image.asset("assets/${category.image}", height: 120),
-                            const SizedBox(height: 20),
-                            Text(
-                              category.name,
-                              style: kTextStyle.copyWith(fontSize: 14, color: kTitleColor, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-          if (!showCategories) ...[
-            Align(
-              alignment: Alignment.topRight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    onTap: _saveChoices,
-                    child: Container(
-                        padding: const EdgeInsets.all(10.0),
-                        margin: const EdgeInsets.all(10.0),
-                        decoration: BoxDecoration(
-                          border: const Border(
-                              left: BorderSide(
-                            color: kMainColor,
-                            width: 3.0,
-                          )),
-                          color: kGreenColor,
-                        ),
-                        child: Text(
-                          "Enregisterer",
-                          style: kTextStyle.copyWith(color: Colors.white),
-                        )),
-                  ),
-                  const Spacer(),
-                  if (isLoading) Utils.getLoading(),
-                  const Spacer(),
-                  ActionDropDown(
-                    event: (index) => setState(() {}),
-                    position: DropDownButtonPosition.bottomRight,
-                    buttonStyle: _buttonStyle6,
-                    itemButtonStyle: _itemButtonStyle6,
-                    buttonTextStyle: kTextStyle.copyWith(color: Colors.black87),
-                    iconColor: Colors.black87,
-                    itemTextColor: Colors.black87,
-                    itemCount: 4,
-                    currentIndex: 0,
-                    text: 'x',
-                    resetChoice: resetChoice,
-                    showAddChoiceDialog: showAddChoiceDialog,
-                    defaultChoice: defaultChoice,
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: selectedCategory!.choices.length,
-                itemBuilder: (context, index) {
-                  final choice = selectedCategory!.choices[index];
-
-                  return Material(
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 5.0, left: 20.0, right: 20.0),
-                      padding: const EdgeInsets.all(5.0),
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          left: BorderSide(
-                            color: kMainColorLight,
-                            width: 3.0,
-                          ),
-                        ),
-                        color: Colors.white,
-                      ),
-                      child: ListTile(
-                        leading: Image.asset("assets/" + choice["image"], height: 40, width: 40),
-                        title: Text(
-                          choice["choice"],
-                          maxLines: 2,
-                          style: kTextStyle.copyWith(color: kTitleColor, fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: TextField(
-                          controller: pointsControllers[index],
-                          keyboardType: TextInputType.number,
-                          onChanged: (value) => updatePoints(index, value),
-                          decoration: InputDecoration(
-                            suffixText: ' points', // Le suffixe est ajouté ici
-                          ),
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => removeChoice(index),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
         ],
       ),
     );
   }
 
-  ButtonStyle get _buttonStyle6 => TextButton.styleFrom(
-        backgroundColor: kHalfDay,
-        padding: const EdgeInsets.all(20),
-        textStyle: kTextStyle.copyWith(color: Colors.black87),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2), side: const BorderSide(color: Colors.black87)),
-      );
+  Widget _buildCategoryHeader() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 24,
+            backgroundColor: selectedCategory?.color.withOpacity(0.2),
+            child: Image.asset(
+              "assets/${selectedCategory?.image}",
+              height: 30,
+              width: 30,
+            ),
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  selectedCategory?.name ?? '',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  '${selectedCategory?.choices.length ?? 0} récompenses configurées',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.edit, color: kMainColor),
+            onPressed: resetSelection,
+          ),
+        ],
+      ),
+    );
+  }
 
-  ButtonStyle get _itemButtonStyle6 => TextButton.styleFrom(
-        backgroundColor: kHalfDay,
-        padding: const EdgeInsets.all(10),
-        textStyle: kTextStyle.copyWith(color: Colors.black87),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1), side: const BorderSide(color: Colors.black87)),
-      );
+  Widget _buildCategorySelection() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Sélectionnez votre secteur d\'activité',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[800],
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Choisissez la catégorie qui correspond à votre commerce pour configurer votre programme de fidélité',
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 14,
+            ),
+          ),
+          SizedBox(height: 24),
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 0.9,
+              ),
+              itemCount: categories.length,
+              itemBuilder: (context, index) {
+                final category = categories[index];
+                return _buildCategoryCard(category);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
+  Widget _buildCategoryCard(Category category) {
+    final isSelected = category.id == selectedCategory?.id;
+
+    return InkWell(
+      onTap: () => selectCategory(category),
+      borderRadius: BorderRadius.circular(16),
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: isSelected ? category.color.withOpacity(0.4) : Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: Offset(0, 4),
+              spreadRadius: isSelected ? 1 : 0,
+            ),
+          ],
+          border: Border.all(
+            color: isSelected ? category.color : Colors.transparent,
+            width: 2,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: category.color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Image.asset(
+                "assets/${category.image}",
+                height: 48,
+                width: 48,
+              ),
+            ),
+            SizedBox(height: 16),
+            Text(
+              category.name,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.grey[800],
+              ),
+            ),
+            SizedBox(height: 8),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: category.color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                '${category.choices.length} récompenses',
+                style: TextStyle(
+                  color: category.color,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRewardsManagement() {
+    return Column(
+      children: [
+        _buildActionButtons(),
+        Divider(height: 1),
+        Expanded(
+          child: selectedCategory?.choices.isEmpty ?? true
+              ? _buildEmptyState()
+              : ListView.separated(
+                  padding: EdgeInsets.all(16),
+                  itemCount: selectedCategory!.choices.length,
+                  separatorBuilder: (context, index) => SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final choice = selectedCategory!.choices[index];
+                    return _buildRewardCard(choice, index);
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      margin: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Primary and secondary actions
+          Row(
+            children: [
+              // Main action button with icon
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _saveChoices,
+                  icon: const Icon(Icons.save_rounded, size: 18),
+                  label: const Text('Enregistrer', style: TextStyle(fontWeight: FontWeight.w600)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: kMainColor,
+                    foregroundColor: Colors.white,
+                    elevation: 2,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(width: 12),
+
+              // Secondary action - Add reward
+              OutlinedButton.icon(
+                onPressed: showAddChoiceDialog,
+                icon: const Icon(Icons.add_circle_outline, size: 18),
+                label: const Text('Ajouter', style: TextStyle(fontWeight: FontWeight.w500)),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: kMainColor,
+                  side: BorderSide(color: kMainColor.withOpacity(0.5)),
+                  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const Spacer(),
+
+              // Management options in a dropdown
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: PopupMenuButton(
+                  tooltip: 'Options',
+                  icon: Icon(Icons.settings, color: Colors.grey[700], size: 20),
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  position: PopupMenuPosition.under,
+                  itemBuilder: (context) => [
+                    _buildPopupMenuItem(
+                      icon: Icons.restore,
+                      text: 'Réinitialiser par défaut',
+                      onTap: defaultChoice,
+                    ),
+                    _buildPopupMenuItem(
+                      icon: Icons.delete_outline,
+                      text: 'Tout supprimer',
+                      onTap: resetChoice,
+                      isDestructive: true,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          // Loading indicator and management options row
+          Row(
+            children: [
+              // Loading indicator with text
+              if (isLoading) ...[
+                const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(kMainColor),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Traitement en cours...',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+// Helper method to build consistent menu items
+  PopupMenuItem _buildPopupMenuItem({
+    required IconData icon,
+    required String text,
+    required Function onTap,
+    bool isDestructive = false,
+  }) {
+    final Color textColor = isDestructive ? Colors.red : Colors.black87;
+
+    return PopupMenuItem(
+      onTap: () async => await onTap(),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: textColor),
+          const SizedBox(width: 12),
+          Text(
+            text,
+            style: TextStyle(
+              color: textColor,
+              fontWeight: isDestructive ? FontWeight.w500 : FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.card_giftcard, size: 64, color: Colors.grey[400]),
+          SizedBox(height: 16),
+          Text(
+            'Aucune récompense configurée',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.grey[600],
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Ajoutez des récompenses pour votre programme de fidélité',
+            style: TextStyle(
+              color: Colors.grey[500],
+            ),
+          ),
+          SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: showAddChoiceDialog,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: kMainColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            ),
+            child: Text('Ajouter une récompense'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRewardCard(Map<String, dynamic> choice, int index) {
+    return Card(
+      elevation: 3,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with title and delete button
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    choice["choice"],
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      letterSpacing: 0.3,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+                // More prominent, tactile delete button
+                Material(
+                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: () => removeChoice(index),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Icon(Icons.delete_outline, color: Colors.red.shade700, size: 20),
+                    ),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Image and points input in a row
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Image container with enhanced styling
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      "assets/${choice["image"]}",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+
+                // Points input field
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextFormField(
+                        controller: pointsControllers[index],
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) => updatePoints(index, value),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          suffixText: 'points',
+                          suffixStyle: TextStyle(
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
   void showAddChoiceDialog() {
     bool isManualEntry = false;
+    Map<String, dynamic>? selectedChoice;
 
-    Map<String, dynamic>? selectedChoice; // Stores the selected choice from a category
-    print(selectedCategory);
-    print(categories);
+    // Theme colors
+    final Color primaryColor = Theme.of(context).primaryColor;
+    final Color backgroundColor = Colors.grey[50]!;
+    final Color cardColor = Colors.white;
+    final Color accentColor = Theme.of(context).colorScheme.secondary;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            return AlertDialog(
-              title: Text(
-                "Ajouter une nouvelle récompense",
-                style: kTextStyle,
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "un achat = 10 points (Chaque scan attribue 10 points au client",
-                    style: kTextStyle.copyWith(color: Colors.black87),
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        'Nouvelle Récompense',
-                        style: kTextStyle,
-                      ),
-                      Switch(
-                        value: isManualEntry,
-                        onChanged: (value) {
-                          setState(() {
-                            isManualEntry = value;
-                            selectedChoice = null; // Reset selected choice
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  if (isManualEntry) ...[
-                    TextField(
-                      controller: choiceController,
-                      decoration: const InputDecoration(labelText: "Nom du choix"),
-                    ),
-                    TextField(
-                      controller: pointsController,
-                      decoration: const InputDecoration(labelText: "Points"),
-                      keyboardType: TextInputType.number,
-                    ),
-                  ] else ...[
-                    Column(
+              elevation: 5,
+              backgroundColor: backgroundColor,
+              child: Container(
+                padding: EdgeInsets.all(24),
+                constraints: BoxConstraints(maxWidth: 450, maxHeight: 600),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Header section
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedBox(
-                          height: 200, // Set a fixed height for the scrollable list
-                          width: 200,
-                          child: ListView.builder(
-                            itemCount: categories
-                                .firstWhere(
-                                  (cat) => cat.id.toString() == selectedCategory?.id.toString(),
-                                  orElse: () => Category(id: -1, name: '', image: '', color: Colors.black, choices: []),
-                                )
-                                .choices
-                                .length,
-                            itemBuilder: (context, index) {
-                              final category = categories.firstWhere(
-                                (cat) => cat.id.toString() == selectedCategory?.id.toString(),
-                                orElse: () => Category(id: -1, name: '', image: '', color: Colors.black, choices: []),
-                              );
-                              final choice = category.choices[index];
-                              return ListTile(
-                                title: Text(choice["choice"]),
-                                subtitle: Text("Points: ${choice["points"]}"),
-                                selected: selectedChoice == choice,
-                                tileColor: Colors.grey[200],
-                                // Default background color
-                                selectedTileColor: Colors.blue[200],
-                                onTap: () {
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Ajouter une récompense",
+                              style: kTextStyle.copyWith(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              "Un achat = 10 points",
+                              style: kTextStyle.copyWith(
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.close, color: Colors.grey[600]),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                    ),
+                    Divider(height: 24),
+
+                    // Entry type selector
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: cardColor,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 5,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'Prédéfini',
+                                style: TextStyle(
+                                  color: !isManualEntry ? primaryColor : Colors.grey,
+                                  fontWeight: !isManualEntry ? FontWeight.bold : FontWeight.normal,
+                                ),
+                              ),
+                              Switch(
+                                value: isManualEntry,
+                                activeColor: primaryColor,
+                                onChanged: (value) {
                                   setState(() {
-                                    selectedChoice = choice; // Store the selected choice
-                                    pointsController.text = choice["points"].toString(); // Pre-fill points
+                                    isManualEntry = value;
+                                    selectedChoice = null;
                                   });
                                 },
-                              );
-                            },
+                              ),
+                              Text(
+                                'Personnalisé',
+                                style: TextStyle(
+                                  color: isManualEntry ? primaryColor : Colors.grey,
+                                  fontWeight: isManualEntry ? FontWeight.bold : FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16),
+
+                    // Content based on selected entry type
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: cardColor,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 5,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        padding: EdgeInsets.all(16),
+                        child: isManualEntry
+                            ? _buildManualEntryForm()
+                            : _buildCategorySelectionForm(setState, selectedChoice, primaryColor, accentColor),
+                      ),
+                    ),
+
+                    SizedBox(height: 24),
+
+                    // Action buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        OutlinedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            side: BorderSide(color: Colors.grey[400]!),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            "Annuler",
+                            style: TextStyle(color: Colors.grey[700]),
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (isManualEntry) {
+                              addCustomChoice();
+                            } else if (selectedChoice != null) {
+                              addChoiceFromCategory(selectedChoice!);
+                            }
+                            Navigator.of(context).pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryColor,
+                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            "Ajouter",
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
                     ),
-                    if (selectedChoice != null) ...[
-                      SizedBox(height: 16),
-                      TextField(
-                        controller: pointsController,
-                        decoration: InputDecoration(labelText: "Points"),
-                        keyboardType: TextInputType.number,
-                        onChanged: (value) {
-                          // Update the points in the selected choice
-                          selectedChoice!["points"] = int.tryParse(value) ?? 0;
-                        },
-                      ),
-                    ],
                   ],
-                ],
+                ),
               ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("Annuler"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (isManualEntry) {
-                      addCustomChoice();
-                    } else if (selectedChoice != null) {
-                      addChoiceFromCategory(selectedChoice!);
-                    }
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("Ajouter"),
-                ),
-              ],
             );
           },
         );
@@ -478,6 +840,166 @@ class _FidelityScreenState extends State<FidelityScreen> {
     );
   }
 
+// Manual entry form
+  Widget _buildManualEntryForm() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Saisie manuelle',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 16),
+        TextFormField(
+          controller: choiceController,
+          decoration: InputDecoration(
+            labelText: "Nom de la récompense",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            fillColor: Colors.grey[100],
+            filled: true,
+            prefixIcon: Icon(Icons.card_giftcard),
+          ),
+        ),
+        SizedBox(height: 16),
+        TextFormField(
+          controller: pointsController,
+          decoration: InputDecoration(
+            labelText: "Points nécessaires",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            fillColor: Colors.grey[100],
+            filled: true,
+            prefixIcon: Icon(Icons.star),
+            suffixText: "points",
+          ),
+          keyboardType: TextInputType.number,
+        ),
+      ],
+    );
+  }
+
+// Category selection form
+  Widget _buildCategorySelectionForm(StateSetter setState, Map<String, dynamic>? selectedChoice, Color primaryColor, Color accentColor) {
+    final category = categories.firstWhere(
+      (cat) => cat.id.toString() == selectedCategory?.id.toString(),
+      orElse: () => Category(id: -1, name: '', image: '', color: Colors.black, choices: []),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Sélectionnez une récompense',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          'Catégorie: ${category.name}',
+          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+        ),
+        SizedBox(height: 12),
+        Expanded(
+          child: ListView.separated(
+            itemCount: category.choices.length,
+            separatorBuilder: (_, __) => SizedBox(height: 8),
+            itemBuilder: (context, index) {
+              final choice = category.choices[index];
+              final bool isSelected = selectedChoice == choice;
+
+              return Card(
+                elevation: isSelected ? 3 : 1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(
+                    color: isSelected ? primaryColor : Colors.transparent,
+                    width: 2,
+                  ),
+                ),
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      selectedChoice = choice;
+                      pointsController.text = choice["points"].toString();
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(8),
+                  child: Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: isSelected ? primaryColor.withOpacity(0.1) : Colors.grey[200],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.card_giftcard,
+                            color: isSelected ? primaryColor : Colors.grey[600],
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                choice["choice"],
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                  color: isSelected ? primaryColor : Colors.black87,
+                                ),
+                              ),
+                              Text(
+                                "${choice["points"]} points",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (isSelected)
+                          Icon(
+                            Icons.check_circle,
+                            color: primaryColor,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        if (selectedChoice != null) ...[
+          SizedBox(height: 16),
+          TextFormField(
+            controller: pointsController,
+            decoration: InputDecoration(
+              labelText: "Ajuster les points",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              fillColor: Colors.grey[100],
+              filled: true,
+              prefixIcon: Icon(Icons.edit),
+              suffixText: "points",
+            ),
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              selectedChoice!["points"] = int.tryParse(value) ?? 0;
+            },
+          ),
+        ],
+      ],
+    );
+  }
   Future<void> resetChoice() async {
     bool? result = await Utils.showYesNoDialog(context, "Êtes-vous sûr de vouloir supprimer toutes les récompenses ?");
     if (result == true) {

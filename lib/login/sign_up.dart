@@ -16,39 +16,54 @@ class Inscription extends StatefulWidget {
 }
 
 class _InscriptionState extends State<Inscription> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+
+  bool obscurePassword = true;
+  bool obscureConfirmPassword = true;
   bool isButtonEnabled = false;
-  String? emailError;
-  String? phoneError;
+  bool isLoading = false;
 
   void checkFields() {
     setState(() {
-      emailError = _validateEmail(emailController.text);
-      phoneError = _validatePhone(phoneController.text);
       isButtonEnabled = nameController.text.isNotEmpty &&
           emailController.text.isNotEmpty &&
           phoneController.text.isNotEmpty &&
           passwordController.text.isNotEmpty &&
-          emailError == null &&
-          phoneError == null;
+          confirmPasswordController.text.isNotEmpty &&
+          passwordController.text == confirmPasswordController.text &&
+          _validateEmail(emailController.text) == null &&
+          _validatePhone(phoneController.text) == null;
     });
   }
 
-  String? _validateEmail(String email) {
-    if (email.isEmpty) return "L'email est requis";
-    final emailRegex =
-        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
-    if (!emailRegex.hasMatch(email)) return "Email invalide";
+  String? _validateEmail(String? email) {
+    if (email!.isEmpty) return "L'email est requis";
+    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
+    if (!emailRegex.hasMatch(email)) return "Format d'email invalide";
     return null;
   }
 
-  String? _validatePhone(String phone) {
-    if (phone.isEmpty) return "Le numéro de téléphone est requis";
+  String? _validatePhone(String? phone) {
+    if (phone!.isEmpty) return "Le numéro de téléphone est requis";
     final phoneRegex = RegExp(r'^\d{10,15}$');
-    if (!phoneRegex.hasMatch(phone)) return "Numéro de téléphone invalide";
+    if (!phoneRegex.hasMatch(phone)) return "Format de téléphone invalide";
+    return null;
+  }
+
+  String? _validatePassword(String? password) {
+    if (password!.isEmpty) return "Le mot de passe est requis";
+    if (password.length < 8) return "Le mot de passe doit contenir au moins 8 caractères";
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? confirmPassword) {
+    if (confirmPassword!.isEmpty) return "Veuillez confirmer votre mot de passe";
+    if (confirmPassword != passwordController.text) return "Les mots de passe ne correspondent pas";
     return null;
   }
 
@@ -59,6 +74,17 @@ class _InscriptionState extends State<Inscription> {
     emailController.addListener(checkFields);
     phoneController.addListener(checkFields);
     passwordController.addListener(checkFields);
+    confirmPasswordController.addListener(checkFields);
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -67,148 +93,331 @@ class _InscriptionState extends State<Inscription> {
       backgroundColor: kMainColor,
       appBar: AppBar(
         backgroundColor: kMainColor,
-        elevation: 0.0,
+        elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
-          'Connexion',
+          'Inscription',
           style: kTextStyle.copyWith(
-              color: Colors.white, fontWeight: FontWeight.bold),
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/welcome2.jpg'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Center(child: Utils.getLogoWidget()),
+            // Header with logo
             Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(
-                'Inscrivez-vous maintenant pour commencer une aventure incroyable',
-                style: kTextStyle.copyWith(color: Colors.white),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(20.0),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30.0),
-                    topRight: Radius.circular(30.0)),
-                color: Colors.white,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 20),
               child: Column(
                 children: [
-                  const SizedBox(height: 20.0),
-                  AppTextField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This is the required field';
-                      }
-                      return null;
-                    },
-                    textFieldType: TextFieldType.NAME,
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Nom complet',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  if (nameController.text.isEmpty)
-                    const Text(
-                      'Le nom est requis',
-                      style: nameOfTextStyle,
-                    ),
-                  const SizedBox(height: 20.0),
-                  AppTextField(
-                    textFieldType: TextFieldType.EMAIL,
-                    controller: emailController,
-                    suffix: emailError != null ? Text(emailError!) : null,
-                    decoration: const InputDecoration(
-                      labelText: 'Adresse e-mail',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  if (_validateEmail(emailController.text) != null)
-                    Text(
-                      _validateEmail(emailController.text)!,
-                      style: nameOfTextStyle,
-                    ),
-                  const SizedBox(height: 20.0),
-                  AppTextField(
-                    textFieldType: TextFieldType.PHONE,
-                    controller: phoneController,
-                    suffix: phoneError != null ? Text(phoneError!) : null,
-                    decoration: InputDecoration(
-                      labelText: 'Numéro de téléphone',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  if (phoneError != null)
-                    Text(
-                      phoneError!,
-                      style: nameOfTextStyle,
-                    ),
-                  const SizedBox(height: 20.0),
-                  AppTextField(
-                    textFieldType: TextFieldType.PASSWORD,
-                    controller: passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Mot de passe',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  ButtonGlobal(
-                    buttontext: 'S\'inscrire',
-                    buttonDecoration: kButtonDecoration.copyWith(
-                        color: isButtonEnabled ? kMainColor : Colors.grey),
-                    onPressed: isButtonEnabled
-                        ? () {
-                            User user = getUser();
-
-                            APIRest.signUp(user).then((value) {
-                              const SignIn().launch(context);
-                              Utils.showSucces("Bienvue", context: context);
-                            }).catchError((value) {
-                              Utils.showErreur("Email déjà utilisé!", context: context);
-                            });
-                          }
-                        : null,
-                  ),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Vous avez déjà un compte ? ',
-                          style: kTextStyle.copyWith(color: kGreyTextColor),
-                        ),
-                        WidgetSpan(
-                          child: GestureDetector(
-                            onTap: () => const SignIn().launch(context),
-                            child: Text(
-                              'Se connecter',
-                              style: kTextStyle.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: kMainColor),
-                            ),
-                          ),
-                        ),
-                      ],
+                  Utils.getLogoWidget(),
+                  const SizedBox(height: 15),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      'Créez votre compte et commencez votre aventure',
+                      textAlign: TextAlign.center,
+                      style: kTextStyle.copyWith(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
+
+            // Form container
+            Expanded(
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                ),
+                width: double.infinity,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Name field
+                          buildInputField(
+                            controller: nameController,
+                            icon: Icons.person_outline,
+                            label: 'Nom complet',
+                            hint: 'Entrez votre nom complet',
+                            textFieldType: TextFieldType.NAME,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Le nom est requis';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Email field
+                          buildInputField(
+                            controller: emailController,
+                            icon: Icons.email_outlined,
+                            label: 'Adresse e-mail',
+                            hint: 'Entrez votre adresse e-mail',
+                            textFieldType: TextFieldType.EMAIL,
+                            validator: _validateEmail,
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Phone field
+                          buildInputField(
+                            controller: phoneController,
+                            icon: Icons.phone_outlined,
+                            label: 'Numéro de téléphone',
+                            hint: 'Entrez votre numéro de téléphone',
+                            textFieldType: TextFieldType.PHONE,
+                            validator: _validatePhone,
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Password field
+                          buildPasswordField(
+                            controller: passwordController,
+                            icon: Icons.lock_outline,
+                            label: 'Mot de passe',
+                            hint: 'Créez votre mot de passe',
+                            obscureText: obscurePassword,
+                            onToggleVisibility: () {
+                              setState(() {
+                                obscurePassword = !obscurePassword;
+                              });
+                            },
+                            validator: _validatePassword,
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Confirm password field
+                          buildPasswordField(
+                            controller: confirmPasswordController,
+                            icon: Icons.lock_outline,
+                            label: 'Confirmation du mot de passe',
+                            hint: 'Confirmez votre mot de passe',
+                            obscureText: obscureConfirmPassword,
+                            onToggleVisibility: () {
+                              setState(() {
+                                obscureConfirmPassword = !obscureConfirmPassword;
+                              });
+                            },
+                            validator: _validateConfirmPassword,
+                          ),
+                          const SizedBox(height: 30),
+
+                          // Sign up button
+                          ButtonGlobal(
+                            buttontext: 'S\'inscrire',
+                            buttonDecoration: BoxDecoration(
+                              color: isButtonEnabled ? kMainColor : Colors.grey.shade300,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: isButtonEnabled
+                                  ? [
+                                      BoxShadow(
+                                        color: kMainColor.withOpacity(0.3),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 5),
+                                      ),
+                                    ]
+                                  : null,
+                            ),
+                            onPressed: isButtonEnabled
+                                ? () async {
+                                    if (_formKey.currentState!.validate()) {
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+
+                                      try {
+                                        User user = getUser();
+                                        await APIRest.signUp(user);
+
+                                        if (mounted) {
+                                    Utils.showSucces(
+                                      "Inscription réussie ! Vous pouvez maintenant vous connecter.",
+                                      context: context,
+                                    );
+                                    await Future.delayed(const Duration(seconds: 1));
+                                    const SignIn().launch(context);
+                                  }
+                                } catch (e) {
+                                  Utils.showErreur(
+                                    "Cette adresse email est déjà utilisée.",
+                                    context: context,
+                                  );
+                                } finally {
+                                  if (mounted) {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  }
+                                }
+                              }
+                            }
+                                : null,
+                            isLoading: isLoading,
+                            textColor: isButtonEnabled ? Colors.white : Colors.grey.shade600,
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Sign in link
+                          Center(
+                            child: GestureDetector(
+                              onTap: () => const SignIn().launch(context),
+                              child: RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: 'Vous avez déjà un compte ? ',
+                                      style: kTextStyle.copyWith(color: kGreyTextColor),
+                                    ),
+                                    TextSpan(
+                                      text: 'Se connecter',
+                                      style: kTextStyle.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: kMainColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildInputField({
+    required TextEditingController controller,
+    required IconData icon,
+    required String label,
+    required String hint,
+    required TextFieldType textFieldType,
+    required String? Function(String?) validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: kTextStyle.copyWith(
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(height: 8),
+        AppTextField(
+          textFieldType: textFieldType,
+          controller: controller,
+          validator: validator,
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: kTextStyle.copyWith(color: Colors.grey),
+            prefixIcon: Icon(icon, color: kMainColor),
+            filled: true,
+            fillColor: Colors.grey.shade100,
+            contentPadding: const EdgeInsets.symmetric(vertical: 16),
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: kMainColor, width: 1.5),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.red, width: 1.5),
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildPasswordField({
+    required TextEditingController controller,
+    required IconData icon,
+    required String label,
+    required String hint,
+    required bool obscureText,
+    required VoidCallback onToggleVisibility,
+    required String? Function(String?) validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: kTextStyle.copyWith(
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          obscureText: obscureText,
+          validator: validator,
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: kTextStyle.copyWith(color: Colors.grey),
+            prefixIcon: Icon(icon, color: kMainColor),
+            suffixIcon: IconButton(
+              icon: Icon(
+                obscureText ? Icons.visibility_off : Icons.visibility,
+                color: kGreyTextColor,
+              ),
+              onPressed: onToggleVisibility,
+            ),
+            filled: true,
+            fillColor: Colors.grey.shade100,
+            contentPadding: const EdgeInsets.symmetric(vertical: 16),
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: kMainColor, width: 1.5),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.red, width: 1.5),
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

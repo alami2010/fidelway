@@ -3,7 +3,6 @@ import 'package:fidelway/subscribtion/scan_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
-import 'package:nb_utils/nb_utils.dart';
 
 import 'model/APIRest.dart';
 import 'model/choice_result.dart';
@@ -20,290 +19,589 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
   bool notification = false;
   ChoiceResult client = ChoiceResult();
   MotionTabBarController? _motionTabBarController;
+  bool isLoading = false;
 
   Future<void> scanQrCode() async {
-    /*   APIRest.scan("test_21-10-000x00x3x").then((value) {
-      setState(() {
-        // adding a new marker to map
-        client = value;
-      });
-    });*/
+    setState(() {
+      isLoading = true;
+    });
 
-    print('scanQrCode');
-    final result = (kIsWeb)
-        ? "test_21-10-000x00x3x"
-        : await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const BarcodeScannerScreen()),
-          );
-    print(result);
-    print('scanQrCode---------');
-    if (result != null) {
-      APIRest.scan(result).then((value) {
+    try {
+      final result = (kIsWeb)
+          ? "test_21-10-000x00x3x"
+          : await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const BarcodeScannerScreen()),
+            );
+
+      if (result != null) {
+        final value = await APIRest.scan(result);
         setState(() {
-          // adding a new marker to map
           client = value;
+          isLoading = false;
         });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
       });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erreur lors du scan: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void resetClient() {
+    setState(() {
+      client = ChoiceResult();
+    });
+  }
+
+  void redeemPoints(Choices choice) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final value = await APIRest.minus(client.code ?? '', choice.points ?? 0);
+      setState(() {
+        client = value;
+        isLoading = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${choice.points} points échangés avec succès!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erreur lors de l\'échange: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
   @override
   void initState() {
     super.initState();
-    //// Use normal tab controller
-    // _tabController = TabController(
-    //   initialIndex: 1,
-    //   length: 4,
-    //   vsync: this,
-    // );
-
-    //// use "MotionTabBarController" to replace with "TabController", if you need to programmatically change the tab
     _motionTabBarController = MotionTabBarController(
       initialIndex: 1,
       length: 4,
       vsync: this,
     );
+
+    // Initialize the showHistory state
+    showHistory = false;
   }
 
   @override
   void dispose() {
+    _motionTabBarController?.dispose();
     super.dispose();
-    _motionTabBarController!.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     var mode = LocalStorageHelper.readMode();
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF8F9FA),
       body: Stack(
-        children: <Widget>[
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(
-                  height: 150,
-                  child: Image.asset(
-                    'assets/fidelway-logo.png',
-                    fit: BoxFit.fitWidth,
+        children: [
+          RefreshIndicator(
+            onRefresh: () async {
+              if (client.code != null) {
+                final value = await APIRest.scan(client.code!);
+                setState(() {
+                  client = value;
+                });
+              }
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: _buildScannerCard(),
                   ),
-                ),
-                SizedBox(height: 8),
-                Scanner(context),
-                if (client.code != null)
-                  InkWell(
-                    onTap: () => setState(() {
-                      // adding a new marker to map
-                      client = ChoiceResult();
-                    }),
-                    child: Container(
-                        height: 50,
-                        margin: EdgeInsets.only(left: 7, bottom: 5),
-                        width: MediaQuery.of(context).size.width,
-                        child: Container(
-                          color: Colors.transparent,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              Expanded(
-                                child: Container(
-                                  width: context.width() / 2,
-                                  padding: const EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    border: const Border(
-                                        left: BorderSide(
-                                      color: kAlertColor,
-                                      width: 3.0,
-                                    )),
-                                    color: kAlertColor.withOpacity(0.1),
-                                  ),
-                                  child: Text(
-                                    'Solde : ${client?.solde.toString() ?? ''} points',
-                                    style: kTextStyle.copyWith(color: kTitleColor, fontSize: 20.0, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () => setState(() {
-                                    // adding a new marker to map
-                                    client = ChoiceResult();
-                                  }),
-                                  child: Container(
-                                      width: context.width() / 3,
-                                      padding: const EdgeInsets.all(10.0),
-                                      decoration: BoxDecoration(
-                                        border: const Border(
-                                            left: BorderSide(
-                                          color: kAlertColor,
-                                          width: 3.0,
-                                        )),
-                                        color: kMainColor.withOpacity(0.1),
-                                      ),
-                                      alignment: Alignment.centerRight,
-                                      child: Text(
-                                        "Déconnexion",
-                                        style: kTextStyle,
-                                      )),
-                                ),
-                              )
-                            ],
-                          ),
-                        )),
-                  ),
-                SingleChildScrollView(scrollDirection: Axis.horizontal, child: showChoice(mode)),
-                if (client.history != null) itemCard('', 'Historique des points'),
-                if (client.history != null)
-                  SizedBox(
-                    height: 250,
-                    child: ListView.builder(
-                      itemCount: client.history!.length,
-                      itemBuilder: (context, index) {
-                        return itemCard(client.history?[index].date ?? '', client.history?[index].amout.toString() ?? '');
-                      },
+                  const SizedBox(height: 20),
+                  if (client.code != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: _buildClientInfoCard(),
                     ),
-                  ),
-              ],
+                  if (client.code != null) const SizedBox(height: 24),
+                  if (client.choices != null && client.choices!.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: _buildRewardsSection(mode),
+                    ),
+                  if (client.history != null && client.history!.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: _buildHistorySection(),
+                    ),
+                  const SizedBox(height: 100), // Extra space at bottom for scrolling
+                ],
+              ),
             ),
           ),
-/*
-          ExhibitionBottomSheet(), //use this or ScrollableExhibitionSheet
-*/
+          if (isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.4),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(kMainColor),
+                ),
+              ),
+            ),
         ],
       ),
     );
   }
 
-  Container Scanner(BuildContext context) {
-    return Container(
-        color: Color(0xFFFF5A1D),
-        height: 100,
-        margin: EdgeInsets.only(left: 7, bottom: 5),
-        width: MediaQuery.of(context).size.width,
+  Widget _buildScannerCard() {
+    return Card(
+      margin: EdgeInsets.zero,
+      elevation: 6,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: InkWell(
+        onTap: scanQrCode,
+        borderRadius: BorderRadius.circular(16),
         child: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              TextButton(
-                  style: ButtonStyle(
-                    foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
-                  ),
-                  onPressed: () {
-                    scanQrCode();
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Text(
-                      'Scanner une carte',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ))
-            ],
-          ),
-        ));
-  }
-
-  Row showChoice(String? mode) {
-    List<Choices> list = client.choices ?? [];
-
-    // Sort the list of choices based on their points
-    list.sort((a, b) => (a.points ?? 0).compareTo(b.points ?? 0));
-
-    return Row(
-      children: [
-        for (int i = 0; i < list.length; i++)
-          InkWell(
-            onTap: () {
-              APIRest.minus(client.code ?? '', list[i].points ?? 0).then((value) {
-                setState(() {
-                  // adding a new marker to map
-                  client = value;
-                });
-              });
-            },
-            child: Container(
-                height: 170,
-                width: 100,
-                margin: EdgeInsets.only(left: 7, bottom: 5),
-                child: Container(
-                  color: Colors.transparent,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      ListTile(
-                        subtitle: Text(
-                          list[i]?.points.toString() ?? '',
-                          style: kTextStyle.copyWith(fontSize: 10.0),
-                        ),
-                        title: Text(list[i]?.choice ?? '', style: kTextStyle.copyWith(fontSize: 12.0)),
-                      ),
-                      Image.asset(
-                        "assets/${list[i].image}",
-                        height: 100,
-                        width: 100,
-                      ),
-                    ],
-                  ),
-                )),
-          )
-      ],
-    );
-  }
-
-  Widget itemCard(String date, String point) {
-    return Padding(
-      padding: EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0),
-      child: Container(
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(width: 1.5, color: Colors.grey),
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 30),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFF5A1D), Color(0xFFFF8C00)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
-          width: MediaQuery.of(context).size.width,
           child: Column(
-            children: <Widget>[
-              const SizedBox(
-                height: 2,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.qr_code_scanner,
+                color: Colors.white,
+                size: 60,
               ),
-              Container(
-                  child: ListTile(
-                leading: Text(
-                  '$point points',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12.0),
+              const SizedBox(height: 20),
+              Text(
+                'SCANNER UNE CARTE',
+                style: kTextStyle.copyWith(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
                 ),
-                title: Text(
-                  date,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12.0),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Accumulez ou utilisez vos points',
+                style: kTextStyle.copyWith(
+                  color: Colors.white.withOpacity(0.9),
+                  fontSize: 14,
                 ),
-              )),
+              ),
             ],
-          )),
-    );
-  }
-}
-
-class Header extends StatelessWidget {
-  const Header({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 32),
-      child: Text(
-        'FidelWAy',
-        style: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
   }
-}
 
+  Widget _buildClientInfoCard() {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.only(bottom: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: kMainColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.stars,
+                        color: kMainColor,
+                        size: 30,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'VOS POINTS',
+                          style: kTextStyle.copyWith(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[600],
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        Text(
+                          '${client.solde ?? 0}',
+                          style: kTextStyle.copyWith(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: kTitleColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                ElevatedButton.icon(
+                  onPressed: resetClient,
+                  icon: const Icon(Icons.logout, size: 18),
+                  label: const Text('Quitter'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: kAlertColor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRewardsSection(String? mode) {
+    List<Choices> list = client.choices ?? [];
+    list.sort((a, b) => (a.points ?? 0).compareTo(b.points ?? 0));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(bottom: 16.0),
+          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 5,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.card_giftcard,
+                color: kMainColor,
+                size: 24,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'RÉCOMPENSES DISPONIBLES',
+                style: kTextStyle.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: kTitleColor,
+                  letterSpacing: 1,
+                ),
+              ),
+            ],
+          ),
+        ),
+        GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.75,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+          ),
+          itemCount: list.length,
+          itemBuilder: (context, index) {
+            final choice = list[index];
+            final bool isDisabled = (client.solde ?? 0) < (choice.points ?? 0);
+
+            return Card(
+              clipBehavior: Clip.antiAlias,
+              elevation: isDisabled ? 1 : 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(
+                  color: isDisabled ? Colors.grey.withOpacity(0.2) : Colors.transparent,
+                  width: 1,
+                ),
+              ),
+              child: InkWell(
+                onTap: isDisabled ? null : () => redeemPoints(choice),
+                child: Container(
+                  color: isDisabled ? Colors.grey.withOpacity(0.05) : Colors.white,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Stack(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              width: double.infinity,
+                              child: Image.asset(
+                                "assets/${choice.image}",
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            if (isDisabled)
+                              Container(
+                                color: Colors.white.withOpacity(0.6),
+                                child: Center(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red.withOpacity(0.7),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      'POINTS INSUFFISANTS',
+                                      style: kTextStyle.copyWith(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: isDisabled
+                                ? [Colors.grey.withOpacity(0.2), Colors.grey.withOpacity(0.1)]
+                                : [kMainColor.withOpacity(0.2), kMainColor.withOpacity(0.05)],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              choice.choice ?? '',
+                              style: kTextStyle.copyWith(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: isDisabled ? Colors.grey[600] : kTitleColor,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isDisabled ? Colors.grey : kMainColor,
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: isDisabled
+                                    ? []
+                                    : [
+                                        BoxShadow(
+                                          color: kMainColor.withOpacity(0.3),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                              ),
+                              child: Text(
+                                '${choice.points} points',
+                                style: kTextStyle.copyWith(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  bool showHistory = false;
+
+  Widget _buildHistorySection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        InkWell(
+          onTap: () {
+            setState(() {
+              showHistory = !showHistory;
+            });
+          },
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 12.0),
+            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 5,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.history,
+                      color: kMainColor,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'HISTORIQUE DES TRANSACTIONS',
+                      style: kTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: kTitleColor,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
+                ),
+                Icon(
+                  showHistory ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                  color: kMainColor,
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (showHistory)
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            child: Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ListView.separated(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: client.history?.length ?? 0,
+                separatorBuilder: (context, index) => Divider(
+                  height: 1,
+                  color: Colors.grey.withOpacity(0.2),
+                ),
+                itemBuilder: (context, index) {
+                  final historyItem = client.history![index];
+                  final isPositive = (historyItem.amout ?? 0) > 0;
+
+                  return ListTile(
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: isPositive ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        isPositive ? Icons.add_circle : Icons.remove_circle,
+                        color: isPositive ? Colors.green : Colors.red,
+                        size: 24,
+                      ),
+                    ),
+                    title: Text(
+                      historyItem.date ?? '',
+                      style: kTextStyle.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    trailing: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: isPositive ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Text(
+                        '${isPositive ? "+" : ""}${historyItem.amout} pts',
+                        style: kTextStyle.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: isPositive ? Colors.green[700] : Colors.red[700],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}

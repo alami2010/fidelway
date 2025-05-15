@@ -1,110 +1,270 @@
-import 'package:basic_dropdown_button/basic_dropwon_button_widget.dart';
-import 'package:basic_dropdown_button/custom_dropdown_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'constant.dart';
-
+/// A more sophisticated dropdown menu for actions
 class ActionDropDown extends StatelessWidget {
   const ActionDropDown({
     Key? key,
-    required this.event,
-    required this.currentIndex,
-    required this.buttonStyle,
-    required this.itemButtonStyle,
-    required this.position,
-    required this.text,
-    required this.itemTextColor,
-    required this.itemCount,
-    required this.showAddChoiceDialog,
-    required this.resetChoice,
-    required this.defaultChoice,
-    this.buttonTextStyle,
+    required this.onActionSelected,
+    required this.actions,
+    this.selectedActionIndex,
+    this.buttonColor,
     this.iconColor,
+    this.menuWidth,
+    this.menuElevation = 8.0,
+    this.buttonLabel = 'Actions',
+    this.buttonBorderRadius = 8.0,
+    this.menuBorderRadius = 12.0,
   }) : super(key: key);
-  final void Function(int) event;
-  final int? currentIndex;
 
-  final ButtonStyle buttonStyle;
-  final ButtonStyle itemButtonStyle;
-  final DropDownButtonPosition position;
-  final String text;
-  final TextStyle? buttonTextStyle;
+  /// Callback when an action is selected
+  final void Function(int) onActionSelected;
+
+  /// List of actions to display in the dropdown
+  final List<ActionItem> actions;
+
+  /// Currently selected action index (optional)
+  final int? selectedActionIndex;
+
+  /// Color of the dropdown button
+  final Color? buttonColor;
+
+  /// Color of icons in the dropdown
   final Color? iconColor;
-  final Color itemTextColor;
-  final int itemCount;
-  final VoidCallback? showAddChoiceDialog;
-  final VoidCallback? resetChoice;
-  final VoidCallback? defaultChoice;
+
+  /// Width of the dropdown menu
+  final double? menuWidth;
+
+  /// Elevation of the dropdown menu
+  final double menuElevation;
+
+  /// Label for the dropdown button
+  final String buttonLabel;
+
+  /// Border radius for the dropdown button
+  final double buttonBorderRadius;
+
+  /// Border radius for the dropdown menu
+  final double menuBorderRadius;
 
   @override
   Widget build(BuildContext context) {
-    return CustomDropDownButton<int>(
-      buttonStyle: buttonStyle,
-      buttonText: text,
-      buttonChild: Row(children: <Widget>[
-        Text(" Action ", style: kTextStyle.copyWith(color: Colors.black87)),
-        const Icon(
-          CupertinoIcons.settings_solid,
-          color: Colors.black87,
-        ),
-      ]),
-      position: position,
-      buttonTextStyle: buttonTextStyle,
-      menuItems: [
-        CustomDropDownButtonItem(
-          value: 1,
-          text: "Ajouter une nouvelle récompense",
-          icon: const Icon(
-            CupertinoIcons.add_circled,
-            color: Colors.black87,
-          ),
-          onPressed: showAddChoiceDialog,
-          buttonStyle: itemButtonStyle,
-          textStyle: TextStyle(
-            color: itemTextColor,
-          ),
-        ),
-        CustomDropDownButtonItem(
-          value: 2,
-          text: "Charger les récompenses par défaut",
-          icon: const Icon(
-            CupertinoIcons.settings_solid,
-            color: Colors.black87,
-          ),
-          onPressed: defaultChoice,
-          buttonStyle: itemButtonStyle,
-          textStyle: TextStyle(
-            color: itemTextColor,
-          ),
-        ),
-        CustomDropDownButtonItem(
-          value: 2,
-          text: "Supprimer toutes les récompenses",
-          icon: const Icon(
-            CupertinoIcons.delete_solid,
-            color: Colors.black87,
-          ),
-          onPressed: resetChoice,
-          buttonStyle: itemButtonStyle,
-          textStyle: TextStyle(
-            color: itemTextColor,
-          ),
-        ),
-      ],
-      menuBorderRadius: BorderRadius.circular(
-        2,
+    final theme = Theme.of(context);
+    final effectiveIconColor = iconColor ?? theme.colorScheme.onSurface;
+    final effectiveButtonColor = buttonColor ?? theme.colorScheme.surface;
+
+    return PopupMenuButton<int>(
+      elevation: menuElevation,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(menuBorderRadius),
       ),
-      selectedValue: currentIndex,
-      buttonIcon: ({required showedMenu}) => showedMenu
-          ? Icon(
-              Icons.arrow_drop_down,
-              color: iconColor,
-            )
-          : Icon(
-              Icons.arrow_drop_up,
-              color: iconColor,
+      offset: const Offset(0, 8),
+      tooltip: 'Show actions',
+      onSelected: onActionSelected,
+      itemBuilder: (context) => _buildMenuItems(context),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: effectiveButtonColor,
+          borderRadius: BorderRadius.circular(buttonBorderRadius),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              buttonLabel,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              CupertinoIcons.chevron_down,
+              size: 16,
+              color: effectiveIconColor,
+            ),
+          ],
+        ),
+      ),
     );
   }
+
+  List<PopupMenuItem<int>> _buildMenuItems(BuildContext context) {
+    return actions.asMap().entries.map((entry) {
+      final index = entry.key;
+      final action = entry.value;
+
+      return PopupMenuItem<int>(
+        value: index,
+        padding: EdgeInsets.zero,
+        child: Container(
+          width: menuWidth,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+          child: _ActionMenuItem(
+            icon: action.icon,
+            label: action.label,
+            iconColor: action.iconColor ?? iconColor,
+            onTap: action.onTap,
+            isSelected: selectedActionIndex == index,
+            isDestructive: action.isDestructive,
+          ),
+        ),
+      );
+    }).toList();
+  }
+}
+
+/// Represents an individual action in the dropdown
+class ActionItem {
+  const ActionItem({
+    required this.label,
+    required this.icon,
+    this.onTap,
+    this.iconColor,
+    this.isDestructive = false,
+  });
+
+  /// Display label for the action
+  final String label;
+
+  /// Icon to display with the action
+  final IconData icon;
+
+  /// Optional callback when this specific action is tapped
+  final VoidCallback? onTap;
+
+  /// Color override for this action's icon
+  final Color? iconColor;
+
+  /// Whether this is a destructive action (will show in red)
+  final bool isDestructive;
+}
+
+/// Widget for individual menu items in the dropdown
+class _ActionMenuItem extends StatelessWidget {
+  const _ActionMenuItem({
+    Key? key,
+    required this.icon,
+    required this.label,
+    this.iconColor,
+    this.onTap,
+    this.isSelected = false,
+    this.isDestructive = false,
+  }) : super(key: key);
+
+  final IconData icon;
+  final String label;
+  final Color? iconColor;
+  final VoidCallback? onTap;
+  final bool isSelected;
+  final bool isDestructive;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    Color textColor;
+    if (isDestructive) {
+      textColor = Colors.red.shade700;
+    } else if (isSelected) {
+      textColor = theme.colorScheme.primary;
+    } else {
+      textColor = theme.colorScheme.onSurface;
+    }
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: isDestructive ? Colors.red.shade700 : (iconColor ?? textColor),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  color: textColor,
+                ),
+              ),
+            ),
+            if (isSelected)
+              Icon(
+                Icons.check,
+                size: 18,
+                color: theme.colorScheme.primary,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Example usage of the ActionDropDown component
+class ExampleUsage extends StatelessWidget {
+  const ExampleUsage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ActionDropDown(
+      buttonLabel: 'Actions',
+      onActionSelected: (index) {
+        // Handle action selection
+        print('Selected action index: $index');
+
+        // Execute the action's specific handler if available
+        final action = actions[index];
+        if (action.onTap != null) {
+          action.onTap!();
+        }
+      },
+      actions: actions,
+      buttonColor: Colors.white,
+      iconColor: Colors.black87,
+      menuWidth: 280,
+    );
+  }
+
+  List<ActionItem> get actions => [
+        ActionItem(
+          label: 'Ajouter une nouvelle récompense',
+          icon: CupertinoIcons.add_circled,
+          onTap: () {
+            // Show dialog to add new reward
+            print('Show add dialog');
+          },
+        ),
+        ActionItem(
+          label: 'Charger les récompenses par défaut',
+          icon: CupertinoIcons.arrow_clockwise,
+          onTap: () {
+            // Load default rewards
+            print('Load default rewards');
+          },
+        ),
+        ActionItem(
+          label: 'Supprimer toutes les récompenses',
+          icon: CupertinoIcons.delete,
+          isDestructive: true,
+          onTap: () {
+            // Delete all rewards
+            print('Delete all rewards');
+          },
+        ),
+      ];
 }

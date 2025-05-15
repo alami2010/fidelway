@@ -23,185 +23,444 @@ class _ProfileScreenState extends State<ProfileScreen> {
   var account = LocalStorageHelper.getAccount();
   bool isLoading = false;
 
-  get resetSelection => null;
+  void startLoading() => setState(() => isLoading = true);
 
-  void startLoading() {
-    setState(() {
-      isLoading = true;
-    });
-  }
-
-  void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
-  }
+  void stopLoading() => setState(() => isLoading = false);
 
   Future<void> _deleteAccount() async {
     startLoading();
     await APIRest.delete().then((value) {
       const SignIn().launch(context);
-      Utils.showSucces(' Suppression réussie, déconnecter l \'utilisateur', context: context);
+      Utils.showSucces('Suppression réussie, utilisateur déconnecté', context: context);
       stopLoading();
     }).catchError((error) {
       stopLoading();
-      Utils.showErreur(' Erreur lors de la suppression du compte', context: context);
+      Utils.showErreur('Erreur lors de la suppression du compte', context: context);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var subscribed = account?.subscribed ?? false;
+    final subscribed = account?.subscribed ?? false;
+    final subscriptionDate = account?.subscriptionExpiryDate ?? DateTime.now();
+    final isSubscriptionExpired = !subscribed || DateTime.now().isAfter(subscriptionDate);
+
     return Scaffold(
       drawer: MyDrawer(),
-      resizeToAvoidBottomInset: false,
       backgroundColor: kMainColor,
       appBar: AppBar(
         backgroundColor: kMainColor,
-        elevation: 0.0,
-        titleSpacing: 0.0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        elevation: 0,
+        centerTitle: true,
         title: Text(
-          'Profile',
-          maxLines: 2,
-          style: kTextStyle.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+          'Mon Profil',
+          style: kTextStyle.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
+          ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined, color: Colors.white),
+            onPressed: () {
+              // Navigate to settings or show settings menu
+              toast('Paramètres');
+            },
+          ),
+        ],
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
         children: [
-          const SizedBox(height: 20.0),
-          Expanded(
-            child: Container(
-              width: context.width(),
-              padding: const EdgeInsets.all(20.0),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
-                color: Colors.white,
-              ),
-              child: Column(
-                children: [
-                  const SizedBox(height: 20.0),
-                  AppTextField(
-                    readOnly: true,
-                    textFieldType: TextFieldType.NAME,
-                    decoration: InputDecoration(
-                      labelText: 'Name',
-                      hintText: account?.firstName,
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  AppTextField(
-                    readOnly: true,
-                    textFieldType: TextFieldType.EMAIL,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      hintText: account?.email,
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  AppTextField(
-                    readOnly: true,
-                    textFieldType: TextFieldType.PHONE,
-                    decoration: InputDecoration(
-                      labelText: 'Tél',
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      hintText: account?.lastName,
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  Container(
-                    width: context.width() * 0.95,
-                    padding: const EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        left: BorderSide(
-                          color: (subscribed) ? kGreenColor : kRedColor,
-                          width: 10.0,
-                        ),
-                      ),
-                      color: const Color(0xFFDAF3FF),
-                    ),
-                    child: ListTile(
-                      leading: Icon(
-                        (subscribed) ? CupertinoIcons.timer_fill : CupertinoIcons.time,
-                        color: (subscribed) ? kGreenColor : kRedColor,
-                      ),
-                      title: Text(
-                        (subscribed) ? "Votre abonnement est Actif" : "Votre abonnement est Expiré",
-                        maxLines: 2,
-                        style: kTextStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        (subscribed)
-                            ? "Votre abonnement expire le ${DateFormat('dd/MM/yyyy').format(account?.subscriptionExpiryDate ?? DateTime.now())}"
-                            : "Votre abonnement est expiré la date ${DateFormat('yyyy-MM-dd').format(account?.subscriptionExpiryDate ?? DateTime.now())}",
-                        maxLines: 2,
-                        style: kTextStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  Container(
-                    width: context.width() * 0.95,
-                    padding: const EdgeInsets.all(10.0),
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        left: BorderSide(
-                          color: kRedColor,
-                          width: 10.0,
-                        ),
-                      ),
-                      color: Color(0xFFDAF3FF),
-                    ),
-                    child: ListTile(
-                      onTap: () async {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Confirmer la suppression'),
-                            content: const Text('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.'),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text('Annuler'),
+          Container(
+            width: context.width(),
+            height: context.height(),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+            ),
+            margin: const EdgeInsets.only(top: 70),
+          ),
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                // Profile header with avatar
+                Container(
+                  width: context.width(),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white, width: 4),
+                              borderRadius: BorderRadius.circular(60),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  spreadRadius: 0,
+                                ),
+                              ],
+                            ),
+                            child: const CircleAvatar(
+                              radius: 60,
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Icons.person,
+                                size: 60,
+                                color: kMainColor,
                               ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  _deleteAccount();
-                                },
-                                child: const Text('Supprimer', style: TextStyle(color: Colors.red)),
+                            ),
+                          ),
+                          CircleAvatar(
+                            radius: 18,
+                            backgroundColor: kMainColor,
+                            child: IconButton(
+                              icon: const Icon(Icons.camera_alt, size: 16, color: Colors.white),
+                              onPressed: () {
+                                toast('Changer la photo de profil');
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "${account?.firstName ?? ''} ${account?.lastName ?? ''}",
+                        style: kTextStyle.copyWith(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        account?.email ?? '',
+                        style: kTextStyle.copyWith(
+                          color: Colors.grey[600],
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Subscription status banner
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: subscribed ? [const Color(0xFF43A047), const Color(0xFF2E7D32)] : [const Color(0xFFF44336), const Color(0xFFD32F2F)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: (subscribed ? Colors.green : Colors.red).withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            subscribed ? CupertinoIcons.checkmark_seal_fill : CupertinoIcons.exclamationmark_triangle_fill,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                subscribed ? "Abonnement Actif" : "Abonnement Expiré",
+                                style: kTextStyle.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                subscribed
+                                    ? "Expire le ${DateFormat('dd/MM/yyyy').format(subscriptionDate)}"
+                                    : "Expiré depuis le ${DateFormat('dd/MM/yyyy').format(subscriptionDate)}",
+                                style: kTextStyle.copyWith(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontSize: 14,
+                                ),
                               ),
                             ],
                           ),
-                        );
-                      },
-                      leading: const Icon(
-                        CupertinoIcons.delete_solid,
-                        color: kRedColor,
-                      ),
-                      title: Text(
-                        "Supprimer mon compte",
-                        maxLines: 2,
-                        style: kTextStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
+                        ),
+                        if (isSubscriptionExpired)
+                          ElevatedButton(
+                            onPressed: () {
+                              toast('Renouveler l\'abonnement');
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.red,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: const Text('Renouveler'),
+                          ),
+                      ],
                     ),
                   ),
-                  const Spacer(),
-                  if (isLoading) Utils.getLoading(),
-                  const SizedBox(height: 20.0),
-                ],
-              ),
+                ),
+
+                const SizedBox(height: 25),
+
+                // Information section
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        blurRadius: 10,
+                        spreadRadius: 0,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                        child: Text(
+                          'Informations personnelles',
+                          style: kTextStyle.copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const Divider(),
+                      _profileInfoTile(
+                        icon: Icons.person_outline,
+                        title: 'Nom',
+                        value: account?.firstName ?? '',
+                        onTap: () => toast('Modifier le nom'),
+                      ),
+                      const Divider(height: 1),
+                      _profileInfoTile(
+                        icon: Icons.email_outlined,
+                        title: 'Email',
+                        value: account?.email ?? '',
+                        onTap: () => toast('Modifier l\'email'),
+                      ),
+                      const Divider(height: 1),
+                      _profileInfoTile(
+                        icon: Icons.phone_outlined,
+                        title: 'Téléphone',
+                        value: account?.lastName ?? '',
+                        onTap: () => toast('Modifier le téléphone'),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 25),
+
+                // Actions section
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        blurRadius: 10,
+                        spreadRadius: 0,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                        child: Text(
+                          'Actions',
+                          style: kTextStyle.copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const Divider(),
+                      ListTile(
+                        leading: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(Icons.password_outlined, color: Colors.blue),
+                        ),
+                        title: Text('Changer le mot de passe', style: kTextStyle),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () => toast('Changer le mot de passe'),
+                      ),
+                      const Divider(height: 1),
+                      ListTile(
+                        leading: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(Icons.notifications_outlined, color: Colors.orange),
+                        ),
+                        title: Text('Paramètres de notification', style: kTextStyle),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () => toast('Paramètres de notification'),
+                      ),
+                      const Divider(height: 1),
+                      ListTile(
+                        leading: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: kRedColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(CupertinoIcons.delete, color: kRedColor),
+                        ),
+                        title: Text(
+                          'Supprimer mon compte',
+                          style: kTextStyle.copyWith(color: kRedColor),
+                        ),
+                        trailing: const Icon(Icons.chevron_right, color: kRedColor),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Confirmer la suppression'),
+                              content: const Text(
+                                'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.',
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Annuler'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    _deleteAccount();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: kRedColor,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  child: const Text('Supprimer'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Version and app info
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'FidelWay',
+                        style: kTextStyle.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: kMainColor,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Version 1.0.0',
+                        style: kTextStyle.copyWith(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+              ],
             ),
           ),
+
+          // Loading overlay
+          if (isLoading)
+            Container(
+              width: context.width(),
+              height: context.height(),
+              color: Colors.black.withOpacity(0.5),
+              child: Center(
+                child: Utils.getLoading(),
+              ),
+            ),
         ],
       ),
+    );
+  }
+
+  Widget _profileInfoTile({
+    required IconData icon,
+    required String title,
+    required String value,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: kMainColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(icon, color: kMainColor),
+      ),
+      title: Text(title, style: kTextStyle.copyWith(color: Colors.grey[600], fontSize: 14)),
+      subtitle: Text(
+        value,
+        style: kTextStyle.copyWith(fontWeight: FontWeight.w500, fontSize: 16),
+      ),
+      trailing: const Icon(Icons.edit, size: 20, color: kMainColor),
+      onTap: onTap,
     );
   }
 }
