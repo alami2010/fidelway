@@ -17,3 +17,5 @@ Flutter 3.30.0-1.0.pre.306 • channel master • https://github.com/flutter/flu
 Framework • revision ebc7d244d3 (2 months ago) • 2025-02-24 17:30:25 -0500
 Engine • revision ebc7d244d3 (2 months ago) • 2025-02-24 17:30:25 -0500
 Tools • Dart 3.8.0 (build 3.8.0-132.0.dev) • DevTools 2.43.0
+
+flutter build apk --release
