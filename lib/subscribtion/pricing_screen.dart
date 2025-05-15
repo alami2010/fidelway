@@ -158,7 +158,7 @@ class _PricingScreenState extends State<PricingScreen> {
                                   ),
                                   PricingCard(
                                     title: 'Annuel',
-                                    price: '59,99 €',
+                                    price: '99,99 €',
                                     subPriceText: '/an',
                                     billedText: 'Facturé annuellement',
                                     mainPricing: true,

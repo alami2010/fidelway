@@ -613,13 +613,13 @@ class PricingComparisonWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Avec Fidelway, économisez des centaines d\'euros par an :',
+          'Avec Fidelway, économisez des centaines d\'euros par mois :',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         16.height,
         PricingOptionCard(
           title: 'Cartes papier classiques',
-          cost: '520 €',
+          cost: '50 €',
           benefits: 'Coûteux, peu pratique',
           isRecommended: false,
           color: Colors.grey.shade200,
@@ -627,7 +627,7 @@ class PricingComparisonWidget extends StatelessWidget {
         12.height,
         PricingOptionCard(
           title: 'Fidelway (hybride)',
-          cost: '460 €',
+          cost: '40 €',
           benefits: 'Économique + QR code physique',
           isRecommended: false,
           color: Colors.blue.shade50,
@@ -635,7 +635,7 @@ class PricingComparisonWidget extends StatelessWidget {
         12.height,
         PricingOptionCard(
           title: 'Fidelway 100% numérique',
-          cost: '300 €',
+          cost: '9.99 €',
           benefits: 'Solution la plus avantageuse !',
           isRecommended: true,
           color: Colors.green.shade50,
