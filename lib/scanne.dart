@@ -211,6 +211,9 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
   Row showChoice(String? mode) {
     List<Choices> list = client.choices ?? [];
 
+    // Sort the list of choices based on their points
+    list.sort((a, b) => (a.points ?? 0).compareTo(b.points ?? 0));
+
     return Row(
       children: [
         for (int i = 0; i < list.length; i++)

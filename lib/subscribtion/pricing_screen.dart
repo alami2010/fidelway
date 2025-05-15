@@ -446,14 +446,33 @@ class _PricingScreenState extends State<PricingScreen> {
   final String baseUrl = "https://fidelway.enovway.com/payment";
 
   Future<void> _launchURLPayment(PaymentType type) async {
-    // Construire l'URL avec les paramètres
-    var idMarchand = LocalStorageHelper.getAccount()?.id?.toString() ?? "";
-    final Uri uri = Uri.parse("$baseUrl?type=${type.value}&client=$idMarchand");
+    try {
+      final idMarchand = LocalStorageHelper.getAccount()?.id?.toString() ?? "";
 
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      throw "Impossible d'ouvrir l'URL : $uri";
+      final Uri uri = Uri.https(
+        'fidelway.enovway.com',
+        '/payment',
+        {'type': type.value, 'client': idMarchand},
+      );
+
+      if (!await launchUrl(uri)) {
+        throw Exception('Impossible d\'ouvrir l\'URL ${uri}');
+      }
+
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        throw Exception("Impossible d'ouvrir l'URL : $uri");
+      }
+    } catch (e) {
+      // Affichage d'une erreur dans la console
+      debugPrint("Erreur lors de l'ouverture du lien de paiement : $e");
+
+      // Tu peux aussi afficher une Snackbar, Toast ou Dialog si tu veux notifier l'utilisateur
+      // Exemple avec ScaffoldMessenger :
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text('Erreur : Impossible d\'ouvrir le lien')),
+      // );
     }
   }
 }

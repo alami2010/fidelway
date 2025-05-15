@@ -1,0 +1,58 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# tranfomt comment java - java to system linux as service
+# graceful shutdown spring boot
+
+name: Generate APK file
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        type: choice
+        description: 'The env to point'
+        options:
+          - DEV
+          - PROD
+          - MASTER
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate APK file on an env ${{ inputs.env }}
+        run: echo "Generate APK file on an env ${{ inputs.env }}"
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.19.0
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --dart-define="ENV=${{ inputs.env }}"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk

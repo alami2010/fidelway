@@ -58,15 +58,25 @@ final otpInputDecoration = InputDecoration(
   enabledBorder: outlineInputBorder(),
 );
 
-final List<Category> categories = [
+final List categories = [
   Category(
     id: 1,
-    name: "Autre",
-    color: Color(0xFFCD3636),
-    image: "images/gift.png",
+    name: "Restauration",
+    color: Color(0xFF02B984),
+    image: "images/restauration.png",
     choices: [
-      {"choice": "10 €", "points": 10, "image": "images/10e.png"},
-      {"choice": 'Réduction de 10%', "points": 20, "image": "images/reduction.png"},
+      {"choice": "Pizza", "points": 100, "image": "images/pizza.png"}, // ≈10 €
+      {"choice": "Burger", "points": 80, "image": "images/burger.png"}, // ≈8 €
+      {"choice": "Sandwich", "points": 60, "image": "images/sandwich.png"}, // ≈6 €
+      {"choice": "Boisson", "points": 30, "image": "images/boisson.png"}, // ≈3 €
+      {"choice": "Tacos", "points": 90, "image": "images/tacos.png"}, // ≈9 €
+      {"choice": "Kebab", "points": 80, "image": "images/kebab.png"}, // ≈8 €
+      {"choice": "Pasta", "points": 100, "image": "images/pasta.png"}, // ≈10 €
+      {"choice": "Salade", "points": 60, "image": "images/salade.png"}, // ≈6 €
+      {"choice": "Crêpe", "points": 50, "image": "images/crepe.png"}, // ≈5 €
+      {"choice": "Glace", "points": 40, "image": "images/glace.png"}, // ≈4 €
+      {"choice": "Café", "points": 20, "image": "images/cafe.png"}, // ≈2 €
+      {"choice": "Smoothie", "points": 50, "image": "images/smoothie.png"}, // ≈5 €
     ],
   ),
   Category(
@@ -75,10 +85,10 @@ final List<Category> categories = [
     color: Color(0xFF4ACDF9),
     image: "images/boucherie.png",
     choices: [
-      {"choice": "Viande hachée 500g", "points": 60, "image": "images/viande.png"},
-      {"choice": "Steak offert", "points": 50, "image": "images/steak.png"},
-      {"choice": "10 €", "points": 10, "image": "images/10e.png"},
-      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
+      {"choice": "Viande hachée 500g", "points": 60, "image": "images/viande.png"}, // ≈6 €
+      {"choice": "Steak offert", "points": 100, "image": "images/steak.png"}, // ≈10 €
+      {"choice": "10 €", "points": 100, "image": "images/10e.png"},
+      {"choice": "Réduction de 10%", "points": 100, "image": "images/reduction.png"},
     ],
   ),
   Category(
@@ -87,10 +97,10 @@ final List<Category> categories = [
     image: "images/alimentation.png",
     color: Color(0xFF7C69EE),
     choices: [
-      {"choice": "Panier de fruits", "points": 40, "image": "images/fruits.png"},
-      {"choice": "Boisson gratuite", "points": 25, "image": "images/boisson.png"},
-      {"choice": "10 €", "points": 10, "image": "images/10e.png"},
-      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
+      {"choice": "Panier de fruits", "points": 80, "image": "images/fruits.png"}, // ≈8 €
+      {"choice": "Boisson gratuite", "points": 30, "image": "images/boisson.png"}, // ≈3 €
+      {"choice": "10 €", "points": 100, "image": "images/10e.png"},
+      {"choice": "Réduction de 10%", "points": 100, "image": "images/reduction.png"},
     ],
   ),
   Category(
@@ -99,10 +109,10 @@ final List<Category> categories = [
     image: "images/coiffure.png",
     color: Color(0xFFFD72AF),
     choices: [
-      {"choice": "Coupe gratuite", "points": 50, "image": "images/coupe.png"},
-      {"choice": "Shampoing offert", "points": 30, "image": "images/shampoing.png"},
-      {"choice": "Barbe", "points": 30, "image": "images/barbe.png"},
-      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
+      {"choice": "Coupe gratuite", "points": 100, "image": "images/coupe.png"}, // ≈10 €
+      {"choice": "Shampoing offert", "points": 50, "image": "images/shampoing.png"}, // ≈5 €
+      {"choice": "Barbe", "points": 50, "image": "images/barbe.png"}, // ≈5 €
+      {"choice": "Réduction de 10%", "points": 100, "image": "images/reduction.png"},
     ],
   ),
   Category(
@@ -111,12 +121,12 @@ final List<Category> categories = [
     image: "images/coiffeurFemme.png",
     color: Color(0xFFFD72AF),
     choices: [
-      {"choice": "Coupe offerte", "points": 50, "image": "images/coupeFemme.png"},
-      {"choice": "Shampoing offert", "points": 30, "image": "images/shampoing.png"},
-      {"choice": "Sechoir", "points": 30, "image": "images/sechoir.png"},
-      {"choice": "Broching", "points": 40, "image": "images/broching.png"},
-      {"choice": "Shampoing", "points": 40, "image": "images/shampoing.png"},
-      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
+      {"choice": "Coupe offerte", "points": 100, "image": "images/coupeFemme.png"}, // ≈10 €
+      {"choice": "Shampoing offert", "points": 50, "image": "images/shampoing.png"}, // ≈5 €
+      {"choice": "Sechoir", "points": 40, "image": "images/sechoir.png"}, // ≈4 €
+      {"choice": "Broching", "points": 60, "image": "images/broching.png"}, // ≈6 €
+      {"choice": "Shampoing", "points": 50, "image": "images/shampoing.png"}, // ≈5 €
+      {"choice": "Réduction de 10%", "points": 100, "image": "images/reduction.png"},
     ],
   ),
   Category(
@@ -125,13 +135,13 @@ final List<Category> categories = [
     color: Color(0xFF02B984),
     image: "images/boulangerie.png",
     choices: [
-      {"choice": "Baguette", "points": 40, "image": "images/baguette.png"},
-      {"choice": "Tradition", "points": 35, "image": "images/tradition.png"},
-      {"choice": "Croissant", "points": 30, "image": "images/croissant.png"},
-      {"choice": "Pain au chocolat", "points": 20, "image": "images/painchocolat.png"},
-      {"choice": "Cookies", "points": 20, "image": "images/cookies.png"},
-      {"choice": "10 €", "points": 10, "image": "images/10e.png"},
-      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
+      {"choice": "Baguette", "points": 20, "image": "images/baguette.png"}, // ≈2 €
+      {"choice": "Tradition", "points": 30, "image": "images/tradition.png"}, // ≈3 €
+      {"choice": "Croissant", "points": 20, "image": "images/croissant.png"}, // ≈2 €
+      {"choice": "Pain au chocolat", "points": 20, "image": "images/painchocolat.png"}, // ≈2 €
+      {"choice": "Cookies", "points": 20, "image": "images/cookies.png"}, // ≈2 €
+      {"choice": "10 €", "points": 100, "image": "images/10e.png"},
+      {"choice": "Réduction de 10%", "points": 100, "image": "images/reduction.png"},
     ],
   ),
   Category(
@@ -140,11 +150,11 @@ final List<Category> categories = [
     color: Color(0xFF02B984),
     image: "images/centreBeaute.png",
     choices: [
-      {"choice": "Epilation", "points": 40, "image": "images/epilation.png"},
-      {"choice": "Manicure", "points": 35, "image": "images/manicure.png"},
-      {"choice": "Pedicure", "points": 30, "image": "images/pedicure.png"},
-      {"choice": "10 €", "points": 10, "image": "images/10e.png"},
-      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
+      {"choice": "Epilation", "points": 80, "image": "images/epilation.png"}, // ≈8 €
+      {"choice": "Manicure", "points": 70, "image": "images/manicure.png"}, // ≈7 €
+      {"choice": "Pedicure", "points": 70, "image": "images/pedicure.png"}, // ≈7 €
+      {"choice": "10 €", "points": 100, "image": "images/10e.png"},
+      {"choice": "Réduction de 10%", "points": 100, "image": "images/reduction.png"},
     ],
   ),
   Category(
@@ -153,10 +163,21 @@ final List<Category> categories = [
     color: Color(0xFF02B984),
     image: "images/garagiste.png",
     choices: [
-      {"choice": "Diagnostique", "points": 40, "image": "images/diagnostique.png"},
-      {"choice": "Vidange", "points": 35, "image": "images/vidange.png"},
-      {"choice": "10 €", "points": 10, "image": "images/10e.png"},
-      {"choice": "Réduction de 10%", "points": 20, "image": "images/reduction.png"},
+      {"choice": "Diagnostique", "points": 100, "image": "images/diagnostique.png"}, // ≈10 €
+      {"choice": "Vidange", "points": 120, "image": "images/vidange.png"}, // ≈12 €
+      {"choice": "10 €", "points": 100, "image": "images/10e.png"},
+      {"choice": "Réduction de 10%", "points": 100, "image": "images/reduction.png"},
+    ],
+  ),
+  Category(
+    id: 9,
+    name: "Autre",
+    color: Color(0xFFCD3636),
+    image: "images/gift.png",
+    choices: [
+      {"choice": "10 €", "points": 100, "image": "images/10e.png"},
+      {"choice": "Réduction de 10%", "points": 100, "image": "images/reduction.png"},
     ],
   ),
 ];
+

@@ -31,7 +31,7 @@ class _DownloadImageModalState extends State<DownloadImageModal> {
     });
   }
 
-  Future<void> _launchUrl() async {
+  Future<void> _launchUrlFo() async {
     if (!await launchUrl(Uri.parse(url))) {
       throw Exception('Impossible d\'ouvrir l\'URL ${url}');
     }
@@ -73,21 +73,19 @@ class _DownloadImageModalState extends State<DownloadImageModal> {
               url,
               width: 200,
               height: 200,
-              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                if (loadingProgress == null) {
-                  return child; // Image is loaded
-                } else {
-                  return Center(
-                    child: Utils.getLoading(),
-                  ); // Show loading indicator
-                }
+              loadingBuilder: (context, child, progress) {
+                if (progress == null) return child;
+                return const Center(child: CircularProgressIndicator());
               },
-            ),
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.broken_image, size: 50);
+              },
+            )
         ],
       ),
       actions: [
         ElevatedButton(
-          onPressed: () => _launchUrl(),
+          onPressed: () => _launchUrlFo(),
           child: Text('Télécharger l\'image'),
         ),
         TextButton(
