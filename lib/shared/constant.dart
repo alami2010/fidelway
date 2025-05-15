@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../model/category.dart';
 
-const Color kMainColor = Color(0xFF00A8A3); // Refined Teal
+const Color kMainColor = Color(0xFF2979FF); // Refined Teal
 const Color kMainColorLight = Color(0xFF66D3CF); // Soft Teal Light
 const Color kGreyTextColor = Color(0xFF6E7A8A); // Elegant Slate Grey
 const Color kTextColor = Color(0xFF333333); // Deep Charcoal for readability
