@@ -240,7 +240,7 @@ class _ContactUsState extends State<ContactUs> {
           _buildContactMethod(
             icon: Icons.phone_outlined,
             title: 'Par téléphone',
-            subtitle: 'Appelez-nous au 01 23 45 67 89',
+            subtitle: 'Appelez-nous au 06 69 07 65 35',
             color: Colors.blue[50]!,
           ),
           const SizedBox(height: 12),
@@ -249,13 +249,6 @@ class _ContactUsState extends State<ContactUs> {
             title: 'Par email',
             subtitle: 'contact@fidelway.com',
             color: Colors.green[50]!,
-          ),
-          const SizedBox(height: 12),
-          _buildContactMethod(
-            icon: Icons.chat_outlined,
-            title: 'Chat en direct',
-            subtitle: 'Disponible de 9h à 18h',
-            color: Colors.orange[50]!,
           ),
         ],
       ),

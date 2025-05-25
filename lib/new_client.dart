@@ -24,13 +24,6 @@ class GenerateScreenState extends State<GenerateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Carte de Fidélité", style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: kMainColor,
-        foregroundColor: Colors.white,
-      ),
       body: _buildContent(),
     );
   }
