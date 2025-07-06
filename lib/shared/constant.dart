@@ -67,7 +67,10 @@ final List categories = [
     color: Color(0xFF02B984),
     image: "images/restauration.png",
     choices: [
-      {"choice": "Pizza", "points": 100, "image": "images/pizza.png"}, // ≈10 €
+      {"choice": "Pizza junior", "points": 100, "image": "images/pizza1.jpg"},
+      // ≈10 €
+      {"choice": "Pizza senior", "points": 150, "image": "images/pizza.png"},
+      // ≈10 €
       {"choice": "Burger", "points": 80, "image": "images/burger.png"}, // ≈8 €
       {"choice": "Sandwich", "points": 60, "image": "images/sandwich.png"}, // ≈6 €
       {"choice": "Boisson", "points": 30, "image": "images/boisson.png"}, // ≈3 €

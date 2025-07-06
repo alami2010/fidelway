@@ -28,14 +28,14 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
 
     try {
       final result = (kIsWeb)
-          ? "test_21-10-000x00x3x"
+          ? "https://votre-site.com/carte-54"
           : await Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const BarcodeScannerScreen()),
             );
 
       if (result != null) {
-        final value = await APIRest.scan(result);
+        final value = await APIRest.scan(getLastSegment(result));
         setState(() {
           client = value;
           isLoading = false;
@@ -56,6 +56,15 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
         ),
       );
     }
+  }
+
+  String getLastSegment(String input) {
+    // Remove trailing slash if any
+    input = input.endsWith('/') ? input.substring(0, input.length - 1) : input;
+
+    // Split and return the last segment
+    final parts = input.split('/');
+    return parts.isNotEmpty ? parts.last : '';
   }
 
   void resetClient() {
