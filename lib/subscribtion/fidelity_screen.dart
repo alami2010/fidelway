@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import '../home.dart';
 import '../model/APIRest.dart';
@@ -8,6 +10,7 @@ import '../shared/constant.dart';
 import '../shared/local_storage_helper.dart';
 import '../shared/menu.dart';
 import '../shared/utils.dart';
+import '../shared/language_provider.dart';
 
 class FidelityScreen extends StatefulWidget {
   @override
@@ -48,12 +51,14 @@ class _FidelityScreenState extends State<FidelityScreen> {
 
       await APIRest.saveCategory(selectedCategory);
 
-      Utils.showSucces("Choix bien sauvegarder", context: context);
+      Utils.showSucces(AppLocalizations.of(context)!.choicesSavedSuccessfully,
+          context: context);
       stopLoading();
       const HomeScreen().launch(context);
     } catch (error) {
       stopLoading();
-      Utils.showErreur("Erreur lors de sauvgarde de choix", context: context);
+      Utils.showErreur(AppLocalizations.of(context)!.errorSavingChoices,
+          context: context);
     }
   }
 
@@ -70,7 +75,8 @@ class _FidelityScreenState extends State<FidelityScreen> {
   }
 
   Future<void> selectCategory(Category category) async {
-    bool? result = await Utils.showYesNoDialog(context, "En changeant de métier, votre configuration sera perdue. Continuer ?  ");
+    bool? result = await Utils.showYesNoDialog(context,
+        AppLocalizations.of(context)!.changingBusinessWillLoseConfiguration);
     if (result == true) {
       setState(() {
         selectedCategory = category.copyWith();
@@ -140,22 +146,28 @@ class _FidelityScreenState extends State<FidelityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: MyDrawer(),
-      appBar: AppBar(
-        title: Text('Programme de fidélité'),
-        backgroundColor: kMainColor,
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
-      ),
-      body: Column(
-        children: [
-          if (!showCategories) _buildCategoryHeader(),
-          Expanded(
-            child: showCategories ? _buildCategorySelection() : _buildRewardsManagement(),
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Scaffold(
+          drawer: MyDrawer(),
+          appBar: AppBar(
+            title: Text(AppLocalizations.of(context)!.loyaltyProgram),
+            backgroundColor: kMainColor,
+            elevation: 0,
+            iconTheme: IconThemeData(color: Colors.white),
           ),
-        ],
-      ),
+          body: Column(
+            children: [
+              if (!showCategories) _buildCategoryHeader(),
+              Expanded(
+                child: showCategories
+                    ? _buildCategorySelection()
+                    : _buildRewardsManagement(),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -196,7 +208,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
                   ),
                 ),
                 Text(
-                  '${selectedCategory?.choices.length ?? 0} récompenses configurées',
+                  '${selectedCategory?.choices.length ?? 0} ${AppLocalizations.of(context)!.rewardsConfigured}',
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 14,
@@ -221,7 +233,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Sélectionnez votre secteur d\'activité',
+            AppLocalizations.of(context)!.selectYourBusinessSector,
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -230,7 +242,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
           ),
           SizedBox(height: 8),
           Text(
-            'Choisissez la catégorie qui correspond à votre commerce pour configurer votre programme de fidélité',
+            AppLocalizations.of(context)!.chooseCategoryForLoyaltyProgram,
             style: TextStyle(
               color: Colors.grey[600],
               fontSize: 14,
@@ -245,9 +257,9 @@ class _FidelityScreenState extends State<FidelityScreen> {
                 mainAxisSpacing: 16,
                 childAspectRatio: 0.9,
               ),
-              itemCount: categories.length,
+              itemCount: getCategories(context).length,
               itemBuilder: (context, index) {
-                final category = categories[index];
+                final category = getCategories(context)[index];
                 return _buildCategoryCard(category);
               },
             ),
@@ -314,7 +326,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                '${category.choices.length} récompenses',
+                '${category.choices.length} ${AppLocalizations.of(context)!.rewards}',
                 style: TextStyle(
                   color: category.color,
                   fontSize: 12,
@@ -333,6 +345,9 @@ class _FidelityScreenState extends State<FidelityScreen> {
       children: [
         _buildActionButtons(),
         Divider(height: 1),
+        // Add reward preview section
+        if (selectedCategory?.choices.isNotEmpty ?? false)
+          _buildRewardPreview(),
         Expanded(
           child: selectedCategory?.choices.isEmpty ?? true
               ? _buildEmptyState()
@@ -376,7 +391,8 @@ class _FidelityScreenState extends State<FidelityScreen> {
                 child: ElevatedButton.icon(
                   onPressed: _saveChoices,
                   icon: const Icon(Icons.save_rounded, size: 18),
-                  label: const Text('Enregistrer', style: TextStyle(fontWeight: FontWeight.w600)),
+                  label: Text(AppLocalizations.of(context)!.save,
+                      style: TextStyle(fontWeight: FontWeight.w600)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kMainColor,
                     foregroundColor: Colors.white,
@@ -395,7 +411,8 @@ class _FidelityScreenState extends State<FidelityScreen> {
               OutlinedButton.icon(
                 onPressed: showAddChoiceDialog,
                 icon: const Icon(Icons.add_circle_outline, size: 18),
-                label: const Text('Ajouter', style: TextStyle(fontWeight: FontWeight.w500)),
+                label: Text(AppLocalizations.of(context)!.add,
+                    style: TextStyle(fontWeight: FontWeight.w500)),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: kMainColor,
                   side: BorderSide(color: kMainColor.withOpacity(0.5)),
@@ -414,7 +431,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: PopupMenuButton(
-                  tooltip: 'Options',
+                  tooltip: AppLocalizations.of(context)!.options,
                   icon: Icon(Icons.settings, color: Colors.grey[700], size: 20),
                   elevation: 4,
                   shape: RoundedRectangleBorder(
@@ -424,12 +441,12 @@ class _FidelityScreenState extends State<FidelityScreen> {
                   itemBuilder: (context) => [
                     _buildPopupMenuItem(
                       icon: Icons.restore,
-                      text: 'Réinitialiser par défaut',
+                      text: AppLocalizations.of(context)!.resetToDefault,
                       onTap: defaultChoice,
                     ),
                     _buildPopupMenuItem(
                       icon: Icons.delete_outline,
-                      text: 'Tout supprimer',
+                      text: AppLocalizations.of(context)!.deleteAll,
                       onTap: resetChoice,
                       isDestructive: true,
                     ),
@@ -456,7 +473,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Traitement en cours...',
+                  AppLocalizations.of(context)!.processingInProgress,
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],
@@ -505,7 +522,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
           Icon(Icons.card_giftcard, size: 64, color: Colors.grey[400]),
           SizedBox(height: 16),
           Text(
-            'Aucune récompense configurée',
+            AppLocalizations.of(context)!.noRewardsConfigured,
             style: TextStyle(
               fontSize: 18,
               color: Colors.grey[600],
@@ -513,9 +530,48 @@ class _FidelityScreenState extends State<FidelityScreen> {
           ),
           SizedBox(height: 8),
           Text(
-            'Ajoutez des récompenses pour votre programme de fidélité',
+            AppLocalizations.of(context)!.addRewardsForLoyaltyProgram,
             style: TextStyle(
               color: Colors.grey[500],
+            ),
+          ),
+          SizedBox(height: 24),
+          // Show example reward preview
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 32),
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.blue.shade200),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.info_outline,
+                        color: Colors.blue.shade600, size: 20),
+                    SizedBox(width: 8),
+                    Text(
+                      AppLocalizations.of(context)!.exampleRewards,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue.shade800,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Text(
+                  "• À 100 points, vous bénéficiez d'une remise de 10% sur votre 10ᵉ commande\n• À 200 points, vous bénéficiez d'un bon de 10€ valable sur votre 20ᵉ commande",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.blue.shade700,
+                    height: 1.4,
+                  ),
+                ),
+              ],
             ),
           ),
           SizedBox(height: 24),
@@ -528,7 +584,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
               ),
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
-            child: Text('Ajouter une récompense'),
+            child: Text(AppLocalizations.of(context)!.addReward),
           ),
         ],
       ),
@@ -638,7 +694,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
                           ),
                           filled: true,
                           fillColor: Colors.white,
-                          suffixText: 'points',
+                          suffixText: AppLocalizations.of(context)!.points,
                           suffixStyle: TextStyle(
                             color: Colors.grey[600],
                             fontWeight: FontWeight.w500,
@@ -691,7 +747,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Ajouter une récompense",
+                              AppLocalizations.of(context)!.addRewardTitle,
                               style: kTextStyle.copyWith(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -699,7 +755,8 @@ class _FidelityScreenState extends State<FidelityScreen> {
                             ),
                             SizedBox(height: 8),
                             Text(
-                              "Un achat = 10 points",
+                              AppLocalizations.of(context)!
+                                  .onePurchaseEquals10Points,
                               style: kTextStyle.copyWith(
                                 fontSize: 14,
                                 color: Colors.grey[600],
@@ -735,7 +792,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
                           Row(
                             children: [
                               Text(
-                                'Prédéfini',
+                                AppLocalizations.of(context)!.predefined,
                                 style: TextStyle(
                                   color: !isManualEntry ? primaryColor : Colors.grey,
                                   fontWeight: !isManualEntry ? FontWeight.bold : FontWeight.normal,
@@ -752,7 +809,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
                                 },
                               ),
                               Text(
-                                'Personnalisé',
+                                AppLocalizations.of(context)!.custom,
                                 style: TextStyle(
                                   color: isManualEntry ? primaryColor : Colors.grey,
                                   fontWeight: isManualEntry ? FontWeight.bold : FontWeight.normal,
@@ -802,7 +859,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
                             ),
                           ),
                           child: Text(
-                            "Annuler",
+                            AppLocalizations.of(context)!.cancel,
                             style: TextStyle(color: Colors.grey[700]),
                           ),
                         ),
@@ -824,7 +881,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
                             ),
                           ),
                           child: Text(
-                            "Ajouter",
+                            AppLocalizations.of(context)!.addRewardButton,
                             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -846,14 +903,14 @@ class _FidelityScreenState extends State<FidelityScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Saisie manuelle',
+          AppLocalizations.of(context)!.manualEntry,
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 16),
         TextFormField(
           controller: choiceController,
           decoration: InputDecoration(
-            labelText: "Nom de la récompense",
+            labelText: AppLocalizations.of(context)!.rewardName,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
             ),
@@ -866,14 +923,14 @@ class _FidelityScreenState extends State<FidelityScreen> {
         TextFormField(
           controller: pointsController,
           decoration: InputDecoration(
-            labelText: "Points nécessaires",
+            labelText: AppLocalizations.of(context)!.pointsRequired,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
             ),
             fillColor: Colors.grey[100],
             filled: true,
             prefixIcon: Icon(Icons.star),
-            suffixText: "points",
+            suffixText: AppLocalizations.of(context)!.points,
           ),
           keyboardType: TextInputType.number,
         ),
@@ -883,7 +940,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
 
 // Category selection form
   Widget _buildCategorySelectionForm(StateSetter setState, Map<String, dynamic>? selectedChoice, Color primaryColor, Color accentColor) {
-    final category = categories.firstWhere(
+    final category = getCategories(context).firstWhere(
       (cat) => cat.id.toString() == selectedCategory?.id.toString(),
       orElse: () => Category(id: -1, name: '', image: '', color: Colors.black, choices: []),
     );
@@ -892,11 +949,11 @@ class _FidelityScreenState extends State<FidelityScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Sélectionnez une récompense',
+          AppLocalizations.of(context)!.selectReward,
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         Text(
-          'Catégorie: ${category.name}',
+          '${AppLocalizations.of(context)!.category}: ${category.name}',
           style: TextStyle(fontSize: 14, color: Colors.grey[600]),
         ),
         SizedBox(height: 12),
@@ -955,7 +1012,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
                                 ),
                               ),
                               Text(
-                                "${choice["points"]} points",
+                                "${choice["points"]} ${AppLocalizations.of(context)!.points}",
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey[600],
@@ -982,14 +1039,14 @@ class _FidelityScreenState extends State<FidelityScreen> {
           TextFormField(
             controller: pointsController,
             decoration: InputDecoration(
-              labelText: "Ajuster les points",
+              labelText: AppLocalizations.of(context)!.adjustPoints,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
               fillColor: Colors.grey[100],
               filled: true,
               prefixIcon: Icon(Icons.edit),
-              suffixText: "points",
+              suffixText: AppLocalizations.of(context)!.points,
             ),
             keyboardType: TextInputType.number,
             onChanged: (value) {
@@ -1001,7 +1058,8 @@ class _FidelityScreenState extends State<FidelityScreen> {
     );
   }
   Future<void> resetChoice() async {
-    bool? result = await Utils.showYesNoDialog(context, "Êtes-vous sûr de vouloir supprimer toutes les récompenses ?");
+    bool? result = await Utils.showYesNoDialog(
+        context, AppLocalizations.of(context)!.sureToDeleteAllRewards);
     if (result == true) {
       startLoading();
       setState(() {
@@ -1013,10 +1071,13 @@ class _FidelityScreenState extends State<FidelityScreen> {
   }
 
   Future<void> defaultChoice() async {
-    bool? result = await Utils.showYesNoDialog(context, "Êtes-vous sûr de vouloir réinitialiser les récompenses par défaut ?");
+    bool? result = await Utils.showYesNoDialog(
+        context, AppLocalizations.of(context)!.sureToResetDefaultRewards);
     if (result == true) {
       startLoading();
-      List<Map<String, dynamic>> choices = List.from(categories.firstWhere((cat) => cat.id == selectedCategory?.id).choices);
+      List<Map<String, dynamic>> choices = List.from(getCategories(context)
+          .firstWhere((cat) => cat.id == selectedCategory?.id)
+          .choices);
 
       setState(() {
         selectedCategory!.choices = choices;
@@ -1024,5 +1085,197 @@ class _FidelityScreenState extends State<FidelityScreen> {
       _initializeControllers();
       stopLoading();
     }
+  }
+
+  /// Generate reward preview messages based on configured rewards
+  List<String> _generateRewardPreviews() {
+    if (selectedCategory?.choices.isEmpty ?? true) {
+      return [];
+    }
+
+    List<String> previews = [];
+
+    // Sort rewards by points to show them in ascending order
+    List<Map<String, dynamic>> sortedChoices =
+        List.from(selectedCategory!.choices);
+    sortedChoices
+        .sort((a, b) => (a["points"] as int).compareTo(b["points"] as int));
+
+    for (int i = 0; i < sortedChoices.length; i++) {
+      final choice = sortedChoices[i];
+      final points = choice["points"] as int;
+      final rewardName = choice["choice"] as String;
+
+      // Determine order number (10th, 20th, etc.)
+      final orderNumber = ((i + 1) * 10).toString();
+
+      // Extract percentage or amount from reward name
+      String previewMessage = "";
+
+      if (rewardName.toLowerCase().contains("%") ||
+          rewardName.toLowerCase().contains("discount") ||
+          rewardName.toLowerCase().contains("réduction")) {
+        // Extract percentage
+        RegExp percentageRegex = RegExp(r'(\d+)%');
+        Match? match = percentageRegex.firstMatch(rewardName);
+        if (match != null) {
+          String percentage = match.group(1)!;
+          previewMessage = AppLocalizations.of(context)!
+                  .atPointsYouBenefitFrom(points.toString()) +
+              " " +
+              AppLocalizations.of(context)!
+                  .discountOnYourOrder(percentage, orderNumber);
+        } else {
+          // Default to 10% if no percentage found
+          previewMessage = AppLocalizations.of(context)!
+                  .atPointsYouBenefitFrom(points.toString()) +
+              " " +
+              AppLocalizations.of(context)!
+                  .discountOnYourOrder("10", orderNumber);
+        }
+      } else if (rewardName.toLowerCase().contains("€") ||
+          rewardName.toLowerCase().contains("euro")) {
+        // Extract amount
+        RegExp amountRegex = RegExp(r'(\d+)\s*€?');
+        Match? match = amountRegex.firstMatch(rewardName);
+        if (match != null) {
+          String amount = match.group(1)!;
+          previewMessage = AppLocalizations.of(context)!
+                  .atPointsYouBenefitFrom(points.toString()) +
+              " " +
+              AppLocalizations.of(context)!
+                  .orVoucherValidOnYourOrder(amount, orderNumber);
+        } else {
+          // Default to 10€ if no amount found
+          previewMessage = AppLocalizations.of(context)!
+                  .atPointsYouBenefitFrom(points.toString()) +
+              " " +
+              AppLocalizations.of(context)!
+                  .orVoucherValidOnYourOrder("10", orderNumber);
+        }
+      } else {
+        // Generic reward description
+        previewMessage =
+            "${AppLocalizations.of(context)!.atPointsYouBenefitFrom(points.toString())} ${rewardName.toLowerCase()}";
+      }
+
+      previews.add(previewMessage);
+    }
+
+    return previews;
+  }
+
+  /// Build reward preview section
+  Widget _buildRewardPreview() {
+    final previews = _generateRewardPreviews();
+
+    if (previews.isEmpty) {
+      return Container(
+        margin: EdgeInsets.all(16),
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.blue.shade50,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.blue.shade200),
+        ),
+        child: Column(
+          children: [
+            Icon(Icons.info_outline, color: Colors.blue.shade600, size: 32),
+            SizedBox(height: 12),
+            Text(
+              AppLocalizations.of(context)!.noRewardsAvailable,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.blue.shade800,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              AppLocalizations.of(context)!.configureRewardsToSeePreview,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.blue.shade600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.green.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.green.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.green.withOpacity(0.1),
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.card_giftcard, color: Colors.green.shade600, size: 24),
+              SizedBox(width: 8),
+              Text(
+                AppLocalizations.of(context)!.rewardPreview,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green.shade800,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 4),
+          Text(
+            AppLocalizations.of(context)!.whatYouCanEarn,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.green.shade600,
+            ),
+          ),
+          SizedBox(height: 16),
+          ...previews
+              .map((preview) => Padding(
+                    padding: EdgeInsets.only(bottom: 12),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          margin: EdgeInsets.only(top: 6, right: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade600,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            preview,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.green.shade800,
+                              height: 1.4,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ))
+              .toList(),
+        ],
+      ),
+    );
   }
 }

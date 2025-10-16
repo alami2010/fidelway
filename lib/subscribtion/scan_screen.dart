@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import '../shared/language_provider.dart';
 
 class BarcodeScannerScreen extends StatefulWidget {
   const BarcodeScannerScreen({super.key});
@@ -20,10 +23,12 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mobile Scanner'),
-        actions: [
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(AppLocalizations.of(context)!.mobileScanner),
+            actions: [
           IconButton(
             color: Colors.white,
             icon: ValueListenableBuilder(
@@ -78,11 +83,14 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
           Expanded(
             flex: 1,
             child: Center(
-              child: Text(scannedData ?? 'Scan something!'),
-            ),
+                  child: Text(scannedData ??
+                      AppLocalizations.of(context)!.scanSomething),
+                ),
           ),
         ],
       ),
+        );
+      },
     );
   }
 }

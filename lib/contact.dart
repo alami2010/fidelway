@@ -2,8 +2,11 @@ import 'package:fidelway/shared/local_storage_helper.dart';
 import 'package:fidelway/shared/menu.dart';
 import 'package:fidelway/shared/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import '../shared/constant.dart';
+import '../shared/language_provider.dart';
 import 'model/APIRest.dart';
 
 class ContactUs extends StatefulWidget {
@@ -45,10 +48,13 @@ class _ContactUsState extends State<ContactUs> {
       );
 
       setState(() => _isSubmitted = true);
-      Utils.showSucces("Message envoyé avec succès !", context: context);
+      Utils.showSucces(AppLocalizations.of(context)!.messageSentSuccessfully,
+          context: context);
       _formKey.currentState!.reset();
     } catch (e) {
-      Utils.showErreur("Échec de l'envoi du message: ${e.toString()}", context: context);
+      Utils.showErreur(
+          "${AppLocalizations.of(context)!.errorSendingMessage}: ${e.toString()}",
+          context: context);
     } finally {
       setState(() => _isLoading = false);
     }
@@ -56,10 +62,12 @@ class _ContactUsState extends State<ContactUs> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Nous contacter'),
-        backgroundColor: kMainColor,
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(AppLocalizations.of(context)!.contactUs),
+            backgroundColor: kMainColor,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -82,6 +90,8 @@ class _ContactUsState extends State<ContactUs> {
         ),
       ),
     );
+      },
+    );
   }
 
   Widget _buildHeaderSection() {
@@ -89,7 +99,7 @@ class _ContactUsState extends State<ContactUs> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Contactez notre équipe',
+          AppLocalizations.of(context)!.contactTeam,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: kMainColor,
@@ -97,7 +107,7 @@ class _ContactUsState extends State<ContactUs> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Nous sommes là pour répondre à vos questions et recevoir vos feedbacks.',
+          AppLocalizations.of(context)!.contactDescription,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 color: Colors.grey[600],
               ),
@@ -122,7 +132,7 @@ class _ContactUsState extends State<ContactUs> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: Text(
-                    'Merci pour votre message ! Nous vous répondrons dès que possible.',
+                    AppLocalizations.of(context)!.thankYouMessage,
                     style: TextStyle(
                       color: Colors.green[700],
                       fontWeight: FontWeight.w500,
@@ -133,16 +143,16 @@ class _ContactUsState extends State<ContactUs> {
               TextFormField(
                 controller: _emailController,
                 decoration: _buildInputDecoration(
-                  label: 'Adresse email',
+                  label: AppLocalizations.of(context)!.emailAddress,
                   icon: Icons.email_outlined,
                 ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre email';
+                    return AppLocalizations.of(context)!.pleaseEnterEmail;
                   }
                   if (!value.contains('@')) {
-                    return 'Veuillez entrer un email valide';
+                    return AppLocalizations.of(context)!.pleaseEnterValidEmail;
                   }
                   return null;
                 },
@@ -151,7 +161,7 @@ class _ContactUsState extends State<ContactUs> {
               TextFormField(
                 controller: _phoneController,
                 decoration: _buildInputDecoration(
-                  label: 'Numéro de téléphone (optionnel)',
+                  label: AppLocalizations.of(context)!.phoneNumberOptional,
                   icon: Icons.phone_outlined,
                 ),
                 keyboardType: TextInputType.phone,
@@ -160,12 +170,12 @@ class _ContactUsState extends State<ContactUs> {
               TextFormField(
                 controller: _subjectController,
                 decoration: _buildInputDecoration(
-                  label: 'Sujet',
+                  label: AppLocalizations.of(context)!.subject,
                   icon: Icons.subject_outlined,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer un sujet';
+                    return AppLocalizations.of(context)!.pleaseEnterSubject;
                   }
                   return null;
                 },
@@ -174,16 +184,16 @@ class _ContactUsState extends State<ContactUs> {
               TextFormField(
                 controller: _messageController,
                 decoration: _buildInputDecoration(
-                  label: 'Message',
+                  label: AppLocalizations.of(context)!.message,
                   icon: Icons.message_outlined,
                 ),
                 maxLines: 5,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre message';
+                    return AppLocalizations.of(context)!.pleaseEnterMessage;
                   }
                   if (value.length < 10) {
-                    return 'Votre message est trop court';
+                    return AppLocalizations.of(context)!.messageTooShort;
                   }
                   return null;
                 },
@@ -208,8 +218,8 @@ class _ContactUsState extends State<ContactUs> {
                             color: Colors.white,
                           ),
                         )
-                      : const Text(
-                          'Envoyer le message',
+                      : Text(
+                          AppLocalizations.of(context)!.sendMessage,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -231,7 +241,7 @@ class _ContactUsState extends State<ContactUs> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Autres moyens de contact',
+            AppLocalizations.of(context)!.otherContactMethods,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -239,15 +249,15 @@ class _ContactUsState extends State<ContactUs> {
           const SizedBox(height: 16),
           _buildContactMethod(
             icon: Icons.phone_outlined,
-            title: 'Par téléphone',
-            subtitle: 'Appelez-nous au 06 69 07 65 35',
+            title: AppLocalizations.of(context)!.byPhone,
+            subtitle: AppLocalizations.of(context)!.callUsAt,
             color: Colors.blue[50]!,
           ),
           const SizedBox(height: 12),
           _buildContactMethod(
             icon: Icons.email_outlined,
-            title: 'Par email',
-            subtitle: 'contact@fidelway.com',
+            title: AppLocalizations.of(context)!.byEmail,
+            subtitle: AppLocalizations.of(context)!.contactEmail,
             color: Colors.green[50]!,
           ),
         ],

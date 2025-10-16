@@ -5,6 +5,7 @@ import 'package:fidelway/tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
 import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'new_client.dart';
 import 'scanne.dart';
@@ -61,7 +62,10 @@ class _HomeScreenState extends State<HomeScreen>
         initialSelectedTab: "FidelWay",
         useSafeArea: false,
         // default: true, apply safe area wrapper
-        labels: const ["FidelWay", "Nouveau"],
+        labels: [
+          AppLocalizations.of(context)!.appTitle,
+          AppLocalizations.of(context)!.signUp
+        ],
         icons: const [
           Icons.dashboard,
           Icons.add

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import 'shared/local_storage_helper.dart';
+import 'shared/language_provider.dart';
 
 class TypeFidelWay extends StatefulWidget {
   @override
@@ -16,22 +19,38 @@ class TypeFidelWayState extends State<TypeFidelWay> {
   void initState() {
     // TODO: implement initState
     super.initState();
+  }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _initializeSampleData();
+  }
+
+  void _initializeSampleData() {
     var mode = LocalStorageHelper.readMode() ?? '';
 
-    sampleData.add(
-        RadioModel(1, mode.isEmpty || mode == 1.toString(), 'logo', 'Default'));
-    sampleData.add(RadioModel(2, mode == 2.toString(), 'burger', 'Burger'));
-    sampleData.add(RadioModel(3, mode == 3.toString(), 'pizza', 'Pizza'));
-    sampleData.add(RadioModel(4, mode == 4.toString(), 'coiffeur', 'Coiffeur'));
+    sampleData.add(RadioModel(1, mode.isEmpty || mode == 1.toString(), 'logo',
+        AppLocalizations.of(context)!.defaultMode));
+    sampleData.add(RadioModel(2, mode == 2.toString(), 'burger',
+        AppLocalizations.of(context)!.burger));
+    sampleData.add(RadioModel(
+        3, mode == 3.toString(), 'pizza', AppLocalizations.of(context)!.pizza));
+    sampleData.add(RadioModel(4, mode == 4.toString(), 'coiffeur',
+        AppLocalizations.of(context)!.hairdresser));
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("Application mode"),
-      ),
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        // Reinitialize sample data when language changes
+        _initializeSampleData();
+
+        return new Scaffold(
+          appBar: new AppBar(
+            title: new Text(AppLocalizations.of(context)!.applicationMode),
+          ),
       body: new ListView.builder(
         itemCount: sampleData.length,
         itemBuilder: (BuildContext context, int index) {
@@ -49,6 +68,8 @@ class TypeFidelWayState extends State<TypeFidelWay> {
           );
         },
       ),
+    );
+      },
     );
   }
 }

@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'shared/language_provider.dart';
 
 class FildelityBar extends StatelessWidget {
   const FildelityBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         SizedBox(width: 24),
-         MyTab(text: 'Fidelway', isSelected: true),
-       ],
+            MyTab(
+                text: AppLocalizations.of(context)!.appTitle, isSelected: true),
+          ],
+        );
+      },
     );
   }
 }

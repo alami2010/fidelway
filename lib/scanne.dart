@@ -3,10 +3,13 @@ import 'package:fidelway/subscribtion/scan_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import 'model/APIRest.dart';
 import 'model/choice_result.dart';
 import 'shared/local_storage_helper.dart';
+import 'shared/language_provider.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -51,7 +54,8 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Erreur lors du scan: ${e.toString()}'),
+          content: Text(
+              '${AppLocalizations.of(context)!.errorScanning}: ${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -87,7 +91,8 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${choice.points} points échangés avec succès!'),
+          content: Text(
+              '${choice.points} ${AppLocalizations.of(context)!.pointsExchangedSuccessfully}'),
           backgroundColor: Colors.green,
         ),
       );
@@ -97,7 +102,8 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Erreur lors de l\'échange: ${e.toString()}'),
+          content: Text(
+              '${AppLocalizations.of(context)!.errorExchanging}: ${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -125,9 +131,11 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    var mode = LocalStorageHelper.readMode();
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        var mode = LocalStorageHelper.readMode();
+        return Scaffold(
+          backgroundColor: const Color(0xFFF8F9FA),
       body: Stack(
         children: [
           RefreshIndicator(
@@ -183,6 +191,8 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
         ],
       ),
     );
+      },
+    );
   }
 
   Widget _buildScannerCard() {
@@ -216,7 +226,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
               ),
               const SizedBox(height: 20),
               Text(
-                'SCANNER UNE CARTE',
+                AppLocalizations.of(context)!.scanCard,
                 style: kTextStyle.copyWith(
                   color: Colors.white,
                   fontSize: 22,
@@ -226,7 +236,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
               ),
               const SizedBox(height: 8),
               Text(
-                'Accumulez ou utilisez vos points',
+                AppLocalizations.of(context)!.accumulateOrUsePoints,
                 style: kTextStyle.copyWith(
                   color: Colors.white.withOpacity(0.9),
                   fontSize: 14,
@@ -273,7 +283,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'VOS POINTS',
+                          AppLocalizations.of(context)!.yourPoints,
                           style: kTextStyle.copyWith(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -296,7 +306,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                 ElevatedButton.icon(
                   onPressed: resetClient,
                   icon: const Icon(Icons.logout, size: 18),
-                  label: const Text('Quitter'),
+                  label: Text(AppLocalizations.of(context)!.quit),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kAlertColor,
                     foregroundColor: Colors.white,
@@ -343,7 +353,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
               ),
               const SizedBox(width: 12),
               Text(
-                'RÉCOMPENSES DISPONIBLES',
+                AppLocalizations.of(context)!.availableRewards,
                 style: kTextStyle.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -407,7 +417,8 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
-                                      'POINTS INSUFFISANTS',
+                                      AppLocalizations.of(context)!
+                                          .insufficientPoints,
                                       style: kTextStyle.copyWith(
                                         color: Colors.white,
                                         fontSize: 10,
@@ -466,7 +477,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                                       ],
                               ),
                               child: Text(
-                                '${choice.points} points',
+                                '${choice.points} ${AppLocalizations.of(context)!.points}',
                                 style: kTextStyle.copyWith(
                                   color: Colors.white,
                                   fontSize: 13,
@@ -527,7 +538,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'HISTORIQUE DES TRANSACTIONS',
+                      AppLocalizations.of(context)!.transactionHistory,
                       style: kTextStyle.copyWith(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

@@ -19,3 +19,11 @@ Engine • revision ebc7d244d3 (2 months ago) • 2025-02-24 17:30:25 -0500
 Tools • Dart 3.8.0 (build 3.8.0-132.0.dev) • DevTools 2.43.0
 
 flutter build apk --release
+flutter build appbundle --release
+
+PS C:\devs\fidelway> flutter --version
+Flutter 3.30.0-0.1.pre • channel [user-branch] • unknown source
+Framework • revision 360a12c848 (5 months ago) • 2025-02-14 13:36:09 -0800
+Engine • revision 29a2f674ca
+Tools • Dart 3.8.0 (build 3.8.0-70.0.dev) • DevTools 2.43.0
+

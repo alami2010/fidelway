@@ -5,10 +5,13 @@ import 'package:fidelway/login/phone_verification.dart';
 import 'package:fidelway/model/APIRest.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import '../shared/button_global.dart';
 import '../shared/constant.dart';
 import '../shared/utils.dart';
+import '../shared/language_provider.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({Key? key}) : super(key: key);
@@ -35,16 +38,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Scaffold(
+          resizeToAvoidBottomInset: false,
       backgroundColor: kMainColor,
       appBar: AppBar(
         backgroundColor: kMainColor,
         elevation: 0.0,
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
-          'Mot de passe oublié',
-          style: kTextStyle.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+              AppLocalizations.of(context)!.forgotPasswordTitle,
+              style: kTextStyle.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(
@@ -53,8 +58,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Text(
-              'Merci de remplir votre email pour recevoir le code.',
-              style: kTextStyle.copyWith(color: Colors.white),
+                  AppLocalizations.of(context)!.forgotPasswordDescription,
+                  style: kTextStyle.copyWith(color: Colors.white),
             ),
           ),
           Expanded(
@@ -76,9 +81,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       controller: control,
                       enabled: true,
                       decoration: InputDecoration(
-                        labelText: 'Email',
+                            labelText: AppLocalizations.of(context)!.email,
 
-                        labelStyle: kTextStyle,
+                            labelStyle: kTextStyle,
                         border: const OutlineInputBorder(),
                         // prefixIcon: CountryCodePicker(
                         //   padding: EdgeInsets.zero,
@@ -100,18 +105,23 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       height: 20.0,
                     ),
                   ButtonGlobal(
-                    buttontext: 'Recevoir le code',
-                    buttonDecoration: kButtonDecoration.copyWith(color: kMainColor),
+                        buttontext: AppLocalizations.of(context)!.receiveCode,
+                        buttonDecoration: kButtonDecoration.copyWith(color: kMainColor),
                     onPressed: () {
                       startLoading();
                       APIRest.requestPasswordReset(control.text).then((value) {
-                        Utils.showSucces('Code bien envoyé à votre email si votre mail existe', context: context);
-                        const PhoneVerification().launch(context);
+                            Utils.showSucces(
+                                AppLocalizations.of(context)!
+                                    .codeSentSuccessfully,
+                                context: context);
+                            const PhoneVerification().launch(context);
                         stopLoading();
                       }).catchError((value) {
-                        Utils.showErreur('Erreur lors de l\'envoi de mail', context: context);
+                            Utils.showErreur(
+                                AppLocalizations.of(context)!.errorSendingEmail,
+                                context: context);
 
-                        stopLoading();
+                            stopLoading();
                       });
                     },
                   ),
@@ -121,6 +131,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           ),
         ],
       ),
+    );
+      },
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:fidelway/login/sign_in.dart';
 import 'package:fidelway/model/APIRest.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../model/user.dart';
 import '../shared/button_global.dart';
@@ -42,28 +43,34 @@ class _InscriptionState extends State<Inscription> {
   }
 
   String? _validateEmail(String? email) {
-    if (email!.isEmpty) return "L'email est requis";
+    if (email!.isEmpty) return AppLocalizations.of(context)!.emailRequired;
     final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
-    if (!emailRegex.hasMatch(email)) return "Format d'email invalide";
+    if (!emailRegex.hasMatch(email))
+      return AppLocalizations.of(context)!.emailInvalid;
     return null;
   }
 
   String? _validatePhone(String? phone) {
-    if (phone!.isEmpty) return "Le numéro de téléphone est requis";
+    if (phone!.isEmpty) return AppLocalizations.of(context)!.phoneRequired;
     final phoneRegex = RegExp(r'^\d{10,15}$');
-    if (!phoneRegex.hasMatch(phone)) return "Format de téléphone invalide";
+    if (!phoneRegex.hasMatch(phone))
+      return AppLocalizations.of(context)!.phoneInvalid;
     return null;
   }
 
   String? _validatePassword(String? password) {
-    if (password!.isEmpty) return "Le mot de passe est requis";
-    if (password.length < 8) return "Le mot de passe doit contenir au moins 8 caractères";
+    if (password!.isEmpty)
+      return AppLocalizations.of(context)!.passwordRequired;
+    if (password.length < 8)
+      return AppLocalizations.of(context)!.passwordMinLength;
     return null;
   }
 
   String? _validateConfirmPassword(String? confirmPassword) {
-    if (confirmPassword!.isEmpty) return "Veuillez confirmer votre mot de passe";
-    if (confirmPassword != passwordController.text) return "Les mots de passe ne correspondent pas";
+    if (confirmPassword!.isEmpty)
+      return AppLocalizations.of(context)!.confirmPasswordRequired;
+    if (confirmPassword != passwordController.text)
+      return AppLocalizations.of(context)!.passwordsDoNotMatch;
     return null;
   }
 
@@ -96,7 +103,7 @@ class _InscriptionState extends State<Inscription> {
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
-          'Inscription',
+          AppLocalizations.of(context)!.signUp,
           style: kTextStyle.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -116,7 +123,7 @@ class _InscriptionState extends State<Inscription> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      'Créez votre compte et commencez votre aventure',
+                      AppLocalizations.of(context)!.createAccount,
                       textAlign: TextAlign.center,
                       style: kTextStyle.copyWith(
                         color: Colors.white,
@@ -151,12 +158,13 @@ class _InscriptionState extends State<Inscription> {
                           buildInputField(
                             controller: nameController,
                             icon: Icons.person_outline,
-                            label: 'Nom complet',
-                            hint: 'Entrez votre nom complet',
+                            label: AppLocalizations.of(context)!.fullName,
+                            hint: AppLocalizations.of(context)!.enterFullName,
                             textFieldType: TextFieldType.NAME,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Le nom est requis';
+                                return AppLocalizations.of(context)!
+                                    .nameRequired;
                               }
                               return null;
                             },
@@ -167,8 +175,8 @@ class _InscriptionState extends State<Inscription> {
                           buildInputField(
                             controller: emailController,
                             icon: Icons.email_outlined,
-                            label: 'Adresse e-mail',
-                            hint: 'Entrez votre adresse e-mail',
+                            label: AppLocalizations.of(context)!.email,
+                            hint: AppLocalizations.of(context)!.enterEmail,
                             textFieldType: TextFieldType.EMAIL,
                             validator: _validateEmail,
                           ),
@@ -178,8 +186,8 @@ class _InscriptionState extends State<Inscription> {
                           buildInputField(
                             controller: phoneController,
                             icon: Icons.phone_outlined,
-                            label: 'Numéro de téléphone',
-                            hint: 'Entrez votre numéro de téléphone',
+                            label: AppLocalizations.of(context)!.phoneNumber,
+                            hint: AppLocalizations.of(context)!.phoneNumber,
                             textFieldType: TextFieldType.PHONE,
                             validator: _validatePhone,
                           ),
@@ -189,8 +197,8 @@ class _InscriptionState extends State<Inscription> {
                           buildPasswordField(
                             controller: passwordController,
                             icon: Icons.lock_outline,
-                            label: 'Mot de passe',
-                            hint: 'Créez votre mot de passe',
+                            label: AppLocalizations.of(context)!.password,
+                            hint: AppLocalizations.of(context)!.password,
                             obscureText: obscurePassword,
                             onToggleVisibility: () {
                               setState(() {
@@ -205,8 +213,9 @@ class _InscriptionState extends State<Inscription> {
                           buildPasswordField(
                             controller: confirmPasswordController,
                             icon: Icons.lock_outline,
-                            label: 'Confirmation du mot de passe',
-                            hint: 'Confirmez votre mot de passe',
+                            label:
+                                AppLocalizations.of(context)!.confirmPassword,
+                            hint: AppLocalizations.of(context)!.confirmPassword,
                             obscureText: obscureConfirmPassword,
                             onToggleVisibility: () {
                               setState(() {
@@ -219,7 +228,7 @@ class _InscriptionState extends State<Inscription> {
 
                           // Sign up button
                           ButtonGlobal(
-                            buttontext: 'S\'inscrire',
+                            buttontext: AppLocalizations.of(context)!.signUp,
                             buttonDecoration: BoxDecoration(
                               color: isButtonEnabled ? kMainColor : Colors.grey.shade300,
                               borderRadius: BorderRadius.circular(12),
@@ -246,16 +255,18 @@ class _InscriptionState extends State<Inscription> {
 
                                         if (mounted) {
                                     Utils.showSucces(
-                                      "Inscription réussie ! Vous pouvez maintenant vous connecter.",
-                                      context: context,
+                                            AppLocalizations.of(context)!
+                                                .registrationSuccessful,
+                                            context: context,
                                     );
                                     await Future.delayed(const Duration(seconds: 1));
                                     const SignIn().launch(context);
                                   }
                                 } catch (e) {
                                   Utils.showErreur(
-                                    "Cette adresse email est déjà utilisée.",
-                                    context: context,
+                                          AppLocalizations.of(context)!
+                                              .emailAlreadyUsed,
+                                          context: context,
                                   );
                                 } finally {
                                   if (mounted) {
@@ -280,11 +291,13 @@ class _InscriptionState extends State<Inscription> {
                                 text: TextSpan(
                                   children: [
                                     TextSpan(
-                                      text: 'Vous avez déjà un compte ? ',
+                                      text: AppLocalizations.of(context)!
+                                          .alreadyHaveAccount,
                                       style: kTextStyle.copyWith(color: kGreyTextColor),
                                     ),
                                     TextSpan(
-                                      text: 'Se connecter',
+                                      text:
+                                          AppLocalizations.of(context)!.signIn,
                                       style: kTextStyle.copyWith(
                                         fontWeight: FontWeight.bold,
                                         color: kMainColor,

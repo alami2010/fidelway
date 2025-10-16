@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'language_provider.dart';
 
 /// A more sophisticated dropdown menu for actions
 class ActionDropDown extends StatelessWidget {
@@ -59,7 +62,7 @@ class ActionDropDown extends StatelessWidget {
         borderRadius: BorderRadius.circular(menuBorderRadius),
       ),
       offset: const Offset(0, 8),
-      tooltip: 'Show actions',
+      tooltip: AppLocalizations.of(context)!.showActions,
       onSelected: onActionSelected,
       itemBuilder: (context) => _buildMenuItems(context),
       child: Container(
@@ -221,8 +224,10 @@ class ExampleUsage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ActionDropDown(
-      buttonLabel: 'Actions',
+    return Consumer<LanguageProvider>(
+        builder: (context, languageProvider, child) {
+          return ActionDropDown(
+            buttonLabel: AppLocalizations.of(context)!.actions,
       onActionSelected: (index) {
         // Handle action selection
         print('Selected action index: $index');
@@ -242,7 +247,7 @@ class ExampleUsage extends StatelessWidget {
 
   List<ActionItem> get actions => [
         ActionItem(
-          label: 'Ajouter une nouvelle récompense',
+    label: AppLocalizations.of(context)!.addNewReward,
           icon: CupertinoIcons.add_circled,
           onTap: () {
             // Show dialog to add new reward
@@ -250,7 +255,7 @@ class ExampleUsage extends StatelessWidget {
           },
         ),
         ActionItem(
-          label: 'Charger les récompenses par défaut',
+    label: AppLocalizations.of(context)!.loadDefaultRewards,
           icon: CupertinoIcons.arrow_clockwise,
           onTap: () {
             // Load default rewards
@@ -258,7 +263,7 @@ class ExampleUsage extends StatelessWidget {
           },
         ),
         ActionItem(
-          label: 'Supprimer toutes les récompenses',
+    label: AppLocalizations.of(context)!.deleteAllRewards,
           icon: CupertinoIcons.delete,
           isDestructive: true,
           onTap: () {
@@ -267,4 +272,10 @@ class ExampleUsage extends StatelessWidget {
           },
         ),
       ];
+  }
+
+  ,
+
+  );
+}
 }

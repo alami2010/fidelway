@@ -2,16 +2,21 @@ import 'package:fidelway/shared/constant.dart';
 import 'package:fidelway/shared/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import '../shared/menu.dart';
+import '../shared/language_provider.dart';
 
 class ImprovedLoyaltyScreen extends StatelessWidget {
   const ImprovedLoyaltyScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: MyDrawer(),
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Scaffold(
+          drawer: MyDrawer(),
       appBar: Utils.buildAppBar(),
       body: SingleChildScrollView(
         child: Column(
@@ -28,29 +33,29 @@ class ImprovedLoyaltyScreen extends StatelessWidget {
                 children: [
                   // Why Choose Section with visual cards
                   SectionContainer(
-                    title: 'Pourquoi choisir Fidelway ?',
-                    icon: Icons.check_circle_outline,
+                        title: AppLocalizations.of(context)!.whyChooseFidelway,
+                        icon: Icons.check_circle_outline,
                     child: BenefitsGrid(),
                   ),
 
                   // Features Section with tabs
                   SectionContainer(
-                    title: 'Fonctionnalités clés',
-                    icon: Icons.smartphone,
+                        title: AppLocalizations.of(context)!.keyFeatures,
+                        icon: Icons.smartphone,
                     child: FeaturesTabView(),
                   ),
 
                   // Examples Section with carousel
                   SectionContainer(
-                    title: 'Exemples concrets',
-                    icon: Icons.lightbulb_outline,
+                        title: AppLocalizations.of(context)!.concreteExamples,
+                        icon: Icons.lightbulb_outline,
                     child: ExamplesCarousel(),
                   ),
 
                   // Pricing Comparison with visual elements
                   SectionContainer(
-                    title: 'Combien ça coûte ?',
-                    icon: Icons.euro,
+                        title: AppLocalizations.of(context)!.howMuchDoesItCost,
+                        icon: Icons.euro,
                     child: PricingComparisonWidget(),
                   ),
 
@@ -92,6 +97,8 @@ class ImprovedLoyaltyScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+      },
     );
   }
 }

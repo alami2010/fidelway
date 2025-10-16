@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:pricing_cards/pricing_cards.dart';
@@ -85,14 +86,18 @@ class _PricingScreenState extends State<PricingScreen> {
                               color: subscribed ? kGreenColor : kRedColor,
                             ),
                             title: Text(
-                              subscribed ? "Votre abonnement est Actif" : "Votre abonnement est Expiré",
+                              subscribed
+                                  ? AppLocalizations.of(context)!
+                                      .subscriptionActive
+                                  : AppLocalizations.of(context)!
+                                      .subscriptionExpired,
                               maxLines: 2,
                               style: kTextStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             subtitle: Text(
                               subscribed
-                                  ? "Votre abonnement expire le ${DateFormat('dd/MM/yyyy').format(account?.subscriptionExpiryDate ?? DateTime.now())}"
-                                  : "Votre abonnement est expiré la date ${DateFormat('yyyy-MM-dd').format(account?.subscriptionExpiryDate ?? DateTime.now())}",
+                                  ? "${AppLocalizations.of(context)!.subscriptionExpiresOn} ${DateFormat('dd/MM/yyyy').format(account?.subscriptionExpiryDate ?? DateTime.now())}"
+                                  : "${AppLocalizations.of(context)!.subscriptionExpiredOn} ${DateFormat('yyyy-MM-dd').format(account?.subscriptionExpiryDate ?? DateTime.now())}",
                               maxLines: 2,
                               style: kTextStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
                             ),
@@ -118,7 +123,11 @@ class _PricingScreenState extends State<PricingScreen> {
                                   color: Colors.white,
                                 ),
                                 child: Text(
-                                  subscribed ? 'Choisissez et prolongez votre abonnement' : 'Choisissez et activez votre abonnement',
+                                  subscribed
+                                      ? AppLocalizations.of(context)!
+                                          .chooseAndExtendSubscription
+                                      : AppLocalizations.of(context)!
+                                          .chooseAndActivateSubscription,
                                   style: kTextStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold, color: kAlertColor),
                                 ),
                               ),
@@ -126,10 +135,14 @@ class _PricingScreenState extends State<PricingScreen> {
                               PricingCards(
                                 pricingCards: [
                                   PricingCard(
-                                    title: 'Mensuel',
-                                    price: '9,99 €',
-                                    subPriceText: '/mois',
-                                    billedText: 'Facturé mensuellement',
+                                    title: AppLocalizations.of(context)!
+                                        .monthlyPlan,
+                                    price: AppLocalizations.of(context)!
+                                        .monthlyPrice,
+                                    subPriceText:
+                                        AppLocalizations.of(context)!.perMonth,
+                                    billedText: AppLocalizations.of(context)!
+                                        .billedMonthly,
                                     onPress: () {
                                       _launchURLPayment(PaymentType.monthly);
                                     },
@@ -157,12 +170,17 @@ class _PricingScreenState extends State<PricingScreen> {
                                     ),
                                   ),
                                   PricingCard(
-                                    title: 'Annuel',
-                                    price: '99,99 €',
-                                    subPriceText: '/an',
-                                    billedText: 'Facturé annuellement',
+                                    title: AppLocalizations.of(context)!
+                                        .yearlyPlan,
+                                    price: AppLocalizations.of(context)!
+                                        .yearlyPrice,
+                                    subPriceText:
+                                        AppLocalizations.of(context)!.perYear,
+                                    billedText: AppLocalizations.of(context)!
+                                        .billedAnnually,
                                     mainPricing: true,
-                                    mainPricingHighlightText: 'Économisez de l\'argent',
+                                    mainPricingHighlightText:
+                                        AppLocalizations.of(context)!.saveMoney,
                                     onPress: () {
                                       _launchURLPayment(PaymentType.annually);
                                     },
@@ -228,7 +246,7 @@ class _PricingScreenState extends State<PricingScreen> {
                             color: Colors.white,
                           ),
                           child: Text(
-                            'Fiabilité accrue : Les QR codes uniques suppriment tout risque de perte, d’usure ou de fraude.',
+                            AppLocalizations.of(context)!.increasedReliability,
                             style: kTextStyle,
                             textAlign: TextAlign.center,
                           ),
@@ -247,7 +265,8 @@ class _PricingScreenState extends State<PricingScreen> {
                             color: Colors.white,
                           ),
                           child: Text(
-                            'Flexibilité et modernité : Configurez vos offres en temps réel pour mieux répondre aux attentes de vos clients.',
+                            AppLocalizations.of(context)!
+                                .flexibilityAndModernity,
                             style: kTextStyle,
                             textAlign: TextAlign.center,
                           ),
@@ -266,7 +285,7 @@ class _PricingScreenState extends State<PricingScreen> {
                             color: Colors.white,
                           ),
                           child: Text(
-                            'Solution écologique et durable : Dites adieu aux cartes papier jetables et réduisez votre empreinte écologique.',
+                            AppLocalizations.of(context)!.ecologicalSolution,
                             style: kTextStyle,
                             textAlign: TextAlign.center,
                           ),
@@ -276,7 +295,7 @@ class _PricingScreenState extends State<PricingScreen> {
                           height: 20.0,
                         ),
                         Text(
-                          'Avec Fidelway, non seulement vous réalisez des économies substantielles, mais vous offrez également une expérience client moderne et écologique.',
+                          AppLocalizations.of(context)!.fidelwayDescription,
                           style: kTextStyle,
                           textAlign: TextAlign.center,
                         ),

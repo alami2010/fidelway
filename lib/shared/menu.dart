@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../contact.dart';
 import '../home.dart';
+import '../login/language_settings.dart';
 import '../login/profile_screen.dart';
 import '../login/sign_in.dart';
 import '../subscribtion/fidelity_screen.dart';
@@ -89,7 +91,7 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
         children: [
           const SizedBox(height: 10),
           Text(
-            '${account?.firstName ?? 'Invité'}',
+            '${account?.firstName ?? AppLocalizations.of(context)!.guest}',
             style: kTextStyle.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -106,7 +108,7 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                'Voir le profil',
+                AppLocalizations.of(context)!.viewProfile,
                 style: kTextStyle.copyWith(
                   color: Colors.white,
                   fontSize: 12,
@@ -126,13 +128,15 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildStatCard("12", "Aujourd'hui", Icons.today, isDark),
+          _buildStatCard(
+              "12", AppLocalizations.of(context)!.today, Icons.today, isDark),
           Container(
             height: 40,
             width: 1,
             color: isDark ? Colors.grey[700] : Colors.grey[300],
           ),
-          _buildStatCard("50", "Total", Icons.insights, isDark),
+          _buildStatCard("50", AppLocalizations.of(context)!.total,
+              Icons.insights, isDark),
         ],
       ),
     );
@@ -177,19 +181,19 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
       children: [
         _buildSection(
           context,
-          "Navigation",
+          AppLocalizations.of(context)!.navigation,
           [
             _buildMenuItem(
               context,
               Icons.qr_code_scanner,
-              "Scanner une carte",
+              AppLocalizations.of(context)!.scanCard,
               () => const HomeScreen().launch(context),
               isDark,
             ),
             _buildMenuItem(
               context,
               Icons.person_outline,
-              "Profil",
+              AppLocalizations.of(context)!.profile,
               () => const ProfileScreen().launch(context),
               isDark,
               isActive: true,
@@ -199,26 +203,26 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
         ),
         _buildSection(
           context,
-          "Fonctionnalités",
+          AppLocalizations.of(context)!.features,
           [
             _buildMenuItem(
               context,
               Icons.menu_book_outlined,
-              "Guide d'utilisation",
+              AppLocalizations.of(context)!.userGuide,
               () => ImprovedLoyaltyScreen().launch(context),
               isDark,
             ),
             _buildMenuItem(
               context,
               Icons.card_membership_outlined,
-              "Souscription",
+              AppLocalizations.of(context)!.subscription,
               () => const PricingScreen().launch(context),
               isDark,
             ),
             _buildMenuItem(
               context,
               Icons.credit_card_outlined,
-              "Création carte client",
+              AppLocalizations.of(context)!.createClientCard,
               () {
                 showDialog(
                   context: context,
@@ -232,26 +236,33 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
         ),
         _buildSection(
           context,
-          "Support & Légal",
+          AppLocalizations.of(context)!.supportLegal,
           [
             _buildMenuItem(
               context,
               Icons.settings_outlined,
-              "Paramètres",
+              AppLocalizations.of(context)!.settings,
               () => FidelityScreen().launch(context),
               isDark,
             ),
             _buildMenuItem(
               context,
+              Icons.language_outlined,
+              'Language / Langue',
+              () => const LanguageSettingsScreen().launch(context),
+              isDark,
+            ),
+            _buildMenuItem(
+              context,
               Icons.privacy_tip_outlined,
-              "Politique de confidentialité",
+              AppLocalizations.of(context)!.privacyPolicy,
               () => const PrivacyPolicyPage().launch(context),
               isDark,
             ),
             _buildMenuItem(
               context,
               Icons.support_agent_outlined,
-              "Nous contacter",
+              AppLocalizations.of(context)!.contactUs,
               () => const ContactUs().launch(context),
               isDark,
             ),
@@ -260,19 +271,15 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
         ),
         _buildSection(
           context,
-          "Partage",
+          AppLocalizations.of(context)!.share,
           [
             _buildMenuItem(
               context,
               Icons.share_outlined,
-              "Partager avec des amis",
+              AppLocalizations.of(context)!.shareWithFriends,
               () {
                 Share.share(
-                  '''Bonjour !
-Je t'invite à rejoindre Fidelway, une application géniale qui te permet de gérer tes cartes de fidélité. C'est simple, rapide et parfait pour économiser du temps et de l'argent.
-Clique ici : https://fidelway.enovway.com/
-
-À bientôt ! 😊''',
+                  AppLocalizations.of(context)!.shareMessage,
                 );
               },
               isDark,
@@ -418,7 +425,7 @@ Clique ici : https://fidelway.enovway.com/
           size: 18,
         ),
         label: Text(
-          'Déconnexion',
+          AppLocalizations.of(context)!.logout,
           style: kTextStyle.copyWith(
             color: isDark ? Colors.white : Colors.red,
             fontWeight: FontWeight.w600,

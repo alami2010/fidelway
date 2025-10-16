@@ -6,9 +6,12 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import '../model/APIRest.dart';
 import 'constant.dart';
+import 'language_provider.dart';
 
 class DownloadImageModal extends StatefulWidget {
   final VoidCallback closeModal;
@@ -75,16 +78,19 @@ class _DownloadImageModalState extends State<DownloadImageModal> with SingleTick
   Future<void> _launchUrl() async {
     try {
       if (!await launchUrl(Uri.parse(url))) {
-        throw Exception('Impossible d\'ouvrir l\'URL $url');
+        throw Exception(
+            '${AppLocalizations.of(context)!.unableToOpenUrl} $url');
       }
     } catch (e) {
-      Utils.showErreur('Erreur lors de l\'ouverture du lien: $e', context: context);
+      Utils.showErreur('${AppLocalizations.of(context)!.errorOpeningLink}: $e',
+          context: context);
     }
   }
 
   Future<void> _copyLinkToClipboard() async {
     await Clipboard.setData(ClipboardData(text: url));
-    Utils.showSucces('Lien copié dans le presse-papier', context: context);
+    Utils.showSucces(AppLocalizations.of(context)!.linkCopiedToClipboard,
+        context: context);
   }
 
   Future<void> _shareFlyer() async {
@@ -98,7 +104,8 @@ class _DownloadImageModalState extends State<DownloadImageModal> with SingleTick
       // Share the file
       //await Share.shareFiles([file.path], text: 'Scannez ce QR code pour créer votre carte de fidélité');
     } catch (e) {
-      Utils.showErreur('Erreur lors du partage: $e', context: context);
+      Utils.showErreur('${AppLocalizations.of(context)!.errorSharing}: $e',
+          context: context);
     }
   }
 
@@ -110,10 +117,12 @@ class _DownloadImageModalState extends State<DownloadImageModal> with SingleTick
         url = newUrl;
       });
 
-      Utils.showSucces('Flyer généré avec succès', context: context);
+      Utils.showSucces(AppLocalizations.of(context)!.flyerGeneratedSuccessfully,
+          context: context);
     } catch (e) {
       widget.closeModal();
-      Utils.showErreur('Erreur lors de la génération du flyer', context: context);
+      Utils.showErreur(AppLocalizations.of(context)!.errorGeneratingFlyer,
+          context: context);
     } finally {
       stopLoading();
     }
@@ -131,8 +140,10 @@ class _DownloadImageModalState extends State<DownloadImageModal> with SingleTick
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
       elevation: 8,
@@ -166,15 +177,15 @@ class _DownloadImageModalState extends State<DownloadImageModal> with SingleTick
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'QR Code de fidélité',
-                      style: kTextStyle.copyWith(color: Colors.white, fontSize: 18),
+                          AppLocalizations.of(context)!.loyaltyQrCode,
+                          style: kTextStyle.copyWith(color: Colors.white, fontSize: 18),
                     ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.close, color: Colors.white),
                     onPressed: widget.closeModal,
-                    tooltip: 'Fermer',
-                  ),
+                        tooltip: AppLocalizations.of(context)!.close,
+                      ),
                 ],
               ),
             ),
@@ -208,8 +219,9 @@ class _DownloadImageModalState extends State<DownloadImageModal> with SingleTick
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Instructions',
-                                  style: kTextStyle,
+                                      AppLocalizations.of(context)!
+                                          .instructions,
+                                      style: kTextStyle,
                                 ),
                               ),
                               InkWell(
@@ -218,8 +230,12 @@ class _DownloadImageModalState extends State<DownloadImageModal> with SingleTick
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      isExpanded ? 'Réduire' : 'Voir plus',
-                                      style: TextStyle(
+                                          isExpanded
+                                              ? AppLocalizations.of(context)!
+                                                  .reduce
+                                              : AppLocalizations.of(context)!
+                                                  .seeMore,
+                                          style: TextStyle(
                                         color: kMainColorLight,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -238,8 +254,9 @@ class _DownloadImageModalState extends State<DownloadImageModal> with SingleTick
                             child: Padding(
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Text(
-                                'Imprimez et mettez à disposition de vos clients ce QR code pour qu\'ils puissent scanner et générer leur carte de fidélité. Vous pouvez également partager ce QR code sur vos réseaux sociaux ou l\'intégrer à vos supports de communication.',
-                                style: kTextStyle,
+                                    AppLocalizations.of(context)!
+                                        .qrCodeInstructions,
+                                    style: kTextStyle,
                               ),
                             ),
                           ),
@@ -274,8 +291,9 @@ class _DownloadImageModalState extends State<DownloadImageModal> with SingleTick
                                   ),
                                   const SizedBox(height: 12),
                                   Text(
-                                    'Génération du QR code...',
-                                    style: kTextStyle,
+                                        AppLocalizations.of(context)!
+                                            .generatingQrCode,
+                                        style: kTextStyle,
                                   ),
                                 ],
                               ),
@@ -310,8 +328,9 @@ class _DownloadImageModalState extends State<DownloadImageModal> with SingleTick
                                           ),
                                           const SizedBox(height: 8),
                                           Text(
-                                            'Impossible de charger l\'image',
-                                            style: TextStyle(color: kRedColor),
+                                                AppLocalizations.of(context)!
+                                                    .unableToLoadImage,
+                                                style: TextStyle(color: kRedColor),
                                           ),
                                         ],
                                       );
@@ -350,20 +369,20 @@ class _DownloadImageModalState extends State<DownloadImageModal> with SingleTick
                     children: [
                       _ActionButton(
                         icon: Icons.refresh,
-                        label: 'Régénérer',
-                        onPressed: _regenerateFlyer,
+                            label: AppLocalizations.of(context)!.regenerate,
+                            onPressed: _regenerateFlyer,
                         color: kTitleColor,
                       ),
                       _ActionButton(
                         icon: Icons.download,
-                        label: 'Télécharger',
-                        onPressed: _launchUrl,
+                            label: AppLocalizations.of(context)!.download,
+                            onPressed: _launchUrl,
                         color: kTitleColor,
                       ),
                       _ActionButton(
                         icon: Icons.copy,
-                        label: 'Copier le lien',
-                        onPressed: _copyLinkToClipboard,
+                            label: AppLocalizations.of(context)!.copyLink,
+                            onPressed: _copyLinkToClipboard,
                         color: kTitleColor,
                       ),
                     ],
@@ -374,6 +393,8 @@ class _DownloadImageModalState extends State<DownloadImageModal> with SingleTick
           ],
         ),
       ),
+    );
+      },
     );
   }
 }

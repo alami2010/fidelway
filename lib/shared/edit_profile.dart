@@ -2,9 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import 'button_global.dart';
 import 'constant.dart';
+import 'language_provider.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
@@ -38,8 +41,10 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Scaffold(
+          resizeToAvoidBottomInset: true,
       backgroundColor: kMainColor,
       appBar: AppBar(
         backgroundColor: kMainColor,
@@ -47,8 +52,8 @@ class _EditProfileState extends State<EditProfile> {
         titleSpacing: 0.0,
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
-          'Edit Profile',
-          maxLines: 2,
+              AppLocalizations.of(context)!.editProfile,
+              maxLines: 2,
           style: kTextStyle.copyWith(
               color: Colors.white, fontWeight: FontWeight.bold),
         ),
@@ -178,6 +183,8 @@ class _EditProfileState extends State<EditProfile> {
           ],
         ),
       ),
+    );
+      },
     );
   }
 }

@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import '../login/sign_in.dart';
 import '../shared/constant.dart';
 import '../shared/local_storage_helper.dart';
+import '../shared/language_provider.dart';
 
 // ignore_for_file: library_private_types_in_public_api
 class OnBoard extends StatefulWidget {
@@ -21,31 +24,38 @@ class _OnBoardState extends State<OnBoard> {
   String buttonText = 'Next';
   double percent = 0.34;
 
-  List<Map<String, dynamic>> sliderList = [
-    {
-      "icon": 'images/fidelity1.png',
-      "title": 'Téléchargement et installation',
-      "description":
-          'Installez l’application Fidelway sur votre appareil (disponible sur iOS et Android).',
-    },
-    {
-      "icon": 'images/fidelity2.png',
-      "title": 'Configuration initiale',
-      "description":
-          'Créez un compte commerçant. Définissez les règles de fidélité (nombre de commandes nécessaires, type de récompenses). Configurez votre QR code unique pour vos clients.',
-    },
-    {
-      "icon": 'images/fidelity3.png',
-      "title": 'Communication avec les clients',
-      "description":
-          'Expliquez le fonctionnement de l’application. Fournissez des cartes papier ou indiquez où générer leur carte numérique.',
-    },
-  ];
+  List<Map<String, dynamic>> sliderList = [];
 
   @override
   void initState() {
     super.initState();
     LocalStorageHelper.setOboarding();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _initializeSliderList();
+  }
+
+  void _initializeSliderList() {
+    sliderList = [
+      {
+        "icon": 'images/fidelity1.png',
+        "title": AppLocalizations.of(context)!.downloadAndInstallation,
+        "description": AppLocalizations.of(context)!.downloadDescription,
+      },
+      {
+        "icon": 'images/fidelity2.png',
+        "title": AppLocalizations.of(context)!.initialConfiguration,
+        "description": AppLocalizations.of(context)!.configDescription,
+      },
+      {
+        "icon": 'images/fidelity3.png',
+        "title": AppLocalizations.of(context)!.customerCommunication,
+        "description": AppLocalizations.of(context)!.communicationDescription,
+      },
+    ];
   }
 
   @override
@@ -60,8 +70,13 @@ class _OnBoardState extends State<OnBoard> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF0FDFF),
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        // Reinitialize slider list when language changes
+        _initializeSliderList();
+
+        return Scaffold(
+          backgroundColor: const Color(0xFFF0FDFF),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Color(0xFFFCF1F0)),
         backgroundColor: const Color(0xFFF0FDFF),
@@ -77,8 +92,8 @@ class _OnBoardState extends State<OnBoard> {
                 const SignIn().launch(context);
               },
               child: Text(
-                'Skip',
-                style: GoogleFonts.dmSans(
+                    AppLocalizations.of(context)!.skip,
+                    style: GoogleFonts.dmSans(
                   fontSize: 16.0,
                   color: kTitleColor,
                 ),
@@ -246,6 +261,8 @@ class _OnBoardState extends State<OnBoard> {
           ),
         ],
       ),
+    );
+      },
     );
   }
 }

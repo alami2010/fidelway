@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../shared/constant.dart';
@@ -17,7 +18,7 @@ class PrivacyPolicyPage extends StatelessWidget {
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
-          'Politique de Confidentialité',
+          AppLocalizations.of(context)!.privacyPolicy,
           style: kTextStyle.copyWith(color: Colors.white),
         ),
       ),
@@ -64,7 +65,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Politique de Confidentialité de Fidelway',
+                        AppLocalizations.of(context)!.privacyPolicyTitle,
                         style: kTextStyle.copyWith(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -72,35 +73,36 @@ class PrivacyPolicyPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Date d\'entrée en vigueur : 01 Janvier 2025',
+                        AppLocalizations.of(context)!.effectiveDate,
                         style: kTextStyle.copyWith(
                           fontSize: 14,
                           color: kGreyTextColor,
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _sectionTitle('1. Introduction'),
+                      _sectionTitle(AppLocalizations.of(context)!.introduction),
                       _sectionText(
-                          'Bienvenue sur Fidelway ! Votre vie privée est importante pour nous. Cette politique décrit comment nous collectons, utilisons et protégeons vos données personnelles.'),
+                          AppLocalizations.of(context)!.introductionText),
                       const SizedBox(height: 12),
-                      _sectionTitle('2. Données que nous collectons'),
-                      _sectionText('• Données personnelles : nom, email, téléphone...\n'
-                          '• Données d’utilisation : journal d’activité, appareil utilisé, cookies...\n'
-                          '• Contenus partagés : fichiers ou médias uploadés dans l’app.'),
-                      const SizedBox(height: 12),
-                      _sectionTitle('3. Utilisation des données'),
+                      _sectionTitle(
+                          AppLocalizations.of(context)!.dataWeCollect),
                       _sectionText(
-                          'Nous utilisons vos données pour améliorer nos services, assurer la sécurité, personnaliser l’expérience et répondre à nos obligations légales.'),
+                          AppLocalizations.of(context)!.dataWeCollectText),
                       const SizedBox(height: 12),
-                      _sectionTitle('4. Partage et sécurité'),
+                      _sectionTitle(AppLocalizations.of(context)!.dataUsage),
+                      _sectionText(AppLocalizations.of(context)!.dataUsageText),
+                      const SizedBox(height: 12),
+                      _sectionTitle(
+                          AppLocalizations.of(context)!.sharingAndSecurity),
                       _sectionText(
-                          'Vos informations ne sont jamais vendues. Nous appliquons des mesures de sécurité strictes pour protéger vos données.'),
+                          AppLocalizations.of(context)!.sharingAndSecurityText),
                       const SizedBox(height: 12),
-                      _sectionTitle('5. Vos droits'),
-                      _sectionText('Vous pouvez accéder, corriger ou supprimer vos données à tout moment en nous contactant.'),
+                      _sectionTitle(AppLocalizations.of(context)!.yourRights),
+                      _sectionText(
+                          AppLocalizations.of(context)!.yourRightsText),
                       const SizedBox(height: 12),
-                      _sectionTitle('6. Contact'),
-                      _sectionText('Pour toute question concernant cette politique, veuillez nous contacter à support@fidelway.com.'),
+                      _sectionTitle(AppLocalizations.of(context)!.contact),
+                      _sectionText(AppLocalizations.of(context)!.contactText),
                     ],
                   ),
                 ),

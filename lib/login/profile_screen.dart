@@ -6,11 +6,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import '../shared/constant.dart';
 import '../shared/local_storage_helper.dart';
 import '../shared/menu.dart';
 import '../shared/utils.dart';
+import '../shared/language_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -31,30 +34,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
     startLoading();
     await APIRest.delete().then((value) {
       const SignIn().launch(context);
-      Utils.showSucces('Suppression réussie, utilisateur déconnecté', context: context);
+      Utils.showSucces(AppLocalizations.of(context)!.deleteMyAccount,
+          context: context);
       stopLoading();
     }).catchError((error) {
       stopLoading();
-      Utils.showErreur('Erreur lors de la suppression du compte', context: context);
+      Utils.showErreur(AppLocalizations.of(context)!.errorChangingPassword,
+          context: context);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final subscribed = account?.subscribed ?? false;
-    final subscriptionDate = account?.subscriptionExpiryDate ?? DateTime.now();
-    final isSubscriptionExpired = !subscribed || DateTime.now().isAfter(subscriptionDate);
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        final subscribed = account?.subscribed ?? false;
+        final subscriptionDate =
+            account?.subscriptionExpiryDate ?? DateTime.now();
+        final isSubscriptionExpired =
+            !subscribed || DateTime.now().isAfter(subscriptionDate);
 
-    return Scaffold(
-      drawer: MyDrawer(),
+        return Scaffold(
+          drawer: MyDrawer(),
       backgroundColor: kMainColor,
       appBar: AppBar(
         backgroundColor: kMainColor,
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'Mon Profil',
-          style: kTextStyle.copyWith(
+              AppLocalizations.of(context)!.myProfile,
+              style: kTextStyle.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 22,
@@ -65,8 +74,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: const Icon(Icons.settings_outlined, color: Colors.white),
             onPressed: () {
               // Navigate to settings or show settings menu
-              toast('Paramètres');
-            },
+                  toast(AppLocalizations.of(context)!.settings);
+                },
           ),
         ],
         iconTheme: const IconThemeData(color: Colors.white),
@@ -122,8 +131,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: IconButton(
                               icon: const Icon(Icons.camera_alt, size: 16, color: Colors.white),
                               onPressed: () {
-                                toast('Changer la photo de profil');
-                              },
+                                    toast(AppLocalizations.of(context)!
+                                        .changeProfilePhoto);
+                                  },
                             ),
                           ),
                         ],
@@ -187,8 +197,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                subscribed ? "Abonnement Actif" : "Abonnement Expiré",
-                                style: kTextStyle.copyWith(
+                                    subscribed
+                                        ? AppLocalizations.of(context)!
+                                            .activeSubscription
+                                        : AppLocalizations.of(context)!
+                                            .expiredSubscription,
+                                    style: kTextStyle.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                   fontSize: 18,
@@ -197,9 +211,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               const SizedBox(height: 5),
                               Text(
                                 subscribed
-                                    ? "Expire le ${DateFormat('dd/MM/yyyy').format(subscriptionDate)}"
-                                    : "Expiré depuis le ${DateFormat('dd/MM/yyyy').format(subscriptionDate)}",
-                                style: kTextStyle.copyWith(
+                                        ? "${AppLocalizations.of(context)!.expiresOn} ${DateFormat('dd/MM/yyyy').format(subscriptionDate)}"
+                                        : "${AppLocalizations.of(context)!.expiredSince} ${DateFormat('dd/MM/yyyy').format(subscriptionDate)}",
+                                    style: kTextStyle.copyWith(
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 14,
                                 ),
@@ -210,8 +224,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         if (isSubscriptionExpired)
                           ElevatedButton(
                             onPressed: () {
-                              toast('Renouveler l\'abonnement');
-                            },
+                                  toast(AppLocalizations.of(context)!.renew);
+                                },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: Colors.red,
@@ -220,8 +234,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 borderRadius: BorderRadius.circular(30),
                               ),
                             ),
-                            child: const Text('Renouveler'),
-                          ),
+                                child:
+                                    Text(AppLocalizations.of(context)!.renew),
+                              ),
                       ],
                     ),
                   ),
@@ -249,8 +264,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
                         child: Text(
-                          'Informations personnelles',
-                          style: kTextStyle.copyWith(
+                              AppLocalizations.of(context)!.personalInformation,
+                              style: kTextStyle.copyWith(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -259,24 +274,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const Divider(),
                       _profileInfoTile(
                         icon: Icons.person_outline,
-                        title: 'Nom',
-                        value: account?.firstName ?? '',
-                        onTap: () => toast('Modifier le nom'),
-                      ),
+                            title: AppLocalizations.of(context)!.name,
+                            value: account?.firstName ?? '',
+                            onTap: () =>
+                                toast(AppLocalizations.of(context)!.name),
+                          ),
                       const Divider(height: 1),
                       _profileInfoTile(
                         icon: Icons.email_outlined,
-                        title: 'Email',
-                        value: account?.email ?? '',
-                        onTap: () => toast('Modifier l\'email'),
-                      ),
+                            title: AppLocalizations.of(context)!.email,
+                            value: account?.email ?? '',
+                            onTap: () =>
+                                toast(AppLocalizations.of(context)!.email),
+                          ),
                       const Divider(height: 1),
                       _profileInfoTile(
                         icon: Icons.phone_outlined,
-                        title: 'Téléphone',
-                        value: account?.lastName ?? '',
-                        onTap: () => toast('Modifier le téléphone'),
-                      ),
+                            title: AppLocalizations.of(context)!.phone,
+                            value: account?.lastName ?? '',
+                            onTap: () =>
+                                toast(AppLocalizations.of(context)!.phone),
+                          ),
                     ],
                   ),
                 ),
@@ -303,8 +321,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
                         child: Text(
-                          'Actions',
-                          style: kTextStyle.copyWith(
+                              AppLocalizations.of(context)!.actions,
+                              style: kTextStyle.copyWith(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -320,10 +338,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           child: const Icon(Icons.password_outlined, color: Colors.blue),
                         ),
-                        title: Text('Changer le mot de passe', style: kTextStyle),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () => toast('Changer le mot de passe'),
-                      ),
+                            title: Text(
+                                AppLocalizations.of(context)!.changePassword,
+                                style: kTextStyle),
+                            trailing: const Icon(Icons.chevron_right),
+                            onTap: () => toast(
+                                AppLocalizations.of(context)!.changePassword),
+                          ),
                       const Divider(height: 1),
                       ListTile(
                         leading: Container(
@@ -334,10 +355,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           child: const Icon(Icons.notifications_outlined, color: Colors.orange),
                         ),
-                        title: Text('Paramètres de notification', style: kTextStyle),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () => toast('Paramètres de notification'),
-                      ),
+                            title: Text(
+                                AppLocalizations.of(context)!
+                                    .notificationSettings,
+                                style: kTextStyle),
+                            trailing: const Icon(Icons.chevron_right),
+                            onTap: () => toast(AppLocalizations.of(context)!
+                                .notificationSettings),
+                          ),
                       const Divider(height: 1),
                       ListTile(
                         leading: Container(
@@ -349,26 +374,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: const Icon(CupertinoIcons.delete, color: kRedColor),
                         ),
                         title: Text(
-                          'Supprimer mon compte',
-                          style: kTextStyle.copyWith(color: kRedColor),
+                              AppLocalizations.of(context)!.deleteMyAccount,
+                              style: kTextStyle.copyWith(color: kRedColor),
                         ),
                         trailing: const Icon(Icons.chevron_right, color: kRedColor),
                         onTap: () {
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: const Text('Confirmer la suppression'),
-                              content: const Text(
-                                'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.',
-                              ),
+                                  title: Text(AppLocalizations.of(context)!
+                                      .confirmDeletion),
+                                  content: Text(
+                                    AppLocalizations.of(context)!
+                                        .confirmDeletionMessage,
+                                  ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(context),
-                                  child: const Text('Annuler'),
-                                ),
+                                      child: Text(
+                                          AppLocalizations.of(context)!.cancel),
+                                    ),
                                 ElevatedButton(
                                   onPressed: () {
                                     Navigator.pop(context);
@@ -381,8 +409,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       borderRadius: BorderRadius.circular(30),
                                     ),
                                   ),
-                                  child: const Text('Supprimer'),
-                                ),
+                                      child: Text(
+                                          AppLocalizations.of(context)!.delete),
+                                    ),
                               ],
                             ),
                           );
@@ -400,8 +429,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     children: [
                       Text(
-                        'FidelWay',
-                        style: kTextStyle.copyWith(
+                            AppLocalizations.of(context)!.appTitle,
+                            style: kTextStyle.copyWith(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: kMainColor,
@@ -409,8 +438,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Version 1.0.0',
-                        style: kTextStyle.copyWith(
+                            AppLocalizations.of(context)!.version,
+                            style: kTextStyle.copyWith(
                           fontSize: 14,
                           color: Colors.grey,
                         ),
@@ -436,6 +465,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
         ],
       ),
+    );
+      },
     );
   }
 

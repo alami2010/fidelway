@@ -3,12 +3,15 @@
 import 'package:fidelway/login/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import '../model/APIRest.dart';
 import '../shared/button_global.dart';
 import '../shared/constant.dart';
 import '../shared/otp_form.dart';
 import '../shared/utils.dart';
+import '../shared/language_provider.dart';
 
 class PhoneVerification extends StatefulWidget {
   const PhoneVerification({Key? key}) : super(key: key);
@@ -43,16 +46,18 @@ class _PhoneVerificationState extends State<PhoneVerification> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Scaffold(
+          resizeToAvoidBottomInset: false,
       backgroundColor: kMainColor,
       appBar: AppBar(
         backgroundColor: kMainColor,
         elevation: 0.0,
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
-          'Validation de code',
-          style: kTextStyle.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+              AppLocalizations.of(context)!.codeValidation,
+              style: kTextStyle.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(
@@ -61,8 +66,8 @@ class _PhoneVerificationState extends State<PhoneVerification> {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Text(
-              'Merci de remplir le code reçu par mail et le nouveau password.',
-              style: kTextStyle.copyWith(color: Colors.white),
+                  AppLocalizations.of(context)!.codeValidationDescription,
+                  style: kTextStyle.copyWith(color: Colors.white),
             ),
           ),
           Expanded(
@@ -89,8 +94,8 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                       color: kAlertColor.withOpacity(0.1),
                     ),
                     child: Text(
-                      'Code reçu par mail',
-                      style: kTextStyle.copyWith(color: kTitleColor, fontSize: 20.0, fontWeight: FontWeight.bold),
+                          AppLocalizations.of(context)!.codeReceivedByEmail,
+                          style: kTextStyle.copyWith(color: kTitleColor, fontSize: 20.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(
@@ -104,8 +109,8 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                     padding: const EdgeInsets.all(10.0),
                     decoration: kButtonDecoration.copyWith(color: kTitleColor.withOpacity(0.1)),
                     child: Text(
-                      'Renvoyer un nouveau code',
-                      style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                          AppLocalizations.of(context)!.resendNewCode,
+                          style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(
@@ -118,9 +123,10 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                       controller: control,
                       enabled: true,
                       decoration: InputDecoration(
-                        labelText: 'Nouveau password',
+                            labelText:
+                                AppLocalizations.of(context)!.newPassword,
 
-                        labelStyle: kTextStyle,
+                            labelStyle: kTextStyle,
                         border: const OutlineInputBorder(),
                         // prefixIcon: CountryCodePicker(
                         //   padding: EdgeInsets.zero,
@@ -142,18 +148,25 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                       height: 20.0,
                     ),
                   ButtonGlobal(
-                    buttontext: 'Changer le mot de passe',
-                    buttonDecoration: kButtonDecoration.copyWith(color: kMainColor),
+                        buttontext:
+                            AppLocalizations.of(context)!.changePassword,
+                        buttonDecoration: kButtonDecoration.copyWith(color: kMainColor),
                     onPressed: () {
                       startLoading();
                       APIRest.finishPasswordReset(optCode, control.text).then((value) {
-                        Utils.showSucces('Mot de pass bien changé', context: context);
-                        const SignIn().launch(context);
+                            Utils.showSucces(
+                                AppLocalizations.of(context)!
+                                    .passwordChangedSuccessfully,
+                                context: context);
+                            const SignIn().launch(context);
                         stopLoading();
                       }).catchError((value) {
-                        Utils.showErreur('Erreur lors de changement de mot de passe', context: context);
+                            Utils.showErreur(
+                                AppLocalizations.of(context)!
+                                    .errorChangingPassword,
+                                context: context);
 
-                        stopLoading();
+                            stopLoading();
                       });
                     },
                   ),
@@ -163,6 +176,8 @@ class _PhoneVerificationState extends State<PhoneVerification> {
           ),
         ],
       ),
+    );
+      },
     );
   }
 }

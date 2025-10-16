@@ -8,10 +8,13 @@ import 'package:fidelway/shared/local_storage_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart' hide AnimatedTextKit;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import '../login/login_service.dart';
 import '../shared/constant.dart';
 import '../shared/utils.dart';
+import '../shared/language_provider.dart';
 import 'on_board.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -99,10 +102,12 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        final size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      body: Container(
+        return Scaffold(
+          body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -173,8 +178,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       child: AnimatedTextKit(
                         animatedTexts: [
                           FadeAnimatedText(
-                            'Votre voyage commence ici',
-                            textStyle: GoogleFonts.manrope(
+                                AppLocalizations.of(context)!
+                                    .yourJourneyStartsHere,
+                                textStyle: GoogleFonts.manrope(
                               color: Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.w300,
@@ -211,8 +217,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                                 Utils.getLoading(),
                                 const SizedBox(width: 15),
                                 Text(
-                                  'Chargement...',
-                                  style: GoogleFonts.manrope(
+                                      AppLocalizations.of(context)!.loading,
+                                      style: GoogleFonts.manrope(
                                     color: Colors.white.withOpacity(0.9),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
@@ -236,8 +242,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          'Version 1.0.0',
-                          style: GoogleFonts.manrope(
+                              AppLocalizations.of(context)!.version,
+                              style: GoogleFonts.manrope(
                             color: Colors.white.withOpacity(0.8),
                             fontWeight: FontWeight.w400,
                             fontSize: 14.0,
@@ -254,6 +260,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           ),
         ),
       ),
+    );
+      },
     );
   }
 }

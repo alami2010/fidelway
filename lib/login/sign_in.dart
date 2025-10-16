@@ -2,6 +2,7 @@ import 'package:fidelway/login/sign_up.dart';
 import 'package:fidelway/model/APIRest.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../shared/constant.dart';
 import '../shared/utils.dart';
@@ -90,7 +91,7 @@ class _SignInState extends State<SignIn> {
     return Row(
       children: [
         Text(
-          'Connexion',
+          AppLocalizations.of(context)!.signIn,
           style: kTextStyle.copyWith(
             color: kMainColor,
             fontWeight: FontWeight.bold,
@@ -126,7 +127,7 @@ class _SignInState extends State<SignIn> {
         ),
         const SizedBox(height: 30),
         Text(
-          'Bienvenue',
+          AppLocalizations.of(context)!.welcome,
           style: kTextStyle.copyWith(
             fontSize: 26,
             fontWeight: FontWeight.bold,
@@ -135,7 +136,7 @@ class _SignInState extends State<SignIn> {
         ),
         const SizedBox(height: 10),
         Text(
-          'Connectez-vous pour découvrir toutes nos fonctionnalités',
+          AppLocalizations.of(context)!.welcomeSubtitle,
           textAlign: TextAlign.center,
           style: kTextStyle.copyWith(
             color: kGreyTextColor,
@@ -184,7 +185,7 @@ class _SignInState extends State<SignIn> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Email',
+          AppLocalizations.of(context)!.email,
           style: kTextStyle.copyWith(
             fontWeight: FontWeight.w600,
             fontSize: 16,
@@ -196,15 +197,15 @@ class _SignInState extends State<SignIn> {
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Veuillez entrer votre email';
+              return AppLocalizations.of(context)!.emailRequired;
             }
             if (!value.contains('@')) {
-              return 'Veuillez entrer un email valide';
+              return AppLocalizations.of(context)!.emailInvalid;
             }
             return null;
           },
           decoration: InputDecoration(
-            hintText: 'Entrez votre adresse email',
+            hintText: AppLocalizations.of(context)!.enterEmail,
             hintStyle: kTextStyle.copyWith(color: kGreyTextColor.withOpacity(0.5)),
             prefixIcon: Icon(Icons.email_outlined, color: kMainColor),
             enabledBorder: OutlineInputBorder(
@@ -237,7 +238,7 @@ class _SignInState extends State<SignIn> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Mot de passe',
+          AppLocalizations.of(context)!.password,
           style: kTextStyle.copyWith(
             fontWeight: FontWeight.w600,
             fontSize: 16,
@@ -249,12 +250,12 @@ class _SignInState extends State<SignIn> {
           obscureText: !_passwordVisible,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Veuillez entrer votre mot de passe';
+              return AppLocalizations.of(context)!.passwordRequired;
             }
             return null;
           },
           decoration: InputDecoration(
-            hintText: 'Entrez votre mot de passe',
+            hintText: AppLocalizations.of(context)!.password,
             hintStyle: kTextStyle.copyWith(color: kGreyTextColor.withOpacity(0.5)),
             prefixIcon: Icon(Icons.lock_outline, color: kMainColor),
             suffixIcon: IconButton(
@@ -317,7 +318,7 @@ class _SignInState extends State<SignIn> {
             ),
             const SizedBox(width: 8),
             Text(
-              'Se souvenir de moi',
+              AppLocalizations.of(context)!.rememberMe,
               style: kTextStyle.copyWith(fontSize: 14),
             ),
           ],
@@ -327,7 +328,7 @@ class _SignInState extends State<SignIn> {
             const ForgotPassword().launch(context);
           },
           child: Text(
-            'Mot de passe oublié ?',
+            AppLocalizations.of(context)!.forgotPassword,
             style: kTextStyle.copyWith(
               color: kMainColor,
               fontWeight: FontWeight.w600,
@@ -357,7 +358,7 @@ class _SignInState extends State<SignIn> {
           }
         },
         child: Text(
-          'Se connecter',
+          AppLocalizations.of(context)!.signIn,
           style: kTextStyle.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -380,7 +381,7 @@ class _SignInState extends State<SignIn> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'OU',
+            AppLocalizations.of(context)!.or,
             style: kTextStyle.copyWith(
               color: kGreyTextColor,
               fontWeight: FontWeight.w600,
@@ -421,7 +422,7 @@ class _SignInState extends State<SignIn> {
             ),
             const SizedBox(width: 16),
             Text(
-              'Se connecter avec Google',
+              AppLocalizations.of(context)!.signInWithGoogle,
               style: kTextStyle.copyWith(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -440,12 +441,12 @@ class _SignInState extends State<SignIn> {
         text: TextSpan(
           children: [
             TextSpan(
-              text: 'Vous n\'avez pas de compte ? ',
+              text: AppLocalizations.of(context)!.dontHaveAccount,
               style: kTextStyle.copyWith(color: kGreyTextColor),
             ),
             WidgetSpan(
               child: Text(
-                'Inscrivez-vous',
+                AppLocalizations.of(context)!.signUp,
                 style: kTextStyle.copyWith(
                   fontWeight: FontWeight.bold,
                   color: kMainColor,
@@ -474,7 +475,8 @@ class _SignInState extends State<SignIn> {
       setState(() {
         isLoading = false;
       });
-      Utils.showErreur("Login ou mot de passe incorrect", context: context);
+      Utils.showErreur(AppLocalizations.of(context)!.loginPasswordIncorrect,
+          context: context);
     });
   }
 
@@ -497,7 +499,8 @@ class _SignInState extends State<SignIn> {
         setState(() {
           isLoading = false;
         });
-        Utils.showErreur("Erreur lors de la connexion avec Google", context: context);
+        Utils.showErreur(AppLocalizations.of(context)!.googleSignInError,
+            context: context);
       });
     } else {
       setState(() {

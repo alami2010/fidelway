@@ -2,6 +2,7 @@ import 'package:fidelway/shared/constant.dart';
 import 'package:fidelway/shared/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'model/APIRest.dart';
 import 'shared/local_storage_helper.dart';
@@ -63,7 +64,7 @@ class GenerateScreenState extends State<GenerateScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              "Créez votre carte de fidélité",
+              AppLocalizations.of(context)!.createLoyaltyCard,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -71,8 +72,8 @@ class GenerateScreenState extends State<GenerateScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              "Remplissez le formulaire ci-dessous pour générer votre QR code personnel",
+            Text(
+              AppLocalizations.of(context)!.fillFormDescription,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
@@ -91,8 +92,8 @@ class GenerateScreenState extends State<GenerateScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Informations Personnelles",
+          Text(
+            AppLocalizations.of(context)!.personalInformation,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -110,12 +111,12 @@ class GenerateScreenState extends State<GenerateScreen> {
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
               ),
-              labelText: 'Nom Complet',
-              hintText: 'Entrez votre nom complet',
+              labelText: AppLocalizations.of(context)!.fullName,
+              hintText: AppLocalizations.of(context)!.enterFullName,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Veuillez entrer votre nom';
+                return AppLocalizations.of(context)!.pleaseEnterName;
               }
               return null;
             },
@@ -133,16 +134,16 @@ class GenerateScreenState extends State<GenerateScreen> {
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
               ),
-              labelText: 'Email',
-              hintText: 'Entrez votre adresse email',
+              labelText: AppLocalizations.of(context)!.email,
+              hintText: AppLocalizations.of(context)!.enterEmail,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Veuillez entrer votre email';
+                return AppLocalizations.of(context)!.pleaseEnterEmail;
               }
               // Simple email validation
               if (!value.contains('@') || !value.contains('.')) {
-                return 'Veuillez entrer un email valide';
+                return AppLocalizations.of(context)!.emailInvalid;
               }
               return null;
             },
@@ -177,7 +178,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Text("Création en cours..."),
+                Text(AppLocalizations.of(context)!.creationInProgress),
               ],
             )
           : Row(
@@ -185,8 +186,8 @@ class GenerateScreenState extends State<GenerateScreen> {
               children: [
                 const Icon(Icons.add_card),
                 const SizedBox(width: 12),
-                const Text(
-                  "CRÉER MA CARTE DE FIDÉLITÉ",
+                Text(
+                  AppLocalizations.of(context)!.createMyLoyaltyCard,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ],
@@ -200,7 +201,7 @@ class GenerateScreenState extends State<GenerateScreen> {
         const Divider(thickness: 1),
         const SizedBox(height: 16),
         Text(
-          "Votre QR Code est prêt !",
+          AppLocalizations.of(context)!.yourQrCodeIsReady,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -208,8 +209,8 @@ class GenerateScreenState extends State<GenerateScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          "Montrez ce QR code lors de vos visites pour cumuler vos points fidélité",
+        Text(
+          AppLocalizations.of(context)!.qrCodeDescription,
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, color: Colors.grey),
         ),
@@ -227,9 +228,9 @@ class GenerateScreenState extends State<GenerateScreen> {
                     data: _dataString,
                     size: 200,
                     backgroundColor: Colors.white,
-                    errorStateBuilder: (context, error) => const Center(
+                    errorStateBuilder: (context, error) => Center(
                       child: Text(
-                        "Erreur lors de la génération du QR code",
+                        AppLocalizations.of(context)!.errorGeneratingQrCode,
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -289,14 +290,16 @@ class GenerateScreenState extends State<GenerateScreen> {
             _isLoading = false;
           });
 
-          Utils.showSucces("Votre carte de fidélité a bien été créée. Si vous avez renseigné un email, vous la recevrez par email.",
+          Utils.showSucces(
+              AppLocalizations.of(context)!.cardCreatedSuccessfully,
               context: context);
         }).catchError((error) {
           setState(() {
             _isLoading = false;
           });
 
-          Utils.showErreur("Une erreur s'est produite lors de la création de votre carte", context: context);
+          Utils.showErreur(AppLocalizations.of(context)!.errorCreatingCard,
+              context: context);
         });
       });
     }

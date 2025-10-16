@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'shared/language_provider.dart';
 
 class CardContent extends StatelessWidget {
   final String name;
@@ -11,8 +14,10 @@ class CardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -34,8 +39,8 @@ class CardContent extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {},
-                child: const Text('Reserve'),
-              ),
+                    child: Text(AppLocalizations.of(context)!.reserve),
+                  ),
               const Spacer(),
               const Text(
                 '0.00 \$',
@@ -49,6 +54,8 @@ class CardContent extends StatelessWidget {
           )
         ],
       ),
+    );
+      },
     );
   }
 }
