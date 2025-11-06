@@ -1,12 +1,12 @@
 import 'package:fidelway/shared/constant.dart';
 import 'package:fidelway/shared/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:nb_utils/nb_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
 
-import '../shared/menu.dart';
 import '../shared/language_provider.dart';
+import '../shared/menu.dart';
 
 class ImprovedLoyaltyScreen extends StatelessWidget {
   const ImprovedLoyaltyScreen({Key? key}) : super(key: key);
@@ -61,8 +61,8 @@ class ImprovedLoyaltyScreen extends StatelessWidget {
 
                   // How to Start Section with step indicators
                   SectionContainer(
-                    title: 'Comment commencer ?',
-                    icon: Icons.rocket_launch,
+                        title: AppLocalizations.of(context)!.howToStart,
+                        icon: Icons.rocket_launch,
                     child: StepsWidget(),
                   ),
 
@@ -75,8 +75,9 @@ class ImprovedLoyaltyScreen extends StatelessWidget {
 
                   // FAQ Section with expandable items
                   SectionContainer(
-                    title: 'Questions fréquentes',
-                    icon: Icons.help_outline,
+                        title: AppLocalizations.of(context)!
+                            .frequentlyAskedQuestions,
+                        icon: Icons.help_outline,
                     child: FaqExpandableList(),
                   ),
 
@@ -85,8 +86,9 @@ class ImprovedLoyaltyScreen extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 32),
                       child: Text(
-                        'Fidelway, la fidélisation intelligente et durable. Essayez-la dès aujourd\'hui ! 😊',
-                        style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                            AppLocalizations.of(context)!
+                                .fidelwayIntelligentSustainableLoyalty,
+                            style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -123,7 +125,7 @@ class HeroSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Découvrez Fidelway',
+                AppLocalizations.of(context)!.discoverFidelway,
                 style: kTextStyle.copyWith(
                   color: Colors.white,
                   fontSize: 28,
@@ -132,7 +134,7 @@ class HeroSection extends StatelessWidget {
               ),
               16.height,
               Text(
-                'La Solution Moderne de Fidélisation Client',
+                AppLocalizations.of(context)!.modernLoyaltySolution,
                 style: kTextStyle.copyWith(
                   fontSize: 18,
                   color: Colors.white,
@@ -162,7 +164,7 @@ class HeroSection extends StatelessWidget {
                     ),
                     16.height,
                     Text(
-                      'Simplifiez la fidélisation, boostez votre chiffre d\'affaires et réduisez vos coûts avec Fidelway !',
+                      AppLocalizations.of(context)!.simplifyLoyaltyBoostRevenue,
                       style: kTextStyle.copyWith(
                         fontSize: 16,
                         height: 1.5,
@@ -226,16 +228,24 @@ class SectionContainer extends StatelessWidget {
 
 // Benefits Grid with visual cards
 class BenefitsGrid extends StatelessWidget {
-  final List<BenefitData> benefits = [
-    BenefitData(Icons.eco, 'Écologique', 'Plus de gaspillage de papier'),
-    BenefitData(Icons.attach_money, 'Économique', 'Jusqu\'à 42% d\'économies'),
-    BenefitData(Icons.settings, 'Flexible', 'Programmes personnalisables'),
-    BenefitData(Icons.security, 'Fiable', 'QR codes uniques et sécurisés'),
-    BenefitData(Icons.phone_iphone, 'Moderne', 'Expérience client digitale'),
-  ];
+  List<BenefitData> getBenefits(BuildContext context) {
+    return [
+      BenefitData(Icons.eco, AppLocalizations.of(context)!.ecological,
+          AppLocalizations.of(context)!.noPaperWaste),
+      BenefitData(Icons.attach_money, AppLocalizations.of(context)!.economical,
+          AppLocalizations.of(context)!.upTo42Savings),
+      BenefitData(Icons.settings, AppLocalizations.of(context)!.flexible,
+          AppLocalizations.of(context)!.customizablePrograms),
+      BenefitData(Icons.security, AppLocalizations.of(context)!.reliable,
+          AppLocalizations.of(context)!.uniqueSecureQrCodes),
+      BenefitData(Icons.phone_iphone, AppLocalizations.of(context)!.modern,
+          AppLocalizations.of(context)!.digitalCustomerExperience),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
+    final benefits = getBenefits(context);
     return GridView.builder(
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
@@ -340,8 +350,8 @@ class _FeaturesTabViewState extends State<FeaturesTabView> with SingleTickerProv
           unselectedLabelColor: Colors.grey,
           indicatorColor: kMainColor,
           tabs: [
-            Tab(text: 'Pour les commerçants'),
-            Tab(text: 'Pour les clients'),
+            Tab(text: AppLocalizations.of(context)!.forMerchants),
+            Tab(text: AppLocalizations.of(context)!.forCustomers),
           ],
         ),
         16.height,
@@ -352,16 +362,34 @@ class _FeaturesTabViewState extends State<FeaturesTabView> with SingleTickerProv
             children: [
               // Merchants Features
               FeaturesList(features: [
-                FeatureData(Icons.dashboard, 'Tableau de bord intuitif', 'Visualisez vos statistiques en un coup d\'œil'),
-                FeatureData(Icons.brush, 'Personnalisation totale', 'Adaptez vos programmes selon vos besoins'),
-                FeatureData(Icons.phone_android, 'Gestion simplifiée', 'Gérez tout depuis votre appareil mobile'),
+                FeatureData(
+                    Icons.dashboard,
+                    AppLocalizations.of(context)!.intuitiveDashboard,
+                    AppLocalizations.of(context)!.viewStatsAtGlance),
+                FeatureData(
+                    Icons.brush,
+                    AppLocalizations.of(context)!.totalCustomization,
+                    AppLocalizations.of(context)!.adaptProgramsToNeeds),
+                FeatureData(
+                    Icons.phone_android,
+                    AppLocalizations.of(context)!.simplifiedManagement,
+                    AppLocalizations.of(context)!.manageFromMobile),
               ]),
 
               // Customers Features
               FeaturesList(features: [
-                FeatureData(Icons.credit_card, 'Carte numérique ou QR code papier', 'Choisissez l\'option qui vous convient'),
-                FeatureData(Icons.notifications, 'Notifications de progression', 'Suivez l\'évolution de vos récompenses'),
-                FeatureData(Icons.loop, 'Réutilisable à vie', 'Une seule carte pour toutes vos visites'),
+                FeatureData(
+                    Icons.credit_card,
+                    AppLocalizations.of(context)!.digitalCardOrPaperQr,
+                    AppLocalizations.of(context)!.chooseYourOption),
+                FeatureData(
+                    Icons.notifications,
+                    AppLocalizations.of(context)!.progressNotifications,
+                    AppLocalizations.of(context)!.trackRewardProgress),
+                FeatureData(
+                    Icons.loop,
+                    AppLocalizations.of(context)!.reusableForLife,
+                    AppLocalizations.of(context)!.oneCardForAllVisits),
               ]),
             ],
           ),
@@ -438,36 +466,38 @@ class _ExamplesCarouselState extends State<ExamplesCarousel> {
   final PageController _pageController = PageController(viewportFraction: 0.9);
   int _currentPage = 0;
 
-  final List<ExampleData> examples = [
-    ExampleData(
-      Icons.local_pizza,
-      'Pizzeria',
-      'assets/pizza_icon.png',
-      [
-        '10 commandes → 1 boisson offerte',
-        '15 commandes → 1 pizza junior',
-        '20 commandes → 1 pizza senior',
-      ],
-    ),
-    ExampleData(
-      Icons.cut,
-      'Salon de coiffure',
-      'assets/salon_icon.png',
-      [
-        '5 visites → 1 soin gratuit',
-        '10 visites → -20% sur une prestation',
-      ],
-    ),
-    ExampleData(
-      Icons.coffee,
-      'Café',
-      'assets/cafe_icon.png',
-      [
-        '8 cafés achetés → 1 café offert',
-        '15 cafés → 1 pâtisserie au choix',
-      ],
-    ),
-  ];
+  List<ExampleData> getExamples(BuildContext context) {
+    return [
+      ExampleData(
+        Icons.local_pizza,
+        AppLocalizations.of(context)!.pizzeria,
+        'assets/pizza_icon.png',
+        [
+          AppLocalizations.of(context)!.tenOrdersOneDrink,
+          AppLocalizations.of(context)!.fifteenOrdersOneJuniorPizza,
+          AppLocalizations.of(context)!.twentyOrdersOneSeniorPizza,
+        ],
+      ),
+      ExampleData(
+        Icons.cut,
+        AppLocalizations.of(context)!.hairdressingSalon,
+        'assets/salon_icon.png',
+        [
+          AppLocalizations.of(context)!.fiveVisitsOneFreeTreatment,
+          AppLocalizations.of(context)!.tenVisitsTwentyPercentDiscount,
+        ],
+      ),
+      ExampleData(
+        Icons.coffee,
+        AppLocalizations.of(context)!.cafe,
+        'assets/cafe_icon.png',
+        [
+          AppLocalizations.of(context)!.eightCoffeesOneFreeCoffee,
+          AppLocalizations.of(context)!.fifteenCoffeesOnePastry,
+        ],
+      ),
+    ];
+  }
 
   @override
   void initState() {
@@ -490,6 +520,37 @@ class _ExamplesCarouselState extends State<ExamplesCarousel> {
 
   @override
   Widget build(BuildContext context) {
+    final examples = [
+      ExampleData(
+        Icons.local_pizza,
+        AppLocalizations.of(context)!.pizzeria,
+        'assets/pizza_icon.png',
+        [
+          AppLocalizations.of(context)!.tenOrdersOneDrink,
+          AppLocalizations.of(context)!.fifteenOrdersOneJuniorPizza,
+          AppLocalizations.of(context)!.twentyOrdersOneSeniorPizza,
+        ],
+      ),
+      ExampleData(
+        Icons.cut,
+        AppLocalizations.of(context)!.hairdressingSalon,
+        'assets/salon_icon.png',
+        [
+          AppLocalizations.of(context)!.fiveVisitsOneFreeTreatment,
+          AppLocalizations.of(context)!.tenVisitsTwentyPercentDiscount,
+        ],
+      ),
+      ExampleData(
+        Icons.coffee,
+        AppLocalizations.of(context)!.cafe,
+        'assets/cafe_icon.png',
+        [
+          AppLocalizations.of(context)!.eightCoffeesOneFreeCoffee,
+          AppLocalizations.of(context)!.fifteenCoffeesOnePastry,
+        ],
+      ),
+    ];
+
     return Column(
       children: [
         Container(
@@ -620,30 +681,30 @@ class PricingComparisonWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Avec Fidelway, économisez des centaines d\'euros par mois :',
+          AppLocalizations.of(context)!.saveHundredsEurosPerMonth,
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         16.height,
         PricingOptionCard(
-          title: 'Cartes papier classiques',
-          cost: '50 €',
-          benefits: 'Coûteux, peu pratique',
+          title: AppLocalizations.of(context)!.classicPaperCards,
+          cost: AppLocalizations.of(context)!.fiftyEuros,
+          benefits: AppLocalizations.of(context)!.expensiveNotPractical,
           isRecommended: false,
           color: Colors.grey.shade200,
         ),
         12.height,
         PricingOptionCard(
-          title: 'Fidelway (hybride)',
-          cost: '40 €',
-          benefits: 'Économique + QR code physique',
+          title: AppLocalizations.of(context)!.fidelwayHybrid,
+          cost: AppLocalizations.of(context)!.fortyEuros,
+          benefits: AppLocalizations.of(context)!.economicalPlusPhysicalQr,
           isRecommended: false,
           color: Colors.blue.shade50,
         ),
         12.height,
         PricingOptionCard(
-          title: 'Fidelway 100% numérique',
-          cost: '9.99 €',
-          benefits: 'Solution la plus avantageuse !',
+          title: AppLocalizations.of(context)!.fidelway100Digital,
+          cost: AppLocalizations.of(context)!.nine99Euros,
+          benefits: AppLocalizations.of(context)!.mostAdvantageousSolution,
           isRecommended: true,
           color: Colors.green.shade50,
         ),
@@ -660,7 +721,8 @@ class PricingComparisonWidget extends StatelessWidget {
               12.width,
               Expanded(
                 child: Text(
-                  'En choisissant l\'option numérique, vous économisez 220 €/an !',
+                  AppLocalizations.of(context)!
+                      .choosingDigitalSaves220EurosPerYear,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -757,7 +819,7 @@ class PricingOptionCard extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'RECOMMANDÉ',
+                AppLocalizations.of(context)!.recommended,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 10,
@@ -773,15 +835,19 @@ class PricingOptionCard extends StatelessWidget {
 
 // Steps Widget
 class StepsWidget extends StatelessWidget {
-  final List<StepData> steps = [
-    StepData('Téléchargez l\'appli (iOS/Android)', 'Disponible sur App Store et Google Play'),
-    StepData('Créez votre compte commerçant', 'Simple et rapide en quelques minutes'),
-    StepData('Paramétrez votre programme', 'Définissez vos règles de fidélité'),
-    StepData('Communiquez auprès de vos clients', 'Utilisez nos outils marketing intégrés'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final steps = [
+      StepData(AppLocalizations.of(context)!.downloadApp,
+          AppLocalizations.of(context)!.availableOnAppStoreAndGooglePlay),
+      StepData(AppLocalizations.of(context)!.createMerchantAccount,
+          AppLocalizations.of(context)!.simpleAndQuickInMinutes),
+      StepData(AppLocalizations.of(context)!.configureYourProgram,
+          AppLocalizations.of(context)!.defineYourLoyaltyRules),
+      StepData(AppLocalizations.of(context)!.communicateToYourClients,
+          AppLocalizations.of(context)!.useIntegratedMarketingTools),
+    ];
+
     return Container(
       child: Column(
         children: List.generate(
@@ -902,7 +968,7 @@ class CtaButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'ABONNEZ-VOUS MAINTENANT',
+            AppLocalizations.of(context)!.subscribeNow,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -924,35 +990,42 @@ class FaqExpandableList extends StatefulWidget {
 }
 
 class _FaqExpandableListState extends State<FaqExpandableList> {
-  final List<FaqItemData> faqItems = [
-    FaqItemData(
-      'Un client perd sa carte papier ?',
-      'Il peut facilement la récupérer via l\'application mobile Fidelway. Toutes les données sont sauvegardées dans le cloud et accessibles à tout moment.',
-    ),
-    FaqItemData(
-      'Modifiable à tout moment ?',
-      'Oui, vous pouvez ajuster vos règles de fidélité depuis le tableau de bord en quelques clics, sans aucune intervention technique requise.',
-    ),
-    FaqItemData(
-      'Est-ce sécurisé ?',
-      'Absolument, chaque QR code est unique et infalsifiable. Toutes les données sont chiffrées et protégées selon les standards les plus élevés.',
-    ),
-    FaqItemData(
-      'Puis-je personnaliser l\'apparence ?',
-      'Bien sûr ! Vous pouvez adapter les couleurs, ajouter votre logo et personnaliser l\'apparence de vos cartes de fidélité numériques.',
-    ),
-  ];
+  List<FaqItemData> getFaqItems(BuildContext context) {
+    return [
+      FaqItemData(
+        AppLocalizations.of(context)!.customerLosesPaperCard,
+        AppLocalizations.of(context)!.canEasilyRetrieveViaApp,
+      ),
+      FaqItemData(
+        AppLocalizations.of(context)!.modifiableAtAnyTime,
+        AppLocalizations.of(context)!.yesCanAdjustRulesFromDashboard,
+      ),
+      FaqItemData(
+        AppLocalizations.of(context)!.isItSecure,
+        AppLocalizations.of(context)!.absolutelyUniqueQrCodes,
+      ),
+      FaqItemData(
+        AppLocalizations.of(context)!.canIPersonalizeAppearance,
+        AppLocalizations.of(context)!.ofCourseCanAdaptColors,
+      ),
+    ];
+  }
 
   List<bool> _expandedList = [];
 
   @override
   void initState() {
     super.initState();
-    _expandedList = List.generate(faqItems.length, (index) => false);
+    _expandedList = [];
   }
 
   @override
   Widget build(BuildContext context) {
+    final faqItems = getFaqItems(context);
+    if (_expandedList.length != faqItems.length) {
+      _expandedList = List.generate(faqItems.length, (index) => false);
+    }
+
     return Column(
       children: List.generate(
         faqItems.length,

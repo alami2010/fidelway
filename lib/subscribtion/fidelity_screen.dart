@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:nb_utils/nb_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
 
 import '../home.dart';
 import '../model/APIRest.dart';
 import '../model/category.dart';
 import '../shared/constant.dart';
+import '../shared/language_provider.dart';
 import '../shared/local_storage_helper.dart';
 import '../shared/menu.dart';
 import '../shared/utils.dart';
-import '../shared/language_provider.dart';
 
 class FidelityScreen extends StatefulWidget {
   @override
@@ -345,9 +345,8 @@ class _FidelityScreenState extends State<FidelityScreen> {
       children: [
         _buildActionButtons(),
         Divider(height: 1),
-        // Add reward preview section
-        if (selectedCategory?.choices.isNotEmpty ?? false)
-          _buildRewardPreview(),
+        // Always show reward preview section as a presentation
+        _buildRewardPreview(),
         Expanded(
           child: selectedCategory?.choices.isEmpty ?? true
               ? _buildEmptyState()
@@ -1138,21 +1137,13 @@ class _FidelityScreenState extends State<FidelityScreen> {
         // Extract amount
         RegExp amountRegex = RegExp(r'(\d+)\s*€?');
         Match? match = amountRegex.firstMatch(rewardName);
-        if (match != null) {
-          String amount = match.group(1)!;
-          previewMessage = AppLocalizations.of(context)!
-                  .atPointsYouBenefitFrom(points.toString()) +
-              " " +
-              AppLocalizations.of(context)!
-                  .orVoucherValidOnYourOrder(amount, orderNumber);
-        } else {
-          // Default to 10€ if no amount found
-          previewMessage = AppLocalizations.of(context)!
-                  .atPointsYouBenefitFrom(points.toString()) +
-              " " +
-              AppLocalizations.of(context)!
-                  .orVoucherValidOnYourOrder("10", orderNumber);
-        }
+        String amount = match != null ? match.group(1)! : "10";
+
+        // For voucher, fix the grammatical issue by replacing "d'une" with "d'un bon de"
+        final baseText = AppLocalizations.of(context)!
+            .atPointsYouBenefitFrom(points.toString());
+        previewMessage = baseText.replaceAll("d'une",
+            "d'un bon de ${amount}€ valable sur votre ${orderNumber}ᵉ commande");
       } else {
         // Generic reward description
         previewMessage =
@@ -1165,56 +1156,26 @@ class _FidelityScreenState extends State<FidelityScreen> {
     return previews;
   }
 
-  /// Build reward preview section
+  /// Build reward preview section - Always visible presentation
   Widget _buildRewardPreview() {
     final previews = _generateRewardPreviews();
-
-    if (previews.isEmpty) {
-      return Container(
-        margin: EdgeInsets.all(16),
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.blue.shade50,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.blue.shade200),
-        ),
-        child: Column(
-          children: [
-            Icon(Icons.info_outline, color: Colors.blue.shade600, size: 32),
-            SizedBox(height: 12),
-            Text(
-              AppLocalizations.of(context)!.noRewardsAvailable,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.blue.shade800,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              AppLocalizations.of(context)!.configureRewardsToSeePreview,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.blue.shade600,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      );
-    }
 
     return Container(
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.green.shade50,
+        color: previews.isEmpty ? Colors.blue.shade50 : Colors.green.shade50,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.green.shade200),
+        border: Border.all(
+          color:
+              previews.isEmpty ? Colors.blue.shade200 : Colors.green.shade200,
+          width: 2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.green.withOpacity(0.1),
-            blurRadius: 8,
+            color: (previews.isEmpty ? Colors.blue : Colors.green)
+                .withOpacity(0.15),
+            blurRadius: 10,
             offset: Offset(0, 4),
           ),
         ],
@@ -1224,58 +1185,182 @@ class _FidelityScreenState extends State<FidelityScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.card_giftcard, color: Colors.green.shade600, size: 24),
-              SizedBox(width: 8),
-              Text(
-                AppLocalizations.of(context)!.rewardPreview,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green.shade800,
+              Icon(
+                previews.isEmpty ? Icons.info_outline : Icons.card_giftcard,
+                color: previews.isEmpty
+                    ? Colors.blue.shade600
+                    : Colors.green.shade600,
+                size: 28,
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.rewardPreview,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: previews.isEmpty
+                            ? Colors.blue.shade800
+                            : Colors.green.shade800,
+                      ),
+                    ),
+                    if (previews.isNotEmpty) ...[
+                      SizedBox(height: 4),
+                      Text(
+                        AppLocalizations.of(context)!.whatYouCanEarn,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.green.shade600,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ],
           ),
-          SizedBox(height: 4),
-          Text(
-            AppLocalizations.of(context)!.whatYouCanEarn,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.green.shade600,
-            ),
-          ),
           SizedBox(height: 16),
-          ...previews
-              .map((preview) => Padding(
-                    padding: EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 6,
-                          height: 6,
-                          margin: EdgeInsets.only(top: 6, right: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.green.shade600,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            preview,
+          if (previews.isEmpty)
+            Column(
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.noRewardsAvailable,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.blue.shade800,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 12),
+                Text(
+                  AppLocalizations.of(context)!.configureRewardsToSeePreview,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.blue.shade600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 16),
+                // Show example format
+                Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.blue.shade300),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.lightbulb_outline,
+                              color: Colors.blue.shade600, size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            AppLocalizations.of(context)!.exampleRewards,
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.green.shade800,
-                              height: 1.4,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.blue.shade800,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ))
-              .toList(),
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      _buildExamplePreviewItem("100", "10", "10", true),
+                      SizedBox(height: 8),
+                      _buildExamplePreviewItem("100", "10", "10", false),
+                      SizedBox(height: 8),
+                      _buildExamplePreviewItem("200", "10", "20", true),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          else
+            ...previews
+                .map((preview) => Padding(
+                      padding: EdgeInsets.only(bottom: 12),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            margin: EdgeInsets.only(top: 6, right: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.green.shade600,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              preview,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.green.shade900,
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ))
+                .toList(),
         ],
       ),
+    );
+  }
+
+  /// Build example preview item for empty state
+  Widget _buildExamplePreviewItem(
+      String points, String value, String orderNumber, bool isDiscount) {
+    final loc = AppLocalizations.of(context)!;
+
+    String text;
+    if (isDiscount) {
+      // For discount: "À {points} points, vous bénéficiez d'une remise de {discount}% sur votre {orderNumber}ᵉ commande"
+      text = loc.atPointsYouBenefitFrom(points) +
+          " " +
+          loc.discountOnYourOrder(value, orderNumber);
+    } else {
+      // For voucher: "À {points} points, vous bénéficiez d'un bon de {amount}€ valable sur votre {orderNumber}ᵉ commande"
+      // Replace "d'une" with "d'un bon de" to fix the grammatical issue
+      final baseText = loc.atPointsYouBenefitFrom(points);
+      text = baseText.replaceAll("d'une",
+          "d'un bon de ${value}€ valable sur votre ${orderNumber}ᵉ commande");
+    }
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 6,
+          height: 6,
+          margin: EdgeInsets.only(top: 6, right: 12),
+          decoration: BoxDecoration(
+            color: Colors.blue.shade600,
+            shape: BoxShape.circle,
+          ),
+        ),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.blue.shade700,
+              height: 1.4,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

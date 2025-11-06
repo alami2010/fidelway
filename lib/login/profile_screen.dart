@@ -4,16 +4,16 @@ import 'package:fidelway/login/sign_in.dart';
 import 'package:fidelway/model/APIRest.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 import '../shared/constant.dart';
+import '../shared/language_provider.dart';
 import '../shared/local_storage_helper.dart';
 import '../shared/menu.dart';
 import '../shared/utils.dart';
-import '../shared/language_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -53,6 +53,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             account?.subscriptionExpiryDate ?? DateTime.now();
         final isSubscriptionExpired =
             !subscribed || DateTime.now().isAfter(subscriptionDate);
+        // Check if app is in free mode
+        final isFree = isAppFree;
 
         return Scaffold(
           drawer: MyDrawer(),
@@ -162,15 +164,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   margin: const EdgeInsets.symmetric(horizontal: 20),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: subscribed ? [const Color(0xFF43A047), const Color(0xFF2E7D32)] : [const Color(0xFFF44336), const Color(0xFFD32F2F)],
-                      begin: Alignment.topLeft,
+                          colors: isFree
+                              ? [
+                                  const Color(0xFF43A047),
+                                  const Color(0xFF2E7D32)
+                                ]
+                              : (subscribed
+                                  ? [
+                                      const Color(0xFF43A047),
+                                      const Color(0xFF2E7D32)
+                                    ]
+                                  : [
+                                      const Color(0xFFF44336),
+                                      const Color(0xFFD32F2F)
+                                    ]),
+                          begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: (subscribed ? Colors.green : Colors.red).withOpacity(0.3),
-                        blurRadius: 8,
+                            color: (isFree || subscribed
+                                    ? Colors.green
+                                    : Colors.red)
+                                .withOpacity(0.3),
+                            blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
                     ],
@@ -186,8 +204,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
-                            subscribed ? CupertinoIcons.checkmark_seal_fill : CupertinoIcons.exclamationmark_triangle_fill,
-                            color: Colors.white,
+                                isFree
+                                    ? CupertinoIcons.checkmark_seal_fill
+                                    : (subscribed
+                                        ? CupertinoIcons.checkmark_seal_fill
+                                        : CupertinoIcons
+                                            .exclamationmark_triangle_fill),
+                                color: Colors.white,
                             size: 30,
                           ),
                         ),
@@ -197,11 +220,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                    subscribed
-                                        ? AppLocalizations.of(context)!
-                                            .activeSubscription
-                                        : AppLocalizations.of(context)!
-                                            .expiredSubscription,
+                                    isFree
+                                        ? AppLocalizations.of(context)!.isFree
+                                        : (subscribed
+                                            ? AppLocalizations.of(context)!
+                                                .activeSubscription
+                                            : AppLocalizations.of(context)!
+                                                .expiredSubscription),
                                     style: kTextStyle.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -210,9 +235,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                subscribed
-                                        ? "${AppLocalizations.of(context)!.expiresOn} ${DateFormat('dd/MM/yyyy').format(subscriptionDate)}"
-                                        : "${AppLocalizations.of(context)!.expiredSince} ${DateFormat('dd/MM/yyyy').format(subscriptionDate)}",
+                                    isFree
+                                        ? AppLocalizations.of(context)!
+                                            .appIsFree
+                                        : (subscribed
+                                            ? "${AppLocalizations.of(context)!.expiresOn} ${DateFormat('dd/MM/yyyy').format(subscriptionDate)}"
+                                            : "${AppLocalizations.of(context)!.expiredSince} ${DateFormat('dd/MM/yyyy').format(subscriptionDate)}"),
                                     style: kTextStyle.copyWith(
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 14,
@@ -221,15 +249,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ],
                           ),
                         ),
-                        if (isSubscriptionExpired)
-                          ElevatedButton(
+                            if (isFree || isSubscriptionExpired)
+                              ElevatedButton(
                             onPressed: () {
-                                  toast(AppLocalizations.of(context)!.renew);
+                                  if (isFree) {
+                                    toast(AppLocalizations.of(context)!
+                                        .appIsFree);
+                                  } else {
+                                    toast(AppLocalizations.of(context)!.renew);
+                                  }
                                 },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
-                              foregroundColor: Colors.red,
-                              elevation: 0,
+                                  foregroundColor:
+                                      isFree ? kGreenColor : Colors.red,
+                                  elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),

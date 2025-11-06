@@ -22,6 +22,10 @@ const TextStyle kTextStyle = TextStyle(
 );
 
 String purchaseCode = '528cdb9a-5d37-4292-a2b5-b792d5eca03a';
+
+// Free mode configuration flag - Set to true to disable all pricing and payment functionality
+const bool isAppFree = true;
+
 const kButtonDecoration = BoxDecoration(
   borderRadius: BorderRadius.all(
     Radius.circular(5),
