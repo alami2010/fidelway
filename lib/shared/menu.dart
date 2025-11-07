@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../contact.dart';
 import '../home.dart';
@@ -177,6 +177,8 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
   }
 
   Widget _buildDrawerItems(BuildContext context, bool isDark) {
+    const isFree = isAppFree;
+
     return Column(
       children: [
         _buildSection(
@@ -212,13 +214,14 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
               () => ImprovedLoyaltyScreen().launch(context),
               isDark,
             ),
-            _buildMenuItem(
-              context,
-              Icons.card_membership_outlined,
-              AppLocalizations.of(context)!.subscription,
-              () => const PricingScreen().launch(context),
-              isDark,
-            ),
+            if (!isFree)
+              _buildMenuItem(
+                context,
+                Icons.card_membership_outlined,
+                AppLocalizations.of(context)!.subscription,
+                () => const PricingScreen().launch(context),
+                isDark,
+              ),
             _buildMenuItem(
               context,
               Icons.credit_card_outlined,
@@ -287,6 +290,17 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
           ],
           isDark,
         ),
+        if (isFree)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: _buildMenuItem(
+              context,
+              Icons.card_membership_outlined,
+              AppLocalizations.of(context)!.pricing,
+              () => const PricingScreen().launch(context),
+              isDark,
+            ),
+          ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Divider(

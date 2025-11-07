@@ -27,3 +27,4 @@ Framework • revision 360a12c848 (5 months ago) • 2025-02-14 13:36:09 -0800
 Engine • revision 29a2f674ca
 Tools • Dart 3.8.0 (build 3.8.0-70.0.dev) • DevTools 2.43.0
 
+fvm install 3.30.0-0.1.pre

@@ -1,10 +1,13 @@
 import 'package:fidelway/login/sign_up.dart';
 import 'package:fidelway/model/APIRest.dart';
 import 'package:flutter/material.dart';
-import 'package:nb_utils/nb_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:nb_utils/nb_utils.dart';
+import 'package:provider/provider.dart';
 
 import '../shared/constant.dart';
+import '../shared/language_provider.dart';
+import '../shared/language_service.dart';
 import '../shared/utils.dart';
 import 'auth_service.dart';
 import 'forgot_password.dart';
@@ -31,41 +34,47 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            _buildBackgroundDecoration(),
-            SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 20),
-                    _buildHeader(),
-                    const SizedBox(height: 30),
-                    _buildLoginForm(size),
-                    const SizedBox(height: 15),
-                    _buildOrDivider(),
-                    const SizedBox(height: 15),
-                    _buildSocialLoginButtons(),
-                    const SizedBox(height: 15),
-                    _buildSignUpText(),
-                    const SizedBox(height: 10),
-                  ],
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: Stack(
+              children: [
+                _buildBackgroundDecoration(),
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 20),
+                        _buildLanguageSelector(),
+                        const SizedBox(height: 10),
+                        _buildHeader(),
+                        const SizedBox(height: 30),
+                        _buildLoginForm(size),
+                        const SizedBox(height: 15),
+                        _buildOrDivider(),
+                        const SizedBox(height: 15),
+                        _buildSocialLoginButtons(),
+                        const SizedBox(height: 15),
+                        _buildSignUpText(),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                if (isLoading)
+                  Container(
+                    color: Colors.black.withOpacity(0.3),
+                    child: Center(child: Utils.getLoading()),
+                  ),
+              ],
             ),
-            if (isLoading)
-              Container(
-                color: Colors.black.withOpacity(0.3),
-                child: Center(child: Utils.getLoading()),
-              ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -99,6 +108,136 @@ class _SignInState extends State<SignIn> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildLanguageSelector() {
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        final currentLocale = languageProvider.currentLocale;
+        final currentLanguageCode = currentLocale.languageCode;
+
+        return Align(
+          alignment: Alignment.topRight,
+          child: PopupMenuButton<Locale>(
+            icon: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: kMainColor.withOpacity(0.3)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    currentLanguageCode == 'fr' ? '🇫🇷' : '🇺🇸',
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    currentLanguageCode.toUpperCase(),
+                    style: kTextStyle.copyWith(
+                      color: kMainColor,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.arrow_drop_down,
+                    color: kMainColor,
+                    size: 20,
+                  ),
+                ],
+              ),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 4,
+            itemBuilder: (context) => [
+              PopupMenuItem<Locale>(
+                value: LanguageService.french,
+                child: Row(
+                  children: [
+                    const Text('🇫🇷', style: TextStyle(fontSize: 20)),
+                    const SizedBox(width: 12),
+                    Text(
+                      AppLocalizations.of(context)!.french,
+                      style: kTextStyle.copyWith(
+                        fontWeight: currentLanguageCode == 'fr'
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                        color: currentLanguageCode == 'fr'
+                            ? kMainColor
+                            : Colors.black87,
+                      ),
+                    ),
+                    if (currentLanguageCode == 'fr') ...[
+                      const Spacer(),
+                      Icon(
+                        Icons.check,
+                        color: kMainColor,
+                        size: 20,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              PopupMenuItem<Locale>(
+                value: LanguageService.english,
+                child: Row(
+                  children: [
+                    const Text('🇺🇸', style: TextStyle(fontSize: 20)),
+                    const SizedBox(width: 12),
+                    Text(
+                      AppLocalizations.of(context)!.english,
+                      style: kTextStyle.copyWith(
+                        fontWeight: currentLanguageCode == 'en'
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                        color: currentLanguageCode == 'en'
+                            ? kMainColor
+                            : Colors.black87,
+                      ),
+                    ),
+                    if (currentLanguageCode == 'en') ...[
+                      const Spacer(),
+                      Icon(
+                        Icons.check,
+                        color: kMainColor,
+                        size: 20,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+            onSelected: (Locale locale) async {
+              await languageProvider.changeLanguage(locale);
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)!.languageChangedSuccessfully,
+                    ),
+                    backgroundColor: Colors.green,
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              }
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -496,6 +635,7 @@ class _SignInState extends State<SignIn> {
           isLoading = false;
         });
       }).catchError((error) {
+        print(error);
         setState(() {
           isLoading = false;
         });

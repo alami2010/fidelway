@@ -10,6 +10,7 @@ import '../shared/constant.dart';
 import '../shared/language_provider.dart';
 import '../shared/local_storage_helper.dart';
 import '../shared/menu.dart';
+import '../shared/reward_preview_dialog.dart';
 import '../shared/utils.dart';
 
 class FidelityScreen extends StatefulWidget {
@@ -24,6 +25,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
   final TextEditingController choiceController = TextEditingController();
   final TextEditingController pointsController = TextEditingController();
   List<TextEditingController> pointsControllers = [];
+  Locale? _lastLocale;
 
   @override
   void initState() {
@@ -32,15 +34,59 @@ class _FidelityScreenState extends State<FidelityScreen> {
   }
 
   Future<void> _loadChoices() async {
-    selectedCategory = LocalStorageHelper.getCategory();
+    final storedCategory = LocalStorageHelper.getCategory();
+
+    if (storedCategory == null) {
+      return;
+    }
 
     setState(() {
-      selectedCategory = LocalStorageHelper.getCategory();
-      if (selectedCategory != null) {
+      selectedCategory = storedCategory.copyWith(
+        choices: storedCategory.choices
+            .map((choice) => Map<String, dynamic>.from(choice))
+            .toList(),
+      );
+      showCategories = false;
+      _initializeControllers();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (selectedCategory == null) {
+      return;
+    }
+
+    final locale = Localizations.localeOf(context);
+    if (_lastLocale == locale) {
+      return;
+    }
+
+    final convertedCategory =
+        convertCategoryChoicesToKeys(context, selectedCategory);
+
+    if (convertedCategory != null) {
+      setState(() {
+        selectedCategory = convertedCategory;
         showCategories = false;
         _initializeControllers();
-      }
-    });
+        _lastLocale = locale;
+      });
+    } else {
+      _lastLocale = locale;
+    }
+  }
+
+  @override
+  void dispose() {
+    choiceController.dispose();
+    pointsController.dispose();
+    for (final controller in pointsControllers) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   Future<void> _saveChoices() async {
@@ -79,13 +125,19 @@ class _FidelityScreenState extends State<FidelityScreen> {
         AppLocalizations.of(context)!.changingBusinessWillLoseConfiguration);
     if (result == true) {
       setState(() {
-        selectedCategory = category.copyWith();
-        if (category.id != selectedCategory?.id) {
-          selectedCategory?.choices = List.from(category.choices);
-        }
+        final copiedCategory = category.copyWith(
+          choices: category.choices
+              .map((choice) => Map<String, dynamic>.from(choice))
+              .toList(),
+        );
 
-        _initializeControllers();
+        selectedCategory =
+            convertCategoryChoicesToKeys(context, copiedCategory) ??
+                copiedCategory;
+
         showCategories = false;
+        _initializeControllers();
+        _lastLocale = Localizations.localeOf(context);
       });
     }
   }
@@ -97,8 +149,18 @@ class _FidelityScreenState extends State<FidelityScreen> {
   }
 
   void _initializeControllers() {
+    for (final controller in pointsControllers) {
+      controller.dispose();
+    }
+
+    if (selectedCategory == null) {
+      pointsControllers = [];
+      return;
+    }
+
     pointsControllers = selectedCategory!.choices.map((choice) {
-      return TextEditingController(text: choice["points"].toString());
+      final pointsValue = choice["points"];
+      return TextEditingController(text: (pointsValue ?? 0).toString());
     }).toList();
   }
 
@@ -111,19 +173,22 @@ class _FidelityScreenState extends State<FidelityScreen> {
   void removeChoice(int index) {
     setState(() {
       selectedCategory!.choices.removeAt(index);
-      pointsControllers.removeAt(index);
+      final controller = pointsControllers.removeAt(index);
+      controller.dispose();
     });
   }
 
   void addCustomChoice() {
     if (choiceController.text.isNotEmpty && pointsController.text.isNotEmpty) {
       setState(() {
+        final parsedPoints = int.tryParse(pointsController.text) ?? 0;
         selectedCategory!.choices.add({
           "choice": choiceController.text,
-          "points": int.tryParse(pointsController.text) ?? 0,
+          "points": parsedPoints,
           "image": "images/default.png", // Image par défaut
         });
-        pointsControllers.add(TextEditingController(text: pointsController.text));
+        pointsControllers
+            .add(TextEditingController(text: parsedPoints.toString()));
         choiceController.clear();
         pointsController.clear();
       });
@@ -133,12 +198,29 @@ class _FidelityScreenState extends State<FidelityScreen> {
   void addChoiceFromCategory(Map<String, dynamic> choice) {
     // Implement the logic to add the selected choice from a category
     setState(() {
-      selectedCategory!.choices.add({
-        "choice": choice["choice"],
-        "points": choice["points"],
-        "image": choice["image"], // Image par défaut
-      });
-      pointsControllers.add(TextEditingController(text: pointsController.text));
+      final choiceCopy = Map<String, dynamic>.from(choice);
+
+      // Find the localization key for this choice
+      final choiceName = choiceCopy["choice"] as String?;
+      final choiceKey =
+          choiceName != null ? getChoiceKeyFromName(choiceName) : null;
+
+      final localizedChoiceName = getLocalizedChoiceName(context, choiceCopy);
+      final pointsValue = choiceCopy["points"];
+      final parsedPoints = pointsValue is int
+          ? pointsValue
+          : int.tryParse(pointsValue?.toString() ?? '') ?? 0;
+
+      final newChoice = {
+        "choice": localizedChoiceName,
+        "points": parsedPoints,
+        "image": choiceCopy["image"],
+        if (choiceKey != null) "choiceKey": choiceKey,
+      };
+
+      selectedCategory!.choices.add(newChoice);
+      pointsControllers
+          .add(TextEditingController(text: parsedPoints.toString()));
       choiceController.clear();
       pointsController.clear();
     });
@@ -345,8 +427,6 @@ class _FidelityScreenState extends State<FidelityScreen> {
       children: [
         _buildActionButtons(),
         Divider(height: 1),
-        // Always show reward preview section as a presentation
-        _buildRewardPreview(),
         Expanded(
           child: selectedCategory?.choices.isEmpty ?? true
               ? _buildEmptyState()
@@ -421,7 +501,32 @@ class _FidelityScreenState extends State<FidelityScreen> {
                   ),
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
+
+              // Preview button - opens popup
+              OutlinedButton.icon(
+                onPressed: () {
+                  RewardPreviewDialog.show(
+                    context,
+                    selectedCategory?.choices ?? [],
+                  );
+                },
+                icon: const Icon(Icons.preview, size: 18),
+                label: Text(
+                  AppLocalizations.of(context)!.preview ?? 'Preview',
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: kMainColor,
+                  side: BorderSide(color: kMainColor.withOpacity(0.5)),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
 
               // Management options in a dropdown
               Container(
@@ -608,7 +713,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    choice["choice"],
+                    getLocalizedChoiceName(context, choice),
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
@@ -1003,7 +1108,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                choice["choice"],
+                                getLocalizedChoiceName(context, choice),
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -1074,14 +1179,26 @@ class _FidelityScreenState extends State<FidelityScreen> {
         context, AppLocalizations.of(context)!.sureToResetDefaultRewards);
     if (result == true) {
       startLoading();
-      List<Map<String, dynamic>> choices = List.from(getCategories(context)
-          .firstWhere((cat) => cat.id == selectedCategory?.id)
-          .choices);
+      final defaultCategory = getCategories(context)
+          .firstWhere((cat) => cat.id == selectedCategory?.id);
+      final restoredChoices = defaultCategory.choices
+          .map((choice) => Map<String, dynamic>.from(choice))
+          .toList();
 
       setState(() {
-        selectedCategory!.choices = choices;
+        final restoredCategory = selectedCategory!.copyWith(
+          choices: restoredChoices,
+        );
+
+        selectedCategory = convertCategoryChoicesToKeys(
+              context,
+              restoredCategory,
+            ) ??
+            restoredCategory;
+
+        _initializeControllers();
+        _lastLocale = Localizations.localeOf(context);
       });
-      _initializeControllers();
       stopLoading();
     }
   }
@@ -1103,7 +1220,7 @@ class _FidelityScreenState extends State<FidelityScreen> {
     for (int i = 0; i < sortedChoices.length; i++) {
       final choice = sortedChoices[i];
       final points = choice["points"] as int;
-      final rewardName = choice["choice"] as String;
+      final rewardName = getLocalizedChoiceName(context, choice);
 
       // Determine order number (10th, 20th, etc.)
       final orderNumber = ((i + 1) * 10).toString();

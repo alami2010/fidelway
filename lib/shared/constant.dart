@@ -68,7 +68,8 @@ final otpInputDecoration = InputDecoration(
 List<Category> getCategories(BuildContext context) {
   return [
     Category(
-    id: 1,
+      id: 1,
+      code: '1',
       name: AppLocalizations.of(context)!.restaurant,
       color: Color(0xFF02B984),
     image: "images/restauration.png",
@@ -143,7 +144,8 @@ List<Category> getCategories(BuildContext context) {
       ],
   ),
   Category(
-    id: 2,
+      id: 2,
+      code: '2',
       name: AppLocalizations.of(context)!.butcher,
       color: Color(0xFF4ACDF9),
     image: "images/boucherie.png",
@@ -171,7 +173,8 @@ List<Category> getCategories(BuildContext context) {
       ],
   ),
   Category(
-    id: 3,
+      id: 3,
+      code: '3',
       name: AppLocalizations.of(context)!.generalFood,
       image: "images/alimentation.png",
     color: Color(0xFF7C69EE),
@@ -199,7 +202,8 @@ List<Category> getCategories(BuildContext context) {
       ],
   ),
   Category(
-    id: 4,
+      id: 4,
+      code: '4',
       name: AppLocalizations.of(context)!.menHairdresser,
       image: "images/coiffure.png",
     color: Color(0xFFFD72AF),
@@ -227,7 +231,8 @@ List<Category> getCategories(BuildContext context) {
       ],
   ),
   Category(
-    id: 5,
+      id: 5,
+      code: '5',
       name: AppLocalizations.of(context)!.womenHairdresser,
       image: "images/coiffeurFemme.png",
     color: Color(0xFFFD72AF),
@@ -265,7 +270,8 @@ List<Category> getCategories(BuildContext context) {
       ],
   ),
   Category(
-    id: 6,
+      id: 6,
+      code: '6',
       name: AppLocalizations.of(context)!.bakery,
       color: Color(0xFF02B984),
     image: "images/boulangerie.png",
@@ -308,7 +314,8 @@ List<Category> getCategories(BuildContext context) {
       ],
   ),
   Category(
-    id: 7,
+      id: 7,
+      code: '7',
       name: AppLocalizations.of(context)!.beautyCenter,
       color: Color(0xFF02B984),
     image: "images/centreBeaute.png",
@@ -341,7 +348,8 @@ List<Category> getCategories(BuildContext context) {
       ],
   ),
   Category(
-    id: 8,
+      id: 8,
+      code: '8',
       name: AppLocalizations.of(context)!.autoMechanic,
       color: Color(0xFF02B984),
     image: "images/garagiste.png",
@@ -369,7 +377,8 @@ List<Category> getCategories(BuildContext context) {
       ],
   ),
   Category(
-    id: 9,
+      id: 9,
+      code: '9',
       name: AppLocalizations.of(context)!.other,
       color: Color(0xFFCD3636),
     image: "images/gift.png",
@@ -387,4 +396,238 @@ List<Category> getCategories(BuildContext context) {
       ],
   ),
 ];
+}
+
+/// Maps a choice name (in any language) to its localization key
+/// This allows us to convert backend choice names to keys for proper i18n
+String? getChoiceKeyFromName(String choiceName) {
+  // Map of localized strings (both French and English) to localization keys
+  final Map<String, String> choiceNameToKey = {
+    // Restaurant
+    "Junior Pizza": "pizzaJunior",
+    "Pizza junior": "pizzaJunior",
+    "Senior Pizza": "pizzaSenior",
+    "Pizza senior": "pizzaSenior",
+    "Burger": "burger",
+    "Sandwich": "sandwich",
+    "Drink": "drink",
+    "Boisson": "drink",
+    "Tacos": "tacos",
+    "Kebab": "kebab",
+    "Pasta": "pasta",
+    "Salad": "salad",
+    "Salade": "salad",
+    "Crepe": "crepe",
+    "Crêpe": "crepe",
+    "Ice Cream": "iceCream",
+    "Glace": "iceCream",
+    "Coffee": "coffee",
+    "Café": "coffee",
+    "Smoothie": "smoothie",
+
+    // Butcher
+    "Ground Meat 500g": "groundMeat500g",
+    "Viande hachée 500g": "groundMeat500g",
+    "Free Steak": "freeSteak",
+    "Steak offert": "freeSteak",
+    "10 €": "tenEuro",
+    "10% Discount": "tenPercentDiscount",
+    "Réduction de 10%": "tenPercentDiscount",
+
+    // General Food
+    "Fruit Basket": "fruitBasket",
+    "Panier de fruits": "fruitBasket",
+    "Free Drink": "freeDrink",
+    "Boisson gratuite": "freeDrink",
+
+    // Men's Hairdresser
+    "Free Haircut": "freeHaircut",
+    "Coupe gratuite": "freeHaircut",
+    "Free Shampoo": "freeShampoo",
+    "Shampoing offert": "freeShampoo",
+    "Beard": "beard",
+    "Barbe": "beard",
+
+    // Women's Hairdresser
+    "Free Cut": "freeCut",
+    "Coupe offerte": "freeCut",
+    "Hair Dryer": "hairDryer",
+    "Sechoir": "hairDryer",
+    "Blow Dry": "blowDry",
+    "Broching": "blowDry",
+
+    // Bakery
+    "Baguette": "baguette",
+    "Traditional": "traditional",
+    "Tradition": "traditional",
+    "Croissant": "croissant",
+    "Chocolate Bread": "chocolateBread",
+    "Pain au chocolat": "chocolateBread",
+    "Cookies": "cookies",
+
+    // Beauty Center
+    "Waxing": "waxing",
+    "Epilation": "waxing",
+    "Manicure": "manicure",
+    "Pedicure": "pedicure",
+
+    // Auto Mechanic
+    "Diagnosis": "diagnosis",
+    "Diagnostique": "diagnosis",
+    "Oil Change": "oilChange",
+    "Vidange": "oilChange",
+  };
+
+  return choiceNameToKey[choiceName];
+}
+
+/// Gets the localized choice name from a choice map
+/// If the choice has a key, use it; otherwise try to map the stored name to a key
+String getLocalizedChoiceName(
+    BuildContext context, Map<String, dynamic> choice) {
+  final localizations = AppLocalizations.of(context)!;
+
+  // If choice already has a key stored, use it
+  if (choice.containsKey("choiceKey") && choice["choiceKey"] != null) {
+    final key = choice["choiceKey"] as String;
+    return _getLocalizedStringByKey(localizations, key) ??
+        choice["choice"] ??
+        "";
+  }
+
+  // Otherwise, try to map the stored choice name to a key
+  final choiceName = choice["choice"] as String?;
+  if (choiceName != null) {
+    final key = getChoiceKeyFromName(choiceName);
+    if (key != null) {
+      // Store the key for future use
+      choice["choiceKey"] = key;
+      return _getLocalizedStringByKey(localizations, key) ?? choiceName;
+    }
+  }
+
+  // Fallback to stored name if no mapping found
+  return choiceName ?? "";
+}
+
+/// Helper function to get localized string by key using reflection-like approach
+String? _getLocalizedStringByKey(AppLocalizations localizations, String key) {
+  switch (key) {
+    case "pizzaJunior":
+      return localizations.pizzaJunior;
+    case "pizzaSenior":
+      return localizations.pizzaSenior;
+    case "burger":
+      return localizations.burger;
+    case "sandwich":
+      return localizations.sandwich;
+    case "drink":
+      return localizations.drink;
+    case "tacos":
+      return localizations.tacos;
+    case "kebab":
+      return localizations.kebab;
+    case "pasta":
+      return localizations.pasta;
+    case "salad":
+      return localizations.salad;
+    case "crepe":
+      return localizations.crepe;
+    case "iceCream":
+      return localizations.iceCream;
+    case "coffee":
+      return localizations.coffee;
+    case "smoothie":
+      return localizations.smoothie;
+    case "groundMeat500g":
+      return localizations.groundMeat500g;
+    case "freeSteak":
+      return localizations.freeSteak;
+    case "tenEuro":
+      return localizations.tenEuro;
+    case "tenPercentDiscount":
+      return localizations.tenPercentDiscount;
+    case "fruitBasket":
+      return localizations.fruitBasket;
+    case "freeDrink":
+      return localizations.freeDrink;
+    case "freeHaircut":
+      return localizations.freeHaircut;
+    case "freeShampoo":
+      return localizations.freeShampoo;
+    case "beard":
+      return localizations.beard;
+    case "freeCut":
+      return localizations.freeCut;
+    case "hairDryer":
+      return localizations.hairDryer;
+    case "blowDry":
+      return localizations.blowDry;
+    case "baguette":
+      return localizations.baguette;
+    case "traditional":
+      return localizations.traditional;
+    case "croissant":
+      return localizations.croissant;
+    case "chocolateBread":
+      return localizations.chocolateBread;
+    case "cookies":
+      return localizations.cookies;
+    case "waxing":
+      return localizations.waxing;
+    case "manicure":
+      return localizations.manicure;
+    case "pedicure":
+      return localizations.pedicure;
+    case "diagnosis":
+      return localizations.diagnosis;
+    case "oilChange":
+      return localizations.oilChange;
+    default:
+      return null;
+  }
+}
+
+/// Converts a category loaded from backend to use localization keys
+/// This should be called when loading a category from the backend
+Category? convertCategoryChoicesToKeys(
+    BuildContext context, Category? category) {
+  if (category == null) return null;
+
+  final convertedChoices = category.choices.map((choice) {
+    final choiceMap = Map<String, dynamic>.from(choice);
+    final choiceName = choiceMap["choice"] as String?;
+
+    if (choiceName != null) {
+      final key = getChoiceKeyFromName(choiceName);
+      if (key != null) {
+        choiceMap["choiceKey"] = key;
+        // Update the choice name to current language
+        choiceMap["choice"] = getLocalizedChoiceName(context, choiceMap);
+      }
+    }
+
+    return choiceMap;
+  }).toList();
+
+  return category.copyWith(choices: convertedChoices);
+}
+
+/// Gets localized choice name from a Choices object (from choice_result.dart)
+/// This is a convenience function for when working with Choices objects from the API
+String getLocalizedChoiceNameFromChoices(BuildContext context, dynamic choice) {
+  // Convert Choices object to Map if needed
+  if (choice is Map<String, dynamic>) {
+    return getLocalizedChoiceName(context, choice);
+  }
+
+  // Handle Choices object from choice_result.dart
+  final choiceMap = {
+    "choice": choice.choice,
+    "points": choice.points,
+    "image": choice.image,
+    if (choice.id != null) "id": choice.id,
+  };
+
+  return getLocalizedChoiceName(context, choiceMap);
 }

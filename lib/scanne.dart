@@ -2,14 +2,14 @@ import 'package:fidelway/shared/constant.dart';
 import 'package:fidelway/subscribtion/scan_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
 import 'package:provider/provider.dart';
 
 import 'model/APIRest.dart';
 import 'model/choice_result.dart';
-import 'shared/local_storage_helper.dart';
 import 'shared/language_provider.dart';
+import 'shared/local_storage_helper.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -447,7 +447,8 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              choice.choice ?? '',
+                              getLocalizedChoiceNameFromChoices(
+                                  context, choice),
                               style: kTextStyle.copyWith(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
