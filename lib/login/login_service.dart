@@ -26,14 +26,21 @@ class LoginService {
       return;
     }
 
-    var category = await APIRest.getCategory() ?? await LocalStorageHelper.getCategory();
-    if (category == null) {
-      FidelityScreen().launch(context);
-    } else {
-      // Convert choice names to localization keys for proper i18n
-      category = convertCategoryChoicesToKeys(context, category);
-      LocalStorageHelper.saveCategory(category);
-      const HomeScreen().launch(context);
+    var category =
+        await APIRest.getCategory() ?? await LocalStorageHelper.getCategory();
+
+    final bool hasValidCategory =
+        category != null && (category.choices.isNotEmpty);
+
+    if (!hasValidCategory) {
+      // Ensure we route user to configure category before using the app
+      FidelityScreen().launch(context, isNewTask: true);
+      return;
     }
+
+    // Convert choice names to localization keys for proper i18n
+    category = convertCategoryChoicesToKeys(context, category);
+    LocalStorageHelper.saveCategory(category);
+    const HomeScreen().launch(context, isNewTask: true);
   }
 }

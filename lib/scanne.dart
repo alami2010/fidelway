@@ -4,12 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
 
 import 'model/APIRest.dart';
 import 'model/choice_result.dart';
 import 'shared/language_provider.dart';
 import 'shared/local_storage_helper.dart';
+import 'subscribtion/fidelity_screen.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -121,6 +123,23 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin {
 
     // Initialize the showHistory state
     showHistory = false;
+
+    // Protect page: ensure a category is configured
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final category = LocalStorageHelper.getCategory();
+      final bool hasValidCategory =
+          category != null && (category.choices.isNotEmpty);
+      if (!hasValidCategory && mounted) {
+        FidelityScreen().launch(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.selectCategory),
+            backgroundColor: Colors.orange,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    });
   }
 
   @override
