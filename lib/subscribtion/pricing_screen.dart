@@ -305,7 +305,7 @@ class _PricingScreenState extends State<PricingScreen> {
                             color: Colors.white,
                           ),
                           child: Text(
-                            'Économies significatives : Passez d’un coût annuel de 520 € à 300 €, soit 42% d’économies !',
+                            AppLocalizations.of(context)!.significantSavings,
                             style: kTextStyle,
                             textAlign: TextAlign.center,
                           ),
@@ -377,7 +377,7 @@ class _PricingScreenState extends State<PricingScreen> {
                           textAlign: TextAlign.center,
                         ),
                         Text(
-                          'Passez dès aujourd’hui à Fidelway et profitez d’une fidélisation simple, fiable et durable !',
+                          AppLocalizations.of(context)!.fidelwayCallToAction,
                           style: kTextStyle.copyWith(fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
